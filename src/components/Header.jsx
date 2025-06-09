@@ -19,7 +19,7 @@ const Header = () => {
   return (
     <header>
       {/* Top bar */}
-      <div className="bg-[#223a66] text-white text-sm flex justify-between items-center px-4 py-2">
+      {/* <div className="bg-[#223a66] text-white text-sm flex justify-between items-center px-4 py-2">
         <div className="flex items-center gap-4">
           <span className="flex items-center gap-1">
             <FaEnvelope className="inline-block" /> support@novena.com
@@ -31,7 +31,7 @@ const Header = () => {
         <div>
           Call Now : <span className="font-bold">823-4565-13456</span>
         </div>
-      </div>
+      </div> */}
       {/* Logo & Navigation */}
       <div className="bg-white flex items-center justify-between px-8 py-4 shadow relative">
         <div className="flex items-center gap-2">
