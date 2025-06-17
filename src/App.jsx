@@ -1,6 +1,6 @@
-import { BrowserRouter as Router, Routes, Route, NavLink } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import './App.css'
-import Header from './components/Header' // Thêm dòng này
+import Header from './components/Header'
 import HomePage from './components/HomePage'
 import About from './components/About';
 import Footer from "./components/Footer";
@@ -10,30 +10,48 @@ import Contact from './components/Contact';
 import Blog from './components/Blog';
 import Login from './components/Login';
 import Register from './components/Register';
+import BookingPage from "./components/BookingPage";
+import { BookingProvider } from "./components/BookingContext";
+import ListBooking from "./components/ListBooking";
+import BookingSuccess from "./components/BookingSuccess";
+import AdminLayout from "./components/admin/AdminLayout";
 
-function App() {
-
+function AppContent() {
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith("/admin");
 
   return (
     <>
-      <Router>
-      <Header />
+      {!isAdminRoute && <Header />}
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/about" element={<About />} />
         <Route path="/medical-services" element={<MedicalServices />} />
         <Route path="/doctors" element={<Doctors />} />
-         <Route path="/blog" element={<Blog />} />
+        <Route path="/blog" element={<Blog />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/booking" element={<BookingPage />} />
+        <Route path="/list-booking" element={<ListBooking />} />
+        <Route path="/booking-success" element={<BookingSuccess />} />
+        <Route path="/admin/*" element={<AdminLayout />}>
+          {/* Các route con cho admin ở đây */}
+        </Route>
       </Routes>
-
-       <Footer />
-    </Router>
-     
+      {!isAdminRoute && <Footer />}
     </>
-  )
+  );
 }
 
-export default App
+function App() {
+  return (
+    <BookingProvider>
+      <Router>
+        <AppContent />
+      </Router>
+    </BookingProvider>
+  );
+}
+
+export default App;

@@ -1,20 +1,31 @@
 import React, { useState } from "react";
-import { FaEnvelope, FaMapMarkerAlt, FaBars, FaTimes } from "react-icons/fa";
-import { NavLink } from "react-router-dom";
+import { FaEnvelope, FaMapMarkerAlt, FaBars, FaTimes, FaUserCircle } from "react-icons/fa";
+import { NavLink, useNavigate } from "react-router-dom";
 
 const navLinks = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
-  // Chỉ giữ các route có thật, hoặc:
-{ label: "Medical Services", href: "/medical-services" },
+  { label: "Medical Services", href: "/medical-services" },
   { label: "Doctors", href: "/doctors" },
   { label: "Blog", href: "/blog" },
   { label: "Contact", href: "/contact" },
-  // { label: "Login", href: "/login" },
+
+  
 ];
 
 const Header = () => {
   const [open, setOpen] = useState(false);
+  const [accountMenu, setAccountMenu] = useState(false);
+  const navigate = useNavigate();
+
+  // Lấy user từ localStorage (nếu đã đăng nhập)
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    setAccountMenu(false);
+    navigate("/login");
+  };
 
   return (
     <header>
@@ -40,86 +51,83 @@ const Header = () => {
         </div>
         {/* Desktop Nav */}
         <nav className="flex-1 justify-center hidden md:flex">
-          <ul className="flex gap-8 items-center">
-            <li>
-              <NavLink
-                to="/"
-                className={({ isActive }) =>
-                  "text-[#223a66] font-medium transition" +
-                  (isActive ? " text-[#f75757]" : " hover:text-[#f75757]")
-                }
-                end
-              >
-                Home
-              </NavLink>
+          <ul className="flex gap-12 items-center">
+            {navLinks.map((link) => (
+              <li key={link.label}>
+                <NavLink
+                  to={link.href}
+                  className={({ isActive }) =>
+                    "text-[#223a66] font-medium transition" +
+                    (isActive ? " text-[#f75757]" : " hover:text-[#f75757]")
+                  }
+                  end={link.href === "/"}
+                >
+                  {link.label}
+                </NavLink>
+              </li>
+              
+            ))}
+           
+            {/* Account menu */}
+            <li className="relative ml-[435px]">
+              {user ? (
+                <button
+                  className="flex items-center gap-2 text-[#223a66] font-medium focus:outline-none"
+                  onClick={() => setAccountMenu((v) => !v)}
+                >
+                  <FaUserCircle className="text-2xl" />
+                  <span>{user.name || "Account"}</span>
+                </button>
+              ) : (
+                <NavLink
+                  to="/login"
+                  className={({ isActive }) =>
+                    "text-[#223a66] font-medium transition" +
+                    (isActive ? " text-[#f75757]" : " hover:text-[#f75757]")
+                  }
+                >
+                  <FaUserCircle className="inline-block text-xl mr-1" />
+                  Login
+                </NavLink>
+              )}
+
+              
+              {/* Dropdown menu */}
+              {accountMenu && user && (
+                <div
+                  className="absolute right-0 mt-2 w-44 bg-white rounded shadow-lg border z-50"
+                  onMouseLeave={() => setAccountMenu(false)}
+                >
+                  <NavLink
+                    to="/profile"
+                    className="block px-4 py-2 hover:bg-gray-100 text-[#223a66] text-sm"
+                    onClick={() => setAccountMenu(false)}
+                  >
+                    Profile
+                  </NavLink>
+                  <NavLink
+                    to="/profile/update"
+                    className="block px-4 py-2 hover:bg-gray-100 text-[#223a66] text-sm"
+                    onClick={() => setAccountMenu(false)}
+                  >
+                    Update Profile
+                  </NavLink>
+                  <NavLink
+                    to="/list-booking"
+                    className="block px-4 py-2 hover:bg-gray-100 text-[#223a66] text-sm"
+                    onClick={() => setAccountMenu(false)}
+                  >
+                    List Booking
+                  </NavLink>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-2 hover:bg-gray-100 text-[#f75757] text-sm"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
             </li>
-            <li>
-              <NavLink
-                to="/about"
-                className={({ isActive }) =>
-                  "text-[#223a66] font-medium transition" +
-                  (isActive ? " text-[#f75757]" : " hover:text-[#f75757]")
-                }
-              >
-                About
-              </NavLink>
-            </li>
-               <li>
-              <NavLink
-                to="/medical-services"
-                className={({ isActive }) =>
-                  "text-[#223a66] font-medium transition" +
-                  (isActive ? " text-[#f75757]" : " hover:text-[#f75757]")
-                }
-              >
-            Medical Services     
-                     </NavLink>
-            </li>
-               <li>
-              <NavLink
-                to="/doctors"
-                className={({ isActive }) =>
-                  "text-[#223a66] font-medium transition" +
-                  (isActive ? " text-[#f75757]" : " hover:text-[#f75757]")
-                }
-              >
-            Doctors     
-                     </NavLink>
-            </li>
-              <li>
-              <NavLink
-                to="/blog"
-                className={({ isActive }) =>
-                  "text-[#223a66] font-medium transition" +
-                  (isActive ? " text-[#f75757]" : " hover:text-[#f75757]")
-                }
-              >
-            BLogs    
-                     </NavLink>
-            </li>
-             <li>
-              <NavLink
-                to="/contact"
-                className={({ isActive }) =>
-                  "text-[#223a66] font-medium transition" +
-                  (isActive ? " text-[#f75757]" : " hover:text-[#f75757]")
-                }
-              >
-            Contact     
-                     </NavLink>
-            </li>
-              <li>
-              <NavLink
-                to="/login"
-                className={({ isActive }) =>
-                  "text-[#223a66] font-medium transition" +
-                  (isActive ? " text-[#f75757]" : " hover:text-[#f75757]")
-                }
-              >
-            Login
-                     </NavLink>
-            </li>
-            {/* Các nav item khác giữ nguyên hoặc chuyển sang NavLink nếu muốn */}
           </ul>
         </nav>
         {/* Mobile Menu Button */}
@@ -157,6 +165,50 @@ const Header = () => {
                     </NavLink>
                   </li>
                 ))}
+                {/* Account menu for mobile */}
+                {user ? (
+                  <>
+                    <NavLink
+                      to="/profile"
+                      className="block px-4 py-2 hover:bg-gray-100 text-[#223a66] text-sm"
+                      onClick={() => setOpen(false)}
+                    >
+                      Profile
+                    </NavLink>
+                    <NavLink
+                      to="/profile/update"
+                      className="block px-4 py-2 hover:bg-gray-100 text-[#223a66] text-sm"
+                      onClick={() => setOpen(false)}
+                    >
+                      Update Profile
+                    </NavLink>
+                    <NavLink
+                      to="/list-booking"
+                      className="block px-4 py-2 hover:bg-gray-100 text-[#223a66] text-sm"
+                      onClick={() => setOpen(false)}
+                    >
+                      List Booking
+                    </NavLink>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left px-4 py-2 hover:bg-gray-100 text-[#f75757] text-sm"
+                    >
+                      Logout
+                    </button>
+                  </>
+                ) : (
+                  <NavLink
+                    to="/login"
+                    className={({ isActive }) =>
+                      "text-[#223a66] font-medium transition" +
+                      (isActive ? " text-[#f75757]" : " hover:text-[#f75757]")
+                    }
+                    onClick={() => setOpen(false)}
+                  >
+                    <FaUserCircle className="inline-block text-xl mr-1" />
+                    Login
+                  </NavLink>
+                )}
               </ul>
             </div>
             <div className="flex-1" onClick={() => setOpen(false)} />
