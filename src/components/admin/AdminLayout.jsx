@@ -1,30 +1,47 @@
-import React from "react";
+import React, { useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
-import { FaUserMd, FaUser, FaClinicMedical, FaList, FaCalendarAlt, FaClock, FaMoneyCheckAlt, FaEnvelope } from "react-icons/fa";
+import { FaUserMd, FaUser, FaClinicMedical, FaList, FaCalendarAlt, FaMoneyCheckAlt, FaEnvelope } from "react-icons/fa";
 import AdminHeader from "./AdminHeader";
 
 const adminMenu = [
-  { label: "Dashboard", icon: <FaList />, to: "/admin" },
-  { label: "Users", icon: <FaUser />, to: "/admin/users" },
-  { label: "Clinics", icon: <FaClinicMedical />, to: "/admin/clinics" },
-  { label: "Specialty", icon: <FaList />, to: "/admin/specialty" },
+  { label: "Bảng điều khiển", icon: <FaList />, to: "/admin" },
+  { label: "Người sử dụng", icon: <FaUser />, children: [
+    { label: "Thêm Người dùng", to: "/admin/users/add" },
+    { label: "Danh sách Người dùng", to: "/admin/users/list" },
+  
+  ] },  
+  { label: "Phòng khám", icon: <FaClinicMedical />, to: "/admin/clinics" },
+  { label: "Chuyên ngành", icon: <FaList />, children: [
+    { label: "Thêm Chuyên ngành", to: "/admin/specialties/add" },
+    { label: "Danh sách Chuyên ngành", to: "/admin/specialties/list" }
+  ]},
   {
-    label: "Doctors", icon: <FaUserMd />, children: [
-      { label: "Add Doctor", to: "/admin/doctors/add" },
-      { label: "List Doctor", to: "/admin/doctors/list" }
+    label: "Bác sĩ", icon: <FaUserMd />, children: [
+      { label: "Thêm Bác sĩ", to: "/admin/doctors/add" },
+      { label: "Danh sách Bác sĩ", to: "/admin/doctors/list" }
     ]
   },
   {
-    label: "Schedules", icon: <FaCalendarAlt />, children: [
-      { label: "Time Slots", to: "/admin/schedules/timeslots" }
+    label: "Lịch trình", icon: <FaCalendarAlt />, children: [
+      { label: "Các khoảng thời gian", to: "/admin/schedules/timeslots" }
     ]
   },
-  { label: "Bookings", icon: <FaList />, to: "/admin/bookings" },
-  { label: "Refund Invoice", icon: <FaMoneyCheckAlt />, to: "/admin/refund-invoice" },
-  { label: "Contacts", icon: <FaEnvelope />, to: "/admin/contacts" },
+  { label: "Đặt chỗ", icon: <FaList />, to: "/admin/bookings" },
+  { label: "Hóa đơn hoàn tiền", icon: <FaMoneyCheckAlt />, to: "/admin/refund-invoice" },
+  { label: "Liên hệ", icon: <FaEnvelope />, to: "/admin/contacts" },
 ];
 
 const AdminLayout = () => {
+  // State để điều khiển mở/đóng submenu
+  const [openMenus, setOpenMenus] = useState({});
+
+  const toggleMenu = (label) => {
+    setOpenMenus((prev) => ({
+      ...prev,
+      [label]: !prev[label],
+    }));
+  };
+
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar */}
@@ -37,25 +54,32 @@ const AdminLayout = () => {
             {adminMenu.map((item) =>
               item.children ? (
                 <li key={item.label}>
-                  <div className="flex items-center gap-2 px-3 py-2 font-semibold text-[#223a66]">
+                  <button
+                    type="button"
+                    className="flex items-center gap-2 px-3 py-2 font-semibold text-[#223a66] w-full hover:bg-gray-100 rounded transition"
+                    onClick={() => toggleMenu(item.label)}
+                  >
                     {item.icon}
                     {item.label}
-                  </div>
-                  <ul className="ml-7 space-y-1">
-                    {item.children.map((child) => (
-                      <li key={child.label}>
-                        <NavLink
-                          to={child.to}
-                          className={({ isActive }) =>
-                            "block px-3 py-1 rounded text-sm " +
-                            (isActive ? "bg-[#f75757] text-white" : "hover:bg-gray-100 text-[#223a66]")
-                          }
-                        >
-                          {child.label}
-                        </NavLink>
-                      </li>
-                    ))}
-                  </ul>
+                    <span className="ml-auto">{openMenus[item.label] ? "▲" : "▼"}</span>
+                  </button>
+                  {openMenus[item.label] && (
+                    <ul className="ml-7 space-y-1">
+                      {item.children.map((child) => (
+                        <li key={child.label}>
+                          <NavLink
+                            to={child.to}
+                            className={({ isActive }) =>
+                              "block px-3 py-1 rounded text-sm " +
+                              (isActive ? "bg-[#f75757] text-white" : "hover:bg-gray-100 text-[#223a66]")
+                            }
+                          >
+                            {child.label}
+                          </NavLink>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </li>
               ) : (
                 <li key={item.label}>
@@ -87,7 +111,7 @@ const AdminLayout = () => {
       <div className="flex-1 flex flex-col min-h-screen">
         <AdminHeader />
         <main className="flex-1 p-8">
-          <Outlet />
+          <Outlet /> {/* Thêm dòng này để render các route con */}
         </main>
       </div>
     </div>
