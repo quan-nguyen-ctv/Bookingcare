@@ -1,5 +1,4 @@
-import React from "react";
-import { useBooking } from "./BookingContext";
+import React, { useEffect, useState } from "react";
 import { FaUserMd, FaCalendarAlt, FaClock } from "react-icons/fa";
 
 const clinicInfo = {
@@ -10,7 +9,24 @@ const clinicInfo = {
 };
 
 const ListBooking = () => {
-  const { bookings } = useBooking();
+  const [bookings, setBookings] = useState([]);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const currentUser = JSON.parse(localStorage.getItem("user"));
+    setUser(currentUser);
+    const allBookings = JSON.parse(localStorage.getItem("bookings") || "[]");
+    // Lọc booking theo email hoặc phone của user đang đăng nhập
+    if (currentUser) {
+      const filtered = allBookings.filter(
+        (b) =>
+          (b.email && b.email === currentUser.email) ||
+          (b.phone && b.phone === currentUser.phone) ||
+          (b.user && b.user === currentUser.name)
+      );
+      setBookings(filtered);
+    }
+  }, []);
 
   return (
     <section className="container mx-auto px-4 py-10 max-w-2xl">

@@ -16,15 +16,18 @@ const Login = () => {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    const found = mockAccounts.find(
-      (acc) => acc.phone === phone && acc.password === password
-    );
+    // Lấy users từ localStorage
+    const users = JSON.parse(localStorage.getItem("users") || "[]");
+    // Kiểm tra trong localStorage trước, nếu không có thì kiểm tra mockAccounts
+    const found =
+      users.find(acc => acc.phone === phone && acc.password === password) ||
+      mockAccounts.find(acc => acc.phone === phone && acc.password === password);
+
     if (found) {
-      // Lưu thông tin user vào localStorage/sessionStorage nếu muốn
       localStorage.setItem("user", JSON.stringify(found));
-      // Phân luồng theo role
       if (found.role === "admin") navigate("/admin");
       else if (found.role === "doctor") navigate("/doctor");
+      else if (found.role === "user" || found.role === "customer") navigate("/");
       else navigate("/");
     } else {
       setError("Sai số điện thoại hoặc mật khẩu!");

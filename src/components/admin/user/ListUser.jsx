@@ -100,6 +100,7 @@ const ListUser = () => {
             <th className="border px-3 py-2">Phone</th>
             <th className="border px-3 py-2">Gender</th>
             <th className="border px-3 py-2">Role</th>
+            <th className="border px-3 py-2">Password</th> {/* Thêm cột Password */}
             <th className="border px-3 py-2">Action</th>
           </tr>
         </thead>
@@ -194,6 +195,18 @@ const ListUser = () => {
                   item.role
                 )}
               </td>
+              <td className="border px-3 py-2">
+                {editId === item.id ? (
+                  <input
+                    className="border px-2 py-1"
+                    value={editData.password}
+                    onChange={e => setEditData({ ...editData, password: e.target.value })}
+                    type="text"
+                  />
+                ) : (
+                  item.password
+                )}
+              </td>
               <td className="border px-3 py-2 space-x-1">
                 {editId === item.id ? (
                   <>
@@ -231,7 +244,7 @@ const ListUser = () => {
           ))}
           {users.length === 0 && (
             <tr>
-              <td colSpan={9} className="py-4 text-gray-400">No users found.</td>
+              <td colSpan={10} className="py-4 text-gray-400">No users found.</td>
             </tr>
           )}
         </tbody>

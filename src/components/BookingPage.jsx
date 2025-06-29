@@ -1,36 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useBooking } from "./BookingContext";
 import { useNavigate } from "react-router-dom";
 
-// Mock data (có thể import từ Doctors.jsx nếu muốn dùng chung)
-const specialties = [
-  "Cardiology",
-  "Ophthalmology",
-  "Dental Care",
-  "Child Care",
-  "Bone & Joint Centre",
-  "Digestive Health",
-];
-
-const doctors = [
-  { id: 1, name: "Nguyen Van Binh", specialty: "Cardiology" },
-  { id: 2, name: "Tran Thi Lan", specialty: "Cardiology" },
-  { id: 3, name: "Le Quang Hieu", specialty: "Ophthalmology" },
-  { id: 4, name: "Pham Thi Mai", specialty: "Ophthalmology" },
-  { id: 5, name: "Nguyen Van Son", specialty: "Dental Care" },
-  { id: 6, name: "Do Thi Hoa", specialty: "Dental Care" },
-  { id: 7, name: "Pham Van An", specialty: "Child Care" },
-  { id: 8, name: "Nguyen Thi Dao", specialty: "Child Care" },
-  { id: 9, name: "Tran Van Minh", specialty: "Bone & Joint Centre" },
-  { id: 10, name: "Le Thi Bich", specialty: "Bone & Joint Centre" },
-  { id: 11, name: "Ha Van Quyet", specialty: "Digestive Health" },
-  { id: 12, name: "Hai Thuy Vi", specialty: "Digestive Health" },
-  { id: 13, name: "Nguyen Chi Thanh", specialty: "Digestive Health" },
-  { id: 14, name: "Le Thi Thu", specialty: "Digestive Health" },
-];
-
 const BookingPage = () => {
-  const [selectedSpecialty, setSelectedSpecialty] = useState(specialties[0]);
+  const [specialties, setSpecialties] = useState([]);
+  const [doctors, setDoctors] = useState([]);
+  const [selectedSpecialty, setSelectedSpecialty] = useState("");
   const [selectedDoctor, setSelectedDoctor] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
@@ -40,6 +15,18 @@ const BookingPage = () => {
   const { addBooking } = useBooking();
   const navigate = useNavigate();
 
+  // Lấy specialties và doctors từ localStorage
+  useEffect(() => {
+    const specialtiesData = JSON.parse(
+      localStorage.getItem("specialties") || "[]"
+    );
+    setSpecialties(specialtiesData);
+    if (specialtiesData.length > 0) setSelectedSpecialty(specialtiesData[0].name);
+
+    const doctorsData = JSON.parse(localStorage.getItem("doctors") || "[]");
+    setDoctors(doctorsData);
+  }, []);
+
   // Lọc bác sĩ theo chuyên khoa
   const filteredDoctors = doctors.filter(
     (doc) => doc.specialty === selectedSpecialty
@@ -48,7 +35,6 @@ const BookingPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     addBooking({
-      name,
       specialty: selectedSpecialty,
       doctor: selectedDoctor,
       date,
@@ -97,8 +83,8 @@ const BookingPage = () => {
                 required
               >
                 {specialties.map((spec) => (
-                  <option key={spec} value={spec}>
-                    {spec}
+                  <option key={spec.id} value={spec.name}>
+                    {spec.name}
                   </option>
                 ))}
               </select>
@@ -116,8 +102,8 @@ const BookingPage = () => {
               >
                 <option value="">Chọn bác sĩ</option>
                 {filteredDoctors.map((doc) => (
-                  <option key={doc.id} value={doc.name}>
-                    {doc.name}
+                  <option key={doc.id} value={doc.user}>
+                    {doc.user}
                   </option>
                 ))}
               </select>
