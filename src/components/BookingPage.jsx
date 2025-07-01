@@ -421,28 +421,42 @@ const BookingPage = () => {
               />
             </div>
 
-            <div>
-              <label className="block mb-1 font-semibold text-[#223a66]">
-                Lịch khám
-              </label>
-              <select
-                className="w-full p-3 rounded border border-gray-200 focus:outline-none"
-                value={selectedSchedule}
-                onChange={(e) => setSelectedSchedule(e.target.value)}
-                required
-              >
-                <option value="">Chọn lịch</option>
-                {schedules
-  .filter((schedule) => schedule.number_booked < schedule.booking_limit)
-  .map((schedule) => (
-    <option key={schedule.id} value={schedule.id}>
-      {schedule.date_schedule?.join("-")} từ {schedule.start_time?.join(":")} đến {schedule.end_time?.join(":")} (
-      {schedule.booking_limit - schedule.number_booked} chỗ trống)
-    </option>
-))}
+           <div>
+  <label className="block mb-1 font-semibold text-[#223a66]">
+    Lịch khám
+  </label>
+  <select
+    className="w-full p-3 rounded border border-gray-200 focus:outline-none"
+    value={selectedSchedule}
+    onChange={(e) => setSelectedSchedule(e.target.value)}
+    required
+  >
+    <option value="">Chọn lịch</option>
+    {schedules
+      .filter((schedule) => schedule.number_booked < schedule.booking_limit)
+      .map((schedule) => {
+        const dateString = Array.isArray(schedule.date_schedule)
+          ? schedule.date_schedule.join("-")
+          : schedule.date_schedule || "Không rõ ngày";
 
-              </select>
-            </div>
+        const startTimeString = Array.isArray(schedule.start_time)
+          ? schedule.start_time.join(":")
+          : schedule.start_time || "Không rõ";
+
+        const endTimeString = Array.isArray(schedule.end_time)
+          ? schedule.end_time.join(":")
+          : schedule.end_time || "Không rõ";
+
+        return (
+          <option key={schedule.id} value={schedule.id}>
+            {dateString} từ {startTimeString} đến {endTimeString} (
+            {schedule.booking_limit - schedule.number_booked} chỗ trống)
+          </option>
+        );
+      })}
+  </select>
+</div>
+
 
             <button
               type="submit"
