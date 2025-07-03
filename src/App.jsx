@@ -28,6 +28,8 @@ import DoctorDashboard from "./components/doctor/DoctorDashboard";
 import PatientBookingList from "./components/doctor/patient/PatientBookingList";
 import ProfileUpdate from "./components/ProfileUpdate";
 import ProfileView from "./components/ProfileView";
+import AdminLogin from "./components/AdminLogin";
+import PaymentPage from "./components/PaymentPage";
 
 
 function AppContent() {
@@ -49,6 +51,7 @@ function AppContent() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/booking" element={<BookingPage />} />
+        <Route path="/payment" element={<PaymentPage />} />
         <Route path="/list-booking" element={<ListBooking />} />
         <Route path="/booking-success" element={<BookingSuccess />} />
         <Route path="/profile" element={<ProfileView />} />
@@ -74,7 +77,7 @@ function AppContent() {
           
           {/* Các route con khác */}
         </Route>
-        
+        <Route path="/admin-login" element={<AdminLogin />} />
       </Routes>
       {!isAdminRoute && !isDoctorRoute && <Footer />}
     </>

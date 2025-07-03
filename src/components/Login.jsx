@@ -121,7 +121,7 @@ const Login = () => {
       body: JSON.stringify({
         phone_number: phone,
         password: password,
-        role_id: 3  // 👈 sửa tại đây nếu bạn có sẵn giá trị roleId
+        role_id: 1  // 👈 sửa tại đây nếu bạn có sẵn giá trị roleId
       })
     });
 

@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { NavLink, Outlet } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { FaUserMd, FaUser, FaClinicMedical, FaList, FaCalendarAlt, FaMoneyCheckAlt, FaEnvelope } from "react-icons/fa";
 import AdminHeader from "./AdminHeader";
 
@@ -35,8 +35,16 @@ const adminMenu = [
 ];
 
 const AdminLayout = () => {
-  // State để điều khiển mở/đóng submenu
   const [openMenus, setOpenMenus] = useState({});
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    const token = localStorage.getItem("token");
+    if (!user || user.role !== "admin" || !token) {
+      navigate("/admin-login");
+    }
+  }, [navigate]);
 
   const toggleMenu = (label) => {
     setOpenMenus((prev) => ({
@@ -122,3 +130,6 @@ const AdminLayout = () => {
 };
 
 export default AdminLayout;
+
+localStorage.setItem("user", JSON.stringify({ role: "admin", name: "Admin Test" }));
+localStorage.setItem("token", "token_gia_test");
