@@ -21,15 +21,24 @@ import ListDoctor from "./components/admin/doctors/ListDoctor";
 import AddDoctor from "./components/admin/doctors/AddDoctor";
 import AddUser from "./components/admin/user/AddUser";
 import ListUser from "./components/admin/user/ListUser";
+import AddBooking from "./components/admin/bookings/AddBooking";
+import ListBookings from "./components/admin/bookings/ListBookings";
+import DoctorLayout from "./components/doctor/DoctorLayout";
+import DoctorDashboard from "./components/doctor/DoctorDashboard";
+import PatientBookingList from "./components/doctor/patient/PatientBookingList";
+import ProfileUpdate from "./components/ProfileUpdate";
+import ProfileView from "./components/ProfileView";
 
 
 function AppContent() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
+  const isDoctorRoute = location.pathname.startsWith("/doctor");
+
 
   return (
     <>
-      {!isAdminRoute && <Header />}
+      {!isAdminRoute && !isDoctorRoute && <Header />}
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/about" element={<About />} />
@@ -42,6 +51,8 @@ function AppContent() {
         <Route path="/booking" element={<BookingPage />} />
         <Route path="/list-booking" element={<ListBooking />} />
         <Route path="/booking-success" element={<BookingSuccess />} />
+        <Route path="/profile" element={<ProfileView />} />
+        <Route path="/profile/update" element={<ProfileUpdate />} />
         <Route path="/admin/*" element={<AdminLayout />}>
           <Route path="specialties/add" element={<AddSpecialty />} />
           <Route path="specialties/list" element={<ListSpecialty />} />
@@ -49,11 +60,23 @@ function AppContent() {
           <Route path="doctors/list" element={<ListDoctor />} />
           <Route path="users/add" element={<AddUser />} />
           <Route path="users/list" element={<ListUser />} />
+          <Route path="bookings/list" element={<ListBookings />} />
+          <Route path="bookings/add" element={<AddBooking />} />
+
           
           {/* Các route con khác */}
         </Route>
+          <Route path="/doctor/*" element={<DoctorLayout />}>
+            <Route path="dashboard" element={<DoctorDashboard />} />
+            <Route path="patients" element={<PatientBookingList />} />
+
+
+          
+          {/* Các route con khác */}
+        </Route>
+        
       </Routes>
-      {!isAdminRoute && <Footer />}
+      {!isAdminRoute && !isDoctorRoute && <Footer />}
     </>
   );
 }

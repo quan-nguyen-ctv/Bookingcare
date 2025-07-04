@@ -26,7 +26,10 @@ const adminMenu = [
       { label: "Các khoảng thời gian", to: "/admin/schedules/timeslots" }
     ]
   },
-  { label: "Đặt chỗ", icon: <FaList />, to: "/admin/bookings" },
+  { label: "Đặt chỗ", icon: <FaList />, children: [
+    { label: "Danh sách Đặt chỗ", to: "/admin/bookings/list" },
+    { label: "Thêm Đặt chỗ", to: "/admin/bookings/add" }
+  ]},
   { label: "Hóa đơn hoàn tiền", icon: <FaMoneyCheckAlt />, to: "/admin/refund-invoice" },
   { label: "Liên hệ", icon: <FaEnvelope />, to: "/admin/contacts" },
 ];
