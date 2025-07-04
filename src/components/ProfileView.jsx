@@ -1,12 +1,56 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 const ProfileView = () => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true); // Hiện loading khi fetch data
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const u = JSON.parse(localStorage.getItem("user"));
-    setUser(u);
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("No token found. Please login.");
+      setLoading(false);
+      return;
+    }
+
+    axios
+      .get("http://localhost:6868/api/v1/users/details", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        if (response.data && response.data.data) {
+          setUser(response.data.data);
+        } else {
+          setError("Cannot load user data.");
+        }
+      })
+      .catch((err) => {
+        console.error("Fetch user failed:", err);
+        setError("Failed to load user data.");
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center mt-10">
+        <span className="text-gray-500">Loading...</span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center mt-10">
+        <span className="text-red-500">{error}</span>
+      </div>
+    );
+  }
 
   if (!user) return null;
 
@@ -21,7 +65,7 @@ const ProfileView = () => {
             <label className="block font-semibold mb-1">Full Name</label>
             <input
               className="border rounded px-3 py-2 w-full bg-gray-100"
-              value={user.name || ""}
+              value={user.fullname || ""}
               disabled
             />
           </div>
@@ -45,12 +89,12 @@ const ProfileView = () => {
             <label className="block font-semibold mb-1">Contact Number</label>
             <input
               className="border rounded px-3 py-2 w-full bg-gray-100"
-              value={user.phone || ""}
+              value={user.phone_number || ""}
               disabled
             />
           </div>
           <div>
-            <label className="block font-semibold mb-1">BirthDay</label>
+            <label className="block font-semibold mb-1">Birthday</label>
             <input
               className="border rounded px-3 py-2 w-full bg-gray-100"
               value={user.birthday || ""}
