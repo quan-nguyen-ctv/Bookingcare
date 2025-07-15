@@ -18,9 +18,12 @@ const Toast = ({ message, type, onClose }) => (
 );
 
 const AddSpecialty = () => {
-  const [name, setName] = useState("");
-  const [imageFile, setImageFile] = useState(null);
-  const [desc, setDesc] = useState("");
+  const [form, setForm] = useState({
+    name: "",
+    image: null,
+    desc: "",
+    price: "",
+  });
   const [toast, setToast] = useState({ show: false, message: "", type: "success" });
 
   const showToast = (message, type = "success") => {
@@ -28,24 +31,57 @@ const AddSpecialty = () => {
     setTimeout(() => setToast({ show: false, message: "", type }), 2000);
   };
 
-  const handleSubmit = (e) => {
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleFileChange = (e) => {
+    setForm({ ...form, image: e.target.files[0] });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    let imageUrl = "";
-    if (imageFile) {
-      imageUrl = URL.createObjectURL(imageFile);
+    try {
+      if (!form.image) {
+        return showToast("Vui lòng chọn ảnh!", "error");
+      }
+
+      const formData = new FormData();
+      formData.append("file", form.image);
+
+      // Upload image first
+      const uploadRes = await fetch("http://localhost:6868/api/v1/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!uploadRes.ok) throw new Error("Upload ảnh thất bại");
+
+      const { fileName } = await uploadRes.json();
+
+      const body = {
+        specialty_name: form.name,
+        specialty_image: fileName,
+        description: form.desc,
+        price: Number(form.price),
+      };
+
+      const res = await fetch("http://localhost:6868/api/v1/specialties", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
+
+      if (!res.ok) throw new Error("Tạo chuyên khoa thất bại");
+
+      showToast("Thêm chuyên khoa thành công!");
+      setForm({ name: "", image: null, desc: "", price: "" });
+    } catch (err) {
+      console.error("Error:", err);
+      showToast("Lỗi khi thêm chuyên khoa", "error");
     }
-    const specialties = JSON.parse(localStorage.getItem("specialties") || "[]");
-    specialties.push({
-      id: Date.now(),
-      name,
-      image: imageUrl,
-      desc,
-    });
-    localStorage.setItem("specialties", JSON.stringify(specialties));
-    setName("");
-    setImageFile(null);
-    setDesc("");
-    showToast("Thêm chuyên ngành thành công!", "success");
   };
 
   return (
@@ -63,10 +99,11 @@ const AddSpecialty = () => {
           <div>
             <label className="block font-semibold text-[#223a66] mb-2">Specialty Name</label>
             <input
-              className="block border border-gray-300 rounded px-3 py-2 w-full focus:outline-none focus:border-[#20c0f3]"
+              className="block border border-gray-300 rounded px-3 py-2 w-full"
+              name="name"
               placeholder="Enter specialty name"
-              value={name}
-              onChange={e => setName(e.target.value)}
+              value={form.name}
+              onChange={handleChange}
               required
             />
           </div>
@@ -76,11 +113,12 @@ const AddSpecialty = () => {
               type="file"
               accept="image/*"
               className="block border border-gray-300 rounded px-3 py-2 w-full bg-white"
-              onChange={e => setImageFile(e.target.files[0])}
+              onChange={handleFileChange}
+              required
             />
-            {imageFile && (
+            {form.image && (
               <img
-                src={URL.createObjectURL(imageFile)}
+                src={URL.createObjectURL(form.image)}
                 alt="preview"
                 className="h-16 mt-2 rounded"
               />
@@ -89,21 +127,30 @@ const AddSpecialty = () => {
           <div>
             <label className="block font-semibold text-[#223a66] mb-2">Description</label>
             <textarea
-              className="block border border-gray-300 rounded px-3 py-2 w-full min-h-[80px] focus:outline-none focus:border-[#20c0f3]"
+              name="desc"
+              className="block border border-gray-300 rounded px-3 py-2 w-full min-h-[80px]"
               placeholder="Description"
-              value={desc}
-              onChange={e => setDesc(e.target.value)}
+              value={form.desc}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <label className="block font-semibold text-[#223a66] mb-2">Price</label>
+            <input
+              type="number"
+              name="price"
+              className="block border border-gray-300 rounded px-3 py-2 w-full"
+              placeholder="Price"
+              value={form.price}
+              onChange={handleChange}
+              required
             />
           </div>
           <div className="flex justify-end gap-4 pt-2">
             <button
               type="button"
               className="bg-[#ffc107] hover:bg-yellow-400 text-white font-bold px-6 py-2 rounded"
-              onClick={() => {
-                setName("");
-                setImageFile(null);
-                setDesc("");
-              }}
+              onClick={() => setForm({ name: "", image: null, desc: "", price: "" })}
             >
               CANCEL
             </button>

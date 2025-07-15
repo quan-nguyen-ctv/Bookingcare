@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import ConfirmDeleteModal from "../ConfirmDeleteModal";
 
 const Toast = ({ message, type, onClose }) => (
@@ -32,27 +33,35 @@ const ListDoctor = () => {
   const [deleteId, setDeleteId] = useState(null);
   const [toast, setToast] = useState({ show: false, message: "", type: "success" });
 
-  useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("doctors") || "[]");
-    setDoctors(data);
-  }, []);
+  const token = localStorage.getItem("token");
 
   const showToast = (message, type = "success") => {
     setToast({ show: true, message, type });
-    setTimeout(() => setToast({ show: false, message: "", type }), 2000);
+    setTimeout(() => setToast({ show: false, message: "", type }), 2500);
   };
 
-  const handleDelete = (id) => {
-    setDeleteId(id);
+  const fetchDoctors = async () => {
+    if (!token) {
+      showToast("Vui lòng đăng nhập với quyền admin để xem danh sách", "error");
+      return;
+    }
+    try {
+      const res = await axios.get("http://localhost:6868/api/v1/doctors", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      const list = res.data.data?.doctorList || [];
+      setDoctors(list);
+    } catch (err) {
+      console.error("Lỗi khi lấy danh sách bác sĩ:", err);
+      showToast("Lỗi khi tải danh sách", "error");
+    }
   };
 
-  const confirmDelete = () => {
-    const newList = doctors.filter(item => item.id !== deleteId);
-    setDoctors(newList);
-    localStorage.setItem("doctors", JSON.stringify(newList));
-    setDeleteId(null);
-    showToast("Xóa bác sĩ thành công!", "success");
-  };
+  useEffect(() => {
+    fetchDoctors();
+  }, []);
 
   const handleEdit = (item) => {
     setEditId(item.id);
@@ -66,14 +75,55 @@ const ListDoctor = () => {
     });
   };
 
-  const handleSave = (id) => {
-    const newList = doctors.map(item =>
-      item.id === id ? { ...item, ...editData } : item
-    );
-    setDoctors(newList);
-    localStorage.setItem("doctors", JSON.stringify(newList));
-    setEditId(null);
-    showToast("Chỉnh sửa bác sĩ thành công!", "success");
+  const handleSave = async (id) => {
+    try {
+      await axios.put(
+        `http://localhost:6868/api/v1/doctors/${id}`,
+        {
+          user: editData.user,
+          specialty: editData.specialty,
+          image: editData.image,
+          experience: editData.experience,
+          qualification: editData.qualification,
+          bio: editData.bio
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      const updated = doctors.map((doc) =>
+        doc.id === id ? { ...doc, ...editData } : doc
+      );
+      setDoctors(updated);
+      setEditId(null);
+      showToast("Chỉnh sửa bác sĩ thành công!");
+    } catch (err) {
+      console.error("Lỗi khi cập nhật:", err);
+      showToast("Lỗi khi cập nhật", "error");
+    }
+  };
+
+  const handleDelete = (id) => {
+    setDeleteId(id);
+  };
+
+  const confirmDelete = async () => {
+    try {
+      await axios.delete(`http://localhost:6868/api/v1/doctors/${deleteId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      const newList = doctors.filter(item => item.id !== deleteId);
+      setDoctors(newList);
+      setDeleteId(null);
+      showToast("Xóa bác sĩ thành công!");
+    } catch (err) {
+      console.error("Lỗi khi xóa:", err);
+      showToast("Xóa thất bại", "error");
+    }
   };
 
   return (
@@ -99,114 +149,54 @@ const ListDoctor = () => {
           </tr>
         </thead>
         <tbody>
-          {doctors.map((item, idx) => (
-            <tr key={item.id} className="border-b">
-              <td className="border px-3 py-2">{idx + 1}</td>
-              <td className="border px-3 py-2">
-                {editId === item.id ? (
-                  <input
-                    className="border px-2 py-1"
-                    value={editData.user}
-                    onChange={e => setEditData({ ...editData, user: e.target.value })}
-                  />
-                ) : (
-                  item.user
-                )}
-              </td>
-              <td className="border px-3 py-2">
-                {editId === item.id ? (
-                  <input
-                    className="border px-2 py-1"
-                    value={editData.specialty}
-                    onChange={e => setEditData({ ...editData, specialty: e.target.value })}
-                  />
-                ) : (
-                  item.specialty
-                )}
-              </td>
-              <td className="border px-3 py-2">
-                {editId === item.id ? (
-                  <input
-                    className="border px-2 py-1"
-                    value={editData.image}
-                    onChange={e => setEditData({ ...editData, image: e.target.value })}
-                  />
-                ) : (
-                  item.image && <img src={item.image} alt={item.user} className="h-10 mx-auto" />
-                )}
-              </td>
-              <td className="border px-3 py-2">
-                {editId === item.id ? (
-                  <input
-                    className="border px-2 py-1"
-                    value={editData.experience}
-                    onChange={e => setEditData({ ...editData, experience: e.target.value })}
-                  />
-                ) : (
-                  item.experience
-                )}
-              </td>
-              <td className="border px-3 py-2">
-                {editId === item.id ? (
-                  <input
-                    className="border px-2 py-1"
-                    value={editData.qualification}
-                    onChange={e => setEditData({ ...editData, qualification: e.target.value })}
-                  />
-                ) : (
-                  item.qualification
-                )}
-              </td>
-              <td className="border px-3 py-2">
-                {editId === item.id ? (
-                  <input
-                    className="border px-2 py-1"
-                    value={editData.bio}
-                    onChange={e => setEditData({ ...editData, bio: e.target.value })}
-                  />
-                ) : (
-                  item.bio
-                )}
-              </td>
-              <td className="border px-3 py-2 space-x-1">
-                {editId === item.id ? (
-                  <>
-                    <button
-                      className="bg-green-500 text-white px-2 py-1 rounded"
-                      onClick={() => handleSave(item.id)}
-                    >
-                      Save
-                    </button>
-                    <button
-                      className="bg-gray-400 text-white px-2 py-1 rounded"
-                      onClick={() => setEditId(null)}
-                    >
-                      Cancel
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <button
-                      className="bg-yellow-400 text-white px-2 py-1 rounded"
-                      onClick={() => handleEdit(item)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="bg-red-500 text-white px-2 py-1 rounded"
-                      onClick={() => handleDelete(item.id)}
-                    >
-                      Delete
-                    </button>
-                  </>
-                )}
-              </td>
-            </tr>
-          ))}
-          {doctors.length === 0 && (
+          {doctors.length === 0 ? (
             <tr>
               <td colSpan={8} className="py-4 text-gray-400">No doctors found.</td>
             </tr>
+          ) : (
+            doctors.map((item, idx) => (
+              <tr key={item.id} className="border-b">
+                <td className="border px-3 py-2">{idx + 1}</td>
+                {["user", "specialty", "image", "experience", "qualification", "bio"].map((field) => (
+                  <td key={field} className="border px-3 py-2">
+                    {editId === item.id ? (
+                      <input
+                        className="border px-2 py-1 w-full"
+                        value={editData[field]}
+                        onChange={e => setEditData({ ...editData, [field]: e.target.value })}
+                      />
+                    ) : (
+                      field === "image" ? (
+                        item.image && <img src={item.image} alt="img" className="h-10 mx-auto" />
+                      ) : (
+                        item[field]
+                      )
+                    )}
+                  </td>
+                ))}
+                <td className="border px-3 py-2 space-x-1">
+                  {editId === item.id ? (
+                    <>
+                      <button className="bg-green-500 text-white px-2 py-1 rounded" onClick={() => handleSave(item.id)}>
+                        Save
+                      </button>
+                      <button className="bg-gray-400 text-white px-2 py-1 rounded" onClick={() => setEditId(null)}>
+                        Cancel
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button className="bg-yellow-400 text-white px-2 py-1 rounded" onClick={() => handleEdit(item)}>
+                        Edit
+                      </button>
+                      <button className="bg-red-500 text-white px-2 py-1 rounded" onClick={() => handleDelete(item.id)}>
+                        Delete
+                      </button>
+                    </>
+                  )}
+                </td>
+              </tr>
+            ))
           )}
         </tbody>
       </table>
