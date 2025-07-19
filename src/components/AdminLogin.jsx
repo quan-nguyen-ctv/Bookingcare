@@ -30,8 +30,8 @@ const AdminLogin = () => {
         setError("Bạn không có quyền truy cập admin!");
         return;
       }
-      localStorage.setItem("user", JSON.stringify(data));
-      localStorage.setItem("token", data.token);
+      localStorage.setItem("admin_user", JSON.stringify(data));
+      localStorage.setItem("admin_token", data.token);
       navigate("/admin");
     } catch (err) {
       setError("Lỗi hệ thống. Vui lòng thử lại sau!");
