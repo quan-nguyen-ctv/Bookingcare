@@ -1,6 +1,5 @@
 
 
-
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -23,7 +22,7 @@ const Login = () => {
       body: JSON.stringify({
         phone_number: phone,
         password: password,
-        role_id: 1  // 👈 sửa tại đây nếu bạn có sẵn giá trị roleId
+        role_id: 3  // 👈 sửa tại đây nếu bạn có sẵn giá trị roleId
       })
     });
 
@@ -31,7 +30,6 @@ const Login = () => {
       const errorData = await response.json();
       setError(errorData.message || "Sai thông tin đăng nhập!");
       return;
-
     }
 
     const data = await response.json();

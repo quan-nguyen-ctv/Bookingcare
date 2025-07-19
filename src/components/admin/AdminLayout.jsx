@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { FaUserMd, FaUser, FaClinicMedical, FaList, FaCalendarAlt, FaMoneyCheckAlt, FaEnvelope } from "react-icons/fa";
+import { 
+  FaUserMd, FaUser, FaClinicMedical, FaList, FaCalendarAlt, 
+  FaMoneyCheckAlt, FaEnvelope 
+} from "react-icons/fa";
 import AdminHeader from "./AdminHeader";
 
 const adminMenu = [
@@ -8,8 +11,7 @@ const adminMenu = [
   { label: "Người sử dụng", icon: <FaUser />, children: [
     { label: "Thêm Người dùng", to: "/admin/users/add" },
     { label: "Danh sách Người dùng", to: "/admin/users/list" },
-  
-  ] },  
+  ]},
   { label: "Phòng khám", icon: <FaClinicMedical />, to: "/admin/clinics" },
   { label: "Chuyên ngành", icon: <FaList />, children: [
     { label: "Thêm Chuyên ngành", to: "/admin/specialties/add" },
@@ -39,9 +41,8 @@ const AdminLayout = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
     const token = localStorage.getItem("token");
-    if (!user || user.role !== "admin" || !token) {
+    if (!token) {
       navigate("/admin-login");
     }
   }, [navigate]);
@@ -82,7 +83,9 @@ const AdminLayout = () => {
                             to={child.to}
                             className={({ isActive }) =>
                               "block px-3 py-1 rounded text-sm " +
-                              (isActive ? "bg-[#f75757] text-white" : "hover:bg-gray-100 text-[#223a66]")
+                              (isActive
+                                ? "bg-[#f75757] text-white"
+                                : "hover:bg-gray-100 text-[#223a66]")
                             }
                           >
                             {child.label}
@@ -98,7 +101,9 @@ const AdminLayout = () => {
                     to={item.to}
                     className={({ isActive }) =>
                       "flex items-center gap-2 px-3 py-2 rounded font-semibold " +
-                      (isActive ? "bg-[#f75757] text-white" : "hover:bg-gray-100 text-[#223a66]")
+                      (isActive
+                        ? "bg-[#f75757] text-white"
+                        : "hover:bg-gray-100 text-[#223a66]")
                     }
                   >
                     {item.icon}
@@ -112,17 +117,24 @@ const AdminLayout = () => {
         <div className="p-4 mt-auto">
           <div className="bg-blue-100 rounded-lg p-3 flex flex-col items-center">
             <img src="/images/doctor.png" alt="Make an Appointments" className="h-16 mb-2" />
-            <div className="text-xs text-center text-[#223a66] font-semibold mb-1">Make an Appointments</div>
-            <div className="text-[10px] text-gray-500 text-center">Best Health Care here</div>
+            <div className="text-xs text-center text-[#223a66] font-semibold mb-1">
+              Make an Appointments
+            </div>
+            <div className="text-[10px] text-gray-500 text-center">
+              Best Health Care here
+            </div>
           </div>
-          <div className="text-xs text-gray-400 mt-4 text-center">Novena Dashboard<br />© All Rights Reserved</div>
+          <div className="text-xs text-gray-400 mt-4 text-center">
+            Novena Dashboard
+            <br />© All Rights Reserved
+          </div>
         </div>
       </aside>
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-h-screen">
         <AdminHeader />
         <main className="flex-1 p-8">
-          <Outlet /> {/* Thêm dòng này để render các route con */}
+          <Outlet />
         </main>
       </div>
     </div>
@@ -130,6 +142,3 @@ const AdminLayout = () => {
 };
 
 export default AdminLayout;
-
-localStorage.setItem("user", JSON.stringify({ role: "admin", name: "Admin Test" }));
-localStorage.setItem("token", "token_gia_test");

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+
 const AdminLogin = () => {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
@@ -8,35 +9,46 @@ const AdminLogin = () => {
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
-    e.preventDefault();
-    setError("");
-    try {
-      const response = await fetch("http://localhost:6868/api/v1/users/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          phone_number: phone,
-          password: password,
-          role_id: 1 // role_id admin (sửa theo API của bạn)
-        })
-      });
-      if (!response.ok) {
-        const errorData = await response.json();
-        setError(errorData.message || "Sai thông tin đăng nhập!");
-        return;
-      }
-      const data = await response.json();
-      if (data.role !== "admin" || !data.token) {
-        setError("Bạn không có quyền truy cập admin!");
-        return;
-      }
-      localStorage.setItem("admin_user", JSON.stringify(data));
-      localStorage.setItem("admin_token", data.token);
-      navigate("/admin");
-    } catch (err) {
-      setError("Lỗi hệ thống. Vui lòng thử lại sau!");
+
+  e.preventDefault();
+  setError("");
+  try {
+    const response = await fetch("http://localhost:6868/api/v1/users/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        phone_number: phone,
+        password: password,
+        role_id: 1
+      })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      setError(errorData.message || "Sai thông tin đăng nhập!");
+      return;
+
     }
-  };
+
+    const data = await response.json();
+
+    if (!data.token) {
+      setError("Token không hợp lệ!");
+      return;
+    }
+
+    localStorage.setItem("user", JSON.stringify(data));
+    localStorage.setItem("token", data.token);
+
+    console.log("Điều hướng đến /admin");
+    navigate("/admin");
+
+  } catch (err) {
+    console.error("Lỗi:", err);
+    setError("Lỗi hệ thống. Vui lòng thử lại sau!");
+  }
+};
+
 
   return (
     <main className="bg-white min-h-screen flex items-center justify-center">
@@ -62,17 +74,6 @@ const AdminLogin = () => {
           className="w-full bg-[#223a66] text-white font-semibold py-2 rounded"
         >
           Đăng nhập Admin
-        </button>
-        <button
-          type="button"
-          className="w-full bg-gray-300 text-[#223a66] font-semibold py-2 rounded mt-2"
-          onClick={() => {
-            localStorage.setItem("user", JSON.stringify({ role: "admin", name: "Admin Test" }));
-            localStorage.setItem("token", "token_gia_test");
-            navigate("/admin");
-          }}
-        >
-          Đăng nhập test admin (token giả)
         </button>
       </form>
     </main>

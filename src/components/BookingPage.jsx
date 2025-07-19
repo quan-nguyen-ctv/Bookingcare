@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
 
+
+
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-
 
 
 const BookingPage = () => {
   const [specialties, setSpecialties] = useState([]);
   const [doctors, setDoctors] = useState([]);
   const [schedules, setSchedules] = useState([]);
-
   const [selectedSpecialty, setSelectedSpecialty] = useState("");
   const [selectedDoctor, setSelectedDoctor] = useState("");
   const [selectedSchedule, setSelectedSchedule] = useState("");
@@ -107,10 +107,30 @@ const BookingPage = () => {
     }
   }, [selectedSchedule]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  const token = localStorage.getItem("token");
+  try {
+    const response = await fetch("http://localhost:6868/api/v1/bookings", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+      body: JSON.stringify({
+        schedule_id: Number(selectedSchedule),
+        user_id: Number(userId),
+        payment_method: paymentMethod,
+        payment_code: paymentCode,
+        amount: Number(amount),
+        reason: reason,
+        status: status,
+      }),
+    });
 
-
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
 
     // Lấy thông tin bác sĩ, chuyên khoa, lịch khám đã chọn
     const doctor = doctors.find(d => d.id === Number(selectedDoctor));
@@ -123,9 +143,15 @@ const BookingPage = () => {
         doctor,
         specialty,
         schedule,
-      }
+      },
     });
-  };
+
+  } catch (err) {
+    console.error("Lỗi đặt lịch:", err);
+    alert("Lỗi kết nối server!");
+  }
+};
+
 
   if (submitted) {
     return (
@@ -169,14 +195,12 @@ const BookingPage = () => {
                 }}
                 required
               >
-
                 {Array.isArray(specialties) &&
                   specialties.map((spec) => (
                     <option key={spec.id} value={spec.id}>
                       {spec.specialtyName}
                     </option>
                   ))}
-
               </select>
             </div>
 
@@ -191,11 +215,9 @@ const BookingPage = () => {
                 required
               >
                 <option value="">Chọn bác sĩ</option>
-
                 {doctors.map((doc) => (
                   <option key={doc.id} value={doc.id}>
                     {doc.user?.fullname || "(Không rõ tên)"}
-
                   </option>
                 ))}
               </select>

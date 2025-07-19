@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-// Toast component giống ảnh minh họa
+// Toast component
 const Toast = ({ message, onClose }) => (
   <div className="fixed top-6 right-6 z-50">
     <div className="flex items-center bg-white border border-green-400 rounded shadow px-4 py-2 min-w-[280px]">
@@ -15,36 +16,56 @@ const Toast = ({ message, onClose }) => (
 
 const ProfileUpdate = () => {
   const [form, setForm] = useState({
-    name: "",
+    fullname: "",
     email: "",
     birthday: "",
-    password: "",
     address: "",
-    phone: "",
+    phone_number: "",
     gender: "",
-    active: "Active",
+    password: "",
+    retype_password: "",
+    role_id: 3,  // default user role
+    active: true,
   });
   const [toast, setToast] = useState(false);
-  const [oldPhone, setOldPhone] = useState("");
-  const [oldEmail, setOldEmail] = useState("");
   const navigate = useNavigate();
+  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (user) {
-      setForm({
-        name: user.name || "",
-        email: user.email || "",
-        birthday: user.birthday || "",
-        password: user.password || "",
-        address: user.address || "",
-        phone: user.phone || "",
-        gender: user.gender || "",
-        active: user.active || "Active",
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    axios.get("http://localhost:6868/api/v1/users/details", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => {
+        const data = res.data.data;
+        // Convert birthday to yyyy-MM-dd if needed
+        let birthdayValue = "";
+        if (data.birthday && data.birthday.includes("-")) {
+          const parts = data.birthday.split("-");
+          birthdayValue = `${parts[2]}-${parts[1]}-${parts[0]}`; // dd-MM-yyyy => yyyy-MM-dd
+        }
+
+        setForm({
+          fullname: data.fullname || "",
+          email: data.email || "",
+          birthday: birthdayValue,
+          address: data.address || "",
+          phone_number: data.phone_number || "",
+          gender: data.gender || "",
+          password: "",
+          retype_password: "",
+          role_id: data.role?.id || 3,
+          active: data.is_active ?? true,
+        });
+        setUserId(data.id);
+      })
+      .catch((err) => {
+        console.error("Error fetching user:", err);
       });
-      setOldPhone(user.phone);
-      setOldEmail(user.email);
-    }
   }, []);
 
   const handleChange = (e) => {
@@ -53,20 +74,24 @@ const ProfileUpdate = () => {
 
   const handleUpdate = (e) => {
     e.preventDefault();
-    localStorage.setItem("user", JSON.stringify(form));
-    // Cập nhật tất cả user trùng phone hoặc email
-    let users = JSON.parse(localStorage.getItem("users") || "[]");
-    users = users.map(u =>
-      (u.phone === oldPhone || u.email === oldEmail)
-        ? { ...u, ...form }
-        : u
-    );
-    localStorage.setItem("users", JSON.stringify(users));
-    setToast(true);
-    setTimeout(() => {
-      setToast(false);
-      navigate("/profile");
-    }, 1800);
+    const token = localStorage.getItem("token");
+    if (!token || !userId) return;
+
+    axios.put(`http://localhost:6868/api/v1/users/details/${userId}`, form, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then(() => {
+        setToast(true);
+        setTimeout(() => {
+          setToast(false);
+          navigate("/profile");
+        }, 1800);
+      })
+      .catch((err) => {
+        console.error("Error updating user:", err);
+      });
   };
 
   return (
@@ -86,8 +111,8 @@ const ProfileUpdate = () => {
             <label className="block font-semibold mb-1">Full Name</label>
             <input
               className="border rounded px-3 py-2 w-full"
-              name="name"
-              value={form.name}
+              name="fullname"
+              value={form.fullname}
               onChange={handleChange}
               required
             />
@@ -116,8 +141,8 @@ const ProfileUpdate = () => {
             <label className="block font-semibold mb-1">Contact Number</label>
             <input
               className="border rounded px-3 py-2 w-full"
-              name="phone"
-              value={form.phone}
+              name="phone_number"
+              value={form.phone_number}
               onChange={handleChange}
               required
             />
@@ -141,8 +166,8 @@ const ProfileUpdate = () => {
               onChange={handleChange}
             >
               <option value="">Select</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
+              <option value="nam">Male</option>
+              <option value="nu">Female</option>
               <option value="other">Other</option>
             </select>
           </div>
@@ -153,21 +178,20 @@ const ProfileUpdate = () => {
               name="password"
               value={form.password}
               onChange={handleChange}
-              type="text"
+              type="password"
               required
             />
           </div>
           <div>
-            <label className="block font-semibold mb-1">Active</label>
-            <select
+            <label className="block font-semibold mb-1">Retype Password</label>
+            <input
               className="border rounded px-3 py-2 w-full"
-              name="active"
-              value={form.active}
+              name="retype_password"
+              value={form.retype_password}
               onChange={handleChange}
-            >
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
-            </select>
+              type="password"
+              required
+            />
           </div>
           <div className="col-span-2 flex gap-4 mt-8">
             <button
