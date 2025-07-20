@@ -6,7 +6,7 @@ const ListBookings = () => {
 
  const fetchBookings = async () => {
   try {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("admin_token");
     const res = await fetch("http://localhost:6868/api/v1/bookings", {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -15,8 +15,13 @@ const ListBookings = () => {
 
     const result = await res.json();
 
-    console.log("result.data", result.data);
-    console.log("result.data.bookingList", result.data.bookingList);
+    if (result && result.data) {
+  console.log("result.data", result.data);
+  console.log("result.data.bookingList", result.data.bookingList);
+} else {
+  console.warn("Dữ liệu trả về từ API không hợp lệ:", result);
+}
+
 
     if (!res.ok) {
       console.error("API error:", result);

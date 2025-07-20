@@ -96,7 +96,7 @@ const ListSpecialty = () => {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Nếu không cần token thì bỏ dòng này
+Authorization: `Bearer ${token}`, // Nếu không cần token thì bỏ dòng này
         },
         body: JSON.stringify(payload),
       });
@@ -180,7 +180,7 @@ const ListSpecialty = () => {
                     onChange={(e) => setEditData({ ...editData, desc: e.target.value })}
                   />
                 ) : (
-                  item.description
+item.description
                 )}
               </td>
               <td className="border px-3 py-2">
