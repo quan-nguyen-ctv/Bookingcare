@@ -1,243 +1,95 @@
 import React, { useEffect, useState } from "react";
-import ConfirmDeleteModal from "../ConfirmDeleteModal";
-
-const Toast = ({ message, type, onClose }) => (
-  <div
-    className={`fixed top-6 right-6 z-50 px-6 py-3 rounded shadow-lg text-white font-semibold transition-all
-      ${type === "error" ? "bg-red-500" : "bg-green-500"}`}
-    style={{ minWidth: 220 }}
-  >
-    {message}
-    <button
-      onClick={onClose}
-      className="ml-4 text-white font-bold"
-      style={{ background: "transparent", border: "none", cursor: "pointer" }}
-    >
-      ×
-    </button>
-  </div>
-);
 
 const ListBookings = () => {
   const [bookings, setBookings] = useState([]);
-  const [editId, setEditId] = useState(null);
-  const [editData, setEditData] = useState({
-    user: "",
-    doctor: "",
-    specialty: "",
-    date: "",
-    time: "",
-    status: ""
-  });
-  const [deleteId, setDeleteId] = useState(null);
-  const [toast, setToast] = useState({ show: false, message: "", type: "success" });
+  const [loading, setLoading] = useState(true);
+
+ const fetchBookings = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    const res = await fetch("http://localhost:6868/api/v1/bookings", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const result = await res.json();
+
+    console.log("result.data", result.data);
+    console.log("result.data.bookingList", result.data.bookingList);
+
+    if (!res.ok) {
+      console.error("API error:", result);
+      throw new Error("API trả về lỗi");
+    }
+
+    const bookingsData = result?.data?.bookingList;
+
+    if (Array.isArray(bookingsData)) {
+      setBookings(bookingsData);
+    } else {
+      console.error("Dữ liệu trả về không hợp lệ:", result.data);
+      setBookings([]);
+    }
+  } catch (err) {
+    console.error("Lỗi khi lấy danh sách bookings:", err);
+    setBookings([]);
+  } finally {
+    setLoading(false);
+  }
+};
+
+
 
   useEffect(() => {
-    // Lấy dữ liệu khi mount
-    const data = JSON.parse(localStorage.getItem("bookings") || "[]");
-    setBookings(data);
-
-    // Lắng nghe sự kiện storage (tab khác)
-    const handleStorage = () => {
-      const data = JSON.parse(localStorage.getItem("bookings") || "[]");
-      setBookings(data);
-    };
-    window.addEventListener("storage", handleStorage);
-    return () => window.removeEventListener("storage", handleStorage);
+    fetchBookings();
   }, []);
 
-  const showToast = (message, type = "success") => {
-    setToast({ show: true, message, type });
-    setTimeout(() => setToast({ show: false, message: "", type }), 2000);
-  };
-
-  const handleDelete = (id) => {
-    setDeleteId(id);
-  };
-
-  const confirmDelete = () => {
-    const newList = bookings.filter(item => item.id !== deleteId);
-    setBookings(newList);
-    localStorage.setItem("bookings", JSON.stringify(newList));
-    setDeleteId(null);
-    showToast("Xóa booking thành công!", "success");
-  };
-
-  const handleEdit = (item) => {
-    setEditId(item.id);
-    setEditData({
-      user: item.user,
-      doctor: item.doctor,
-      specialty: item.specialty,
-      date: item.date,
-      time: item.time,
-      status: item.status
-    });
-  };
-
-  const handleSave = (id) => {
-    const newList = bookings.map(item =>
-      item.id === id ? { ...item, ...editData } : item
-    );
-    setBookings(newList);
-    localStorage.setItem("bookings", JSON.stringify(newList));
-    setEditId(null);
-    showToast("Chỉnh sửa booking thành công!", "success");
-  };
+  if (loading) {
+    return <p>Đang tải dữ liệu...</p>;
+  }
 
   return (
-    <div className="overflow-x-auto">
-      {toast.show && (
-        <Toast
-          message={toast.message}
-          type={toast.type}
-          onClose={() => setToast({ show: false, message: "", type: toast.type })}
-        />
-      )}
-      <table className="min-w-full border text-center">
+    <div className="p-4">
+      <h2 className="text-xl font-semibold mb-4">Danh sách Booking</h2>
+      <table className="min-w-full border border-gray-300">
         <thead>
           <tr className="bg-gray-100">
-            <th className="border px-3 py-2">#</th>
-            <th className="border px-3 py-2">User</th>
-            <th className="border px-3 py-2">Phone</th> {/* Thêm cột Phone */}
-            <th className="border px-3 py-2">Doctor</th>
-            <th className="border px-3 py-2">Specialty</th>
-            <th className="border px-3 py-2">Date</th>
-            <th className="border px-3 py-2">Time</th>
-            <th className="border px-3 py-2">Status</th>
-            <th className="border px-3 py-2">Action</th>
+            <th className="border p-2">ID</th>
+            <th className="border p-2">Tên khách</th>
+            <th className="border p-2">payment method</th>
+            <th className="border p-2">payment code </th>
+            <th className="border p-2">change acount </th>
+            <th className="border p-2">Tổng tiền</th>
+            <th className="border p-2">Trạng thái</th>
+            <th className="border p-2">Ngày đặt</th>
           </tr>
         </thead>
         <tbody>
-          {bookings.map((item, idx) => {
-            // Lấy phone của user từ localStorage
-            const users = JSON.parse(localStorage.getItem("users") || "[]");
-            const userInfo = users.find(u => u.name === item.user);
-            return (
-              <tr key={item.id} className="border-b">
-                <td className="border px-3 py-2">{idx + 1}</td>
-                <td className="border px-3 py-2">
-                  {editId === item.id ? (
-                    <input
-                      className="border px-2 py-1"
-                      value={editData.user}
-                      onChange={e => setEditData({ ...editData, user: e.target.value })}
-                    />
-                  ) : (
-                    item.user
-                  )}
-                </td>
-                <td className="border px-3 py-2">
-                  {userInfo ? userInfo.phone : ""}
-                </td>
-                <td className="border px-3 py-2">
-                  {editId === item.id ? (
-                    <input
-                      className="border px-2 py-1"
-                      value={editData.doctor}
-                      onChange={e => setEditData({ ...editData, doctor: e.target.value })}
-                    />
-                  ) : (
-                    item.doctor
-                  )}
-                </td>
-                <td className="border px-3 py-2">
-                  {editId === item.id ? (
-                    <input
-                      className="border px-2 py-1"
-                      value={editData.specialty}
-                      onChange={e => setEditData({ ...editData, specialty: e.target.value })}
-                    />
-                  ) : (
-                    item.specialty
-                  )}
-                </td>
-                <td className="border px-3 py-2">
-                  {editId === item.id ? (
-                    <input
-                      type="date"
-                      className="border px-2 py-1"
-                      value={editData.date}
-                      onChange={e => setEditData({ ...editData, date: e.target.value })}
-                    />
-                  ) : (
-                    item.date
-                  )}
-                </td>
-                <td className="border px-3 py-2">
-                  {editId === item.id ? (
-                    <input
-                      className="border px-2 py-1"
-                      value={editData.time}
-                      onChange={e => setEditData({ ...editData, time: e.target.value })}
-                    />
-                  ) : (
-                    item.time
-                  )}
-                </td>
-                <td className="border px-3 py-2">
-                  {editId === item.id ? (
-                    <select
-                      className="border px-2 py-1"
-                      value={editData.status}
-                      onChange={e => setEditData({ ...editData, status: e.target.value })}
-                    >
-                      <option value="pending">Pending</option>
-                      <option value="confirmed">Confirmed</option>
-                      <option value="cancelled">Cancelled</option>
-                    </select>
-                  ) : (
-                    item.status
-                  )}
-                </td>
-                <td className="border px-3 py-2 space-x-1">
-                  {editId === item.id ? (
-                    <>
-                      <button
-                        className="bg-green-500 text-white px-2 py-1 rounded"
-                        onClick={() => handleSave(item.id)}
-                      >
-                        Save
-                      </button>
-                      <button
-                        className="bg-gray-400 text-white px-2 py-1 rounded"
-                        onClick={() => setEditId(null)}
-                      >
-                        Cancel
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <button
-                        className="bg-yellow-400 text-white px-2 py-1 rounded"
-                        onClick={() => handleEdit(item)}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        className="bg-red-500 text-white px-2 py-1 rounded"
-                        onClick={() => handleDelete(item.id)}
-                      >
-                        Delete
-                      </button>
-                    </>
-                  )}
+          {Array.isArray(bookings) && bookings.length > 0 ? (
+            bookings.map((booking) => (
+              <tr key={booking.id}>
+                <td className="border p-2">{booking.id}</td>
+                <td className="border p-2">{booking.user_id}</td>
+                <td className="border p-2">{booking.payment_method}</td>
+                <td className="border p-2">{booking.payment_code}</td>
+                <td className="border p-2">{booking.change_count}</td>
+                <td className="border p-2">{booking.amount} VNĐ</td>
+                <td className="border p-2">{booking.status}</td>
+                <td className="border p-2">
+                  {new Date(booking.bookingDate).toLocaleString()}
                 </td>
               </tr>
-            );
-          })}
-          {bookings.length === 0 && (
+            ))
+          ) : (
             <tr>
-              <td colSpan={9} className="py-4 text-gray-400">No bookings found.</td>
+              <td colSpan="8" className="text-center py-4 text-gray-500">
+                Không có booking nào.
+              </td>
             </tr>
           )}
         </tbody>
       </table>
-      <ConfirmDeleteModal
-        open={!!deleteId}
-        onClose={() => setDeleteId(null)}
-        onConfirm={confirmDelete}
-      />
     </div>
   );
 };
