@@ -1,7 +1,7 @@
-
-
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Login = () => {
   const [phone, setPhone] = useState("");
@@ -10,42 +10,47 @@ const Login = () => {
   const navigate = useNavigate
 
   const handleLogin = async (e) => {
-  e.preventDefault();
-  setError("");
+    e.preventDefault();
+    setError("");
 
-  try {
-    const response = await fetch("http://localhost:6868/api/v1/users/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        phone_number: phone,
-        password: password,
-        role_id: 3  // 👈 sửa tại đây nếu bạn có sẵn giá trị roleId
-      })
-    });
+    try {
+      const response = await fetch("http://localhost:6868/api/v1/users/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          phone_number: phone,
+          password: password,
+          role_id: 3
+        })
+      });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      setError(errorData.message || "Sai thông tin đăng nhập!");
-      return;
+      if (!response.ok) {
+        const errorData = await response.json();
+        setError(errorData.message || "Sai thông tin đăng nhập!");
+        toast.error(errorData.message || "Sai thông tin đăng nhập!");
+        return;
+      }
+
+      const data = await response.json();
+      localStorage.setItem("user", JSON.stringify(data));
+      localStorage.setItem("token", data.token);
+
+      toast.success("Đăng nhập thành công!");
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 1200);
+    } catch (err) {
+      console.error("Lỗi đăng nhập:", err);
+      setError("Lỗi hệ thống. Vui lòng thử lại sau!");
+      toast.error("Lỗi hệ thống. Vui lòng thử lại sau!");
     }
-
-    const data = await response.json();
-    localStorage.setItem("user", JSON.stringify(data));
-    localStorage.setItem("token", data.token);
-
-  
-  } catch (err) {
-    console.error("Lỗi đăng nhập:", err);
-    setError("Lỗi hệ thống. Vui lòng thử lại sau!");
-  }
-};
-
+  };
 
   return (
     <main className="bg-white min-h-screen">
+      <ToastContainer position="top-right" autoClose={1500} />
       {/* Banner */}
       <section className="bg-[#223a66] h-56 flex flex-col justify-center items-center relative mb-8">
         <div
