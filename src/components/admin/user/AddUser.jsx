@@ -42,7 +42,7 @@ const AddUser = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("admin_token");
 
     try {
       const res = await fetch("http://localhost:6868/api/v1/users", {

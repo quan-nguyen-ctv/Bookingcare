@@ -9,6 +9,7 @@ const AdminLogin = () => {
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
+
   e.preventDefault();
   setError("");
   try {
@@ -26,6 +27,7 @@ const AdminLogin = () => {
       const errorData = await response.json();
       setError(errorData.message || "Sai thông tin đăng nhập!");
       return;
+
     }
 
     const data = await response.json();
@@ -35,8 +37,8 @@ const AdminLogin = () => {
       return;
     }
 
-    localStorage.setItem("user", JSON.stringify(data));
-    localStorage.setItem("token", data.token);
+    localStorage.setItem("admin_user", JSON.stringify(data));
+    localStorage.setItem("admin_token", data.token);
 
     console.log("Điều hướng đến /admin");
     navigate("/admin");

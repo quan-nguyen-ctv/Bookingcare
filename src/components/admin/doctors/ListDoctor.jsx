@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import ConfirmDeleteModal from "../ConfirmDeleteModal";
+import { useNavigate } from "react-router-dom";
 
 const Toast = ({ message, type, onClose }) => (
   <div
@@ -22,16 +24,18 @@ const ListDoctor = () => {
   const [doctors, setDoctors] = useState([]);
   const [editId, setEditId] = useState(null);
   const [editData, setEditData] = useState({
-    user_id: "",
-    specialty_id: "",
-    avatar: "",
-    bio: "",
+    user: "",
+    specialty: "",
+    image: "",
     experience: "",
     qualification: "",
-    active: true,
+    bio: ""
   });
   const [deleteId, setDeleteId] = useState(null);
   const [toast, setToast] = useState({ show: false, message: "", type: "success" });
+
+  const token = localStorage.getItem("admin_token");
+  const navigate = useNavigate();
 
   const showToast = (message, type = "success") => {
     setToast({ show: true, message, type });
@@ -39,18 +43,34 @@ const ListDoctor = () => {
   };
 
   const fetchDoctors = async () => {
+    if (!token) {
+      showToast("Vui lòng đăng nhập với quyền admin để xem danh sách", "error");
+      return;
+    }
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:6868/api/v1/doctors", {
+      const res = await axios.get("http://localhost:6868/api/v1/doctors", {
         headers: {
-          Authorization: `Bearer ${token}`,
-        },
+          Authorization: `Bearer ${token}`
+        }
       });
-      const data = await res.json();
-      setDoctors(data.data?.doctors || []);
+      const list = res.data.data?.doctors || [];
+      console.log("Danh sách bác sĩ:", list);
+
+      // Ghép lại đúng tên trường cho bảng
+      const mappedList = list.map(item => ({
+        id: item.id,
+        user: item.user?.fullname || item.user?.name || "",
+        specialty: item.specialty?.specialtyName || "",
+        image: item.avatar || "",
+        experience: item.experience || "",
+        qualification: item.qualification || "",
+        bio: item.bio || ""
+      }));
+
+      setDoctors(mappedList);
     } catch (err) {
       console.error("Lỗi khi lấy danh sách bác sĩ:", err);
-      showToast("Tải danh sách thất bại", "error");
+      showToast("Lỗi khi tải danh sách", "error");
     }
   };
 
@@ -61,53 +81,42 @@ const ListDoctor = () => {
   const handleEdit = (item) => {
     setEditId(item.id);
     setEditData({
-      user_id: item.user?.id || "",
-      specialty_id: item.specialty?.id || "",
-      avatar: item.avatar,
-      bio: item.bio,
+      user: item.user,
+      specialty: item.specialty,
+      image: item.avatar,
       experience: item.experience,
       qualification: item.qualification,
-      active: item.active,
+      bio: item.bio
     });
   };
 
   const handleSave = async (id) => {
     try {
-      const token = localStorage.getItem("token");
-
-      const payload = {
-        user_id: Number(editData.user_id),
-        specialty_id: Number(editData.specialty_id),
-        avatar: editData.avatar,
-        bio: editData.bio,
-        experience: Number(editData.experience),
-        qualification: editData.qualification,
-        active: Boolean(editData.active),
-      };
-
-      console.log("Payload gửi đi:", payload);
-
-      const res = await fetch(`http://localhost:6868/api/v1/doctors/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+      await axios.put(
+        `http://localhost:6868/api/v1/doctors/${id}`,
+        {
+          user: editData.user,
+          specialty: editData.specialty.specialtyName,
+          image: editData.image,
+          experience: editData.experience,
+qualification: editData.qualification,
+          bio: editData.bio
         },
-        body: JSON.stringify(payload),
-      });
-
-      if (!res.ok) {
-        const errorData = await res.json();
-        console.error("API error:", errorData);
-        throw new Error("API trả về lỗi " + res.status);
-      }
-
-      showToast("Cập nhật bác sĩ thành công");
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      const updated = doctors.map((doc) =>
+        doc.id === id ? { ...doc, ...editData } : doc
+      );
+      setDoctors(updated);
       setEditId(null);
-      fetchDoctors(); // Reload danh sách
+      showToast("Chỉnh sửa bác sĩ thành công!");
     } catch (err) {
       console.error("Lỗi khi cập nhật:", err);
-      showToast("Cập nhật thất bại", "error");
+      showToast("Lỗi khi cập nhật", "error");
     }
   };
 
@@ -117,16 +126,15 @@ const ListDoctor = () => {
 
   const confirmDelete = async () => {
     try {
-      const token = localStorage.getItem("token");
-      await fetch(`http://localhost:6868/api/v1/doctors/${deleteId}`, {
-        method: "DELETE",
+      await axios.delete(`http://localhost:6868/api/v1/doctors/${deleteId}`, {
         headers: {
-          Authorization: `Bearer ${token}`,
-        },
+          Authorization: `Bearer ${token}`
+        }
       });
-      showToast("Xóa bác sĩ thành công");
+      const newList = doctors.filter(item => item.id !== deleteId);
+      setDoctors(newList);
       setDeleteId(null);
-      fetchDoctors();
+      showToast("Xóa bác sĩ thành công!");
     } catch (err) {
       console.error("Lỗi khi xóa:", err);
       showToast("Xóa thất bại", "error");
@@ -148,142 +156,61 @@ const ListDoctor = () => {
             <th className="border px-3 py-2">#</th>
             <th className="border px-3 py-2">User</th>
             <th className="border px-3 py-2">Specialty</th>
-            <th className="border px-3 py-2">Avatar</th>
+            <th className="border px-3 py-2">Image</th>
             <th className="border px-3 py-2">Experience</th>
             <th className="border px-3 py-2">Qualification</th>
             <th className="border px-3 py-2">Bio</th>
-            <th className="border px-3 py-2">Active</th>
-            <th className="border px-3 py-2">Actions</th>
+            <th className="border px-3 py-2">Action</th>
           </tr>
         </thead>
         <tbody>
           {doctors.length === 0 ? (
             <tr>
-              <td colSpan={9} className="py-4 text-gray-400">
-                No doctors found.
-              </td>
+              <td colSpan={8} className="py-4 text-gray-400">No doctors found.</td>
             </tr>
           ) : (
             doctors.map((item, idx) => (
               <tr key={item.id} className="border-b">
                 <td className="border px-3 py-2">{idx + 1}</td>
-                <td className="border px-3 py-2">
-                  {editId === item.id ? (
-                    <input
-                      className="border px-2 py-1 w-full"
-                      value={editData.user_id}
-                      onChange={(e) => setEditData({ ...editData, user_id: e.target.value })}
-                    />
-                  ) : (
-                    item.user?.fullname
-                  )}
-                </td>
-                <td className="border px-3 py-2">
-                  {editId === item.id ? (
-                    <input
-                      className="border px-2 py-1 w-full"
-                      value={editData.specialty_id}
-                      onChange={(e) => setEditData({ ...editData, specialty_id: e.target.value })}
-                    />
-                  ) : (
-                    item.specialty?.specialtyName || "Chưa có"
-                  )}
-                </td>
-                <td className="border px-3 py-2">
-  {editId === item.id ? (
-    <input
-      className="border px-2 py-1 w-full"
-      value={editData.avatar}
-      onChange={(e) => setEditData({ ...editData, avatar: e.target.value })}
-    />
-  ) : (
-    item.avatar && (
-      <img
-        src={`http://localhost:6868/uploads/${item.avatar}`}
-        alt="Avatar"
-        className="h-10 mx-auto"
-      />
-    )
-  )}
-</td>
-
-                <td className="border px-3 py-2">
-                  {editId === item.id ? (
-                    <input
-                      className="border px-2 py-1 w-full"
-                      value={editData.experience}
-                      onChange={(e) => setEditData({ ...editData, experience: e.target.value })}
-                    />
-                  ) : (
-                    item.experience
-                  )}
-                </td>
-                <td className="border px-3 py-2">
-                  {editId === item.id ? (
-                    <input
-                      className="border px-2 py-1 w-full"
-                      value={editData.qualification}
-                      onChange={(e) => setEditData({ ...editData, qualification: e.target.value })}
-                    />
-                  ) : (
-                    item.qualification
-                  )}
-                </td>
-                <td className="border px-3 py-2">
-                  {editId === item.id ? (
-                    <input
-                      className="border px-2 py-1 w-full"
-                      value={editData.bio}
-                      onChange={(e) => setEditData({ ...editData, bio: e.target.value })}
-                    />
-                  ) : (
-                    item.bio
-                  )}
-                </td>
-                <td className="border px-3 py-2">
-                  {editId === item.id ? (
-                    <select
-                      className="border px-2 py-1 w-full"
-                      value={editData.active}
-                      onChange={(e) =>
-                        setEditData({ ...editData, active: e.target.value === "true" })
-                      }
-                    >
-                      <option value="true">Active</option>
-                      <option value="false">Inactive</option>
-                    </select>
-                  ) : (
-                    item.active ? "Active" : "Inactive"
-                  )}
-                </td>
+                {["user", "specialty", "image", "experience", "qualification", "bio"].map((field) => (
+                  <td key={field} className="border px-3 py-2">
+                    {editId === item.id ? (
+                      <input
+                        className="border px-2 py-1 w-full"
+                        value={editData[field]}
+                        onChange={e => setEditData({ ...editData, [field]: e.target.value })}
+                      />
+                    ) : (
+                      field === "image" ? (
+                        item.image && <img src={`http://localhost:6868/uploads/${item.image}`} alt="img" className="h-10 mx-auto" />
+                      ) : (
+item[field]
+                      )
+                    )}
+                  </td>
+                ))}
                 <td className="border px-3 py-2 space-x-1">
                   {editId === item.id ? (
                     <>
-                      <button
-                        className="bg-green-500 text-white px-2 py-1 rounded"
-                        onClick={() => handleSave(item.id)}
-                      >
+                      <button className="bg-green-500 text-white px-2 py-1 rounded" onClick={() => handleSave(item.id)}>
                         Save
                       </button>
-                      <button
-                        className="bg-gray-400 text-white px-2 py-1 rounded"
-                        onClick={() => setEditId(null)}
-                      >
+                      <button className="bg-gray-400 text-white px-2 py-1 rounded" onClick={() => setEditId(null)}>
                         Cancel
                       </button>
                     </>
                   ) : (
                     <>
                       <button
-                        className="bg-yellow-400 text-white px-2 py-1 rounded"
-                        onClick={() => handleEdit(item)}
+                        className="bg-blue-500 text-white px-2 py-1 rounded"
+                        onClick={() => navigate(`/admin/doctors/${item.id}`)}
                       >
-                        Edit
+                        View
                       </button>
-                      <button
-                        className="bg-red-500 text-white px-2 py-1 rounded"
-                        onClick={() => handleDelete(item.id)}
-                      >
+                      {/* <button className="bg-yellow-400 text-white px-2 py-1 rounded" onClick={() => handleEdit(item)}>
+                        Edit
+                      </button> */}
+                      <button className="bg-red-500 text-white px-2 py-1 rounded" onClick={() => handleDelete(item.id)}>
                         Delete
                       </button>
                     </>

@@ -1,4 +1,5 @@
 
+
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -35,10 +36,7 @@ const Login = () => {
     localStorage.setItem("user", JSON.stringify(data));
     localStorage.setItem("token", data.token);
 
-    if (data.role === "admin") navigate("/admin");
-    else if (data.role === "doctor") navigate("/doctor");
-    else navigate("/");
-
+  
   } catch (err) {
     console.error("Lỗi đăng nhập:", err);
     setError("Lỗi hệ thống. Vui lòng thử lại sau!");

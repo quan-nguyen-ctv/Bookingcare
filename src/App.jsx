@@ -32,6 +32,10 @@ import ProfileUpdate from "./components/ProfileUpdate";
 import ProfileView from "./components/ProfileView";
 import AdminLogin from "./components/AdminLogin";
 import PaymentPage from "./components/PaymentPage";
+import DetailSpecialty from "./components/admin/specialties/DetailSpecialty";
+import DetailDoctor from "./components/admin/doctors/DetailDoctor";
+import DoctorDetail from "./components/DoctorDetail";
+import SpecialtyDetail from "./components/SpecialtyDetail";
 
 
 function AppContent() {
@@ -47,7 +51,9 @@ function AppContent() {
         <Route path="/" element={<HomePage />} />
         <Route path="/about" element={<About />} />
         <Route path="/medical-services" element={<MedicalServices />} />
-        <Route path="/doctors" element={<Doctors />} />
+        <Route path="/MedicalServices/:id" element={<SpecialtyDetail />} />
+        <Route path="/list-doctor" element={<Doctors />} />
+         <Route path="/Doctors-detail/:id" element={<DoctorDetail />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/login" element={<Login />} />
@@ -62,8 +68,11 @@ function AppContent() {
           <Route index element={<AdminDashboard />} />
           <Route path="specialties/add" element={<AddSpecialty />} />
           <Route path="specialties/list" element={<ListSpecialty />} />
+          <Route path="specialties/:id" element={<DetailSpecialty />} /> 
           <Route path="doctors/add" element={<AddDoctor />} />
           <Route path="doctors/list" element={<ListDoctor />} />
+          <Route path="doctors/:id" element={<DetailDoctor />} />
+            
           <Route path="users/add" element={<AddUser />} />
           <Route path="users/list" element={<ListUser />} />
           <Route path="bookings/list" element={<ListBookings />} />
