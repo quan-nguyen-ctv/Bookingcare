@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaEnvelope, FaMapMarkerAlt, FaBars, FaTimes, FaUserCircle } from "react-icons/fa";
 import { NavLink, useNavigate } from "react-router-dom";
 
@@ -17,32 +17,47 @@ const Header = () => {
   const [open, setOpen] = useState(false);
   const [accountMenu, setAccountMenu] = useState(false);
   const navigate = useNavigate();
+    const [user, setUser] = useState(null);
 
   // Lấy user từ localStorage (nếu đã đăng nhập)
-  const user = JSON.parse(localStorage.getItem("user"));
+  // const user = JSON.parse(localStorage.getItem("user"));
+
+   useEffect(() => {
+    const fetchUserDetails = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+      try {
+        const res = await fetch("http://localhost:6868/api/v1/users/details", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setUser(data?.data || null);
+        }
+      } catch (err) {
+        setUser(null);
+      }
+    };
+    fetchUserDetails();
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("token");
     setAccountMenu(false);
+    setUser(null);
     navigate("/login");
   };
 
+  console.log("User details:", user);
+  
+  
+
   return (
     <header>
-      {/* Top bar */}
-      {/* <div className="bg-[#223a66] text-white text-sm flex justify-between items-center px-4 py-2">
-        <div className="flex items-center gap-4">
-          <span className="flex items-center gap-1">
-            <FaEnvelope className="inline-block" /> support@novena.com
-          </span>
-          <span className="flex items-center gap-1">
-            <FaMapMarkerAlt className="inline-block" /> Address: Số 5 Tôn Thất Thuyết
-          </span>
-        </div>
-        <div>
-          Call Now : <span className="font-bold">823-4565-13456</span>
-        </div>
-      </div> */}
+   
       {/* Logo & Navigation */}
       <div className="bg-white flex items-center justify-between px-8 py-4 shadow relative">
         <div className="flex items-center gap-2">
@@ -76,7 +91,7 @@ const Header = () => {
                   onClick={() => setAccountMenu((v) => !v)}
                 >
                   <FaUserCircle className="text-2xl" />
-                  <span>{user.name || "Account"}</span>
+                  <span>{user?.fullname}</span>
                 </button>
               ) : (
                 <NavLink
