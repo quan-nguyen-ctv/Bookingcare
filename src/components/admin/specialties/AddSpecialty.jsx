@@ -42,36 +42,21 @@ const AddSpecialty = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (!form.image) {
-        return showToast("Vui lòng chọn ảnh!", "error");
-      }
-
       const formData = new FormData();
-      formData.append("file", form.image);
+      formData.append("specialty_name", form.name);
+      formData.append("specialty_image", form.image); // file
+      formData.append("description", form.desc);
+      formData.append("price", form.price);
 
-      // Upload image first
-      const uploadRes = await fetch("http://localhost:6868/api/v1/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!uploadRes.ok) throw new Error("Upload ảnh thất bại");
-
-      const { fileName } = await uploadRes.json();
-
-      const body = {
-        specialty_name: form.name,
-        specialty_image: fileName,
-        description: form.desc,
-        price: Number(form.price),
-      };
+      const token = localStorage.getItem("admin_token");
 
       const res = await fetch("http://localhost:6868/api/v1/specialties", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          // Không đặt Content-Type ở đây!
         },
-        body: JSON.stringify(body),
+        body: formData,
       });
 
       if (!res.ok) throw new Error("Tạo chuyên khoa thất bại");

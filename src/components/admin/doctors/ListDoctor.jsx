@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import ConfirmDeleteModal from "../ConfirmDeleteModal";
+import { useNavigate } from "react-router-dom";
 
 const Toast = ({ message, type, onClose }) => (
   <div
@@ -33,7 +34,8 @@ const ListDoctor = () => {
   const [deleteId, setDeleteId] = useState(null);
   const [toast, setToast] = useState({ show: false, message: "", type: "success" });
 
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("admin_token");
+  const navigate = useNavigate();
 
   const showToast = (message, type = "success") => {
     setToast({ show: true, message, type });
@@ -51,8 +53,21 @@ const ListDoctor = () => {
           Authorization: `Bearer ${token}`
         }
       });
-      const list = res.data.data?.doctorList || [];
-      setDoctors(list);
+      const list = res.data.data?.doctors || [];
+      console.log("Danh sách bác sĩ:", list);
+
+      // Ghép lại đúng tên trường cho bảng
+      const mappedList = list.map(item => ({
+        id: item.id,
+        user: item.user?.fullname || item.user?.name || "",
+        specialty: item.specialty?.specialtyName || "",
+        image: item.avatar || "",
+        experience: item.experience || "",
+        qualification: item.qualification || "",
+        bio: item.bio || ""
+      }));
+
+      setDoctors(mappedList);
     } catch (err) {
       console.error("Lỗi khi lấy danh sách bác sĩ:", err);
       showToast("Lỗi khi tải danh sách", "error");
@@ -68,7 +83,7 @@ const ListDoctor = () => {
     setEditData({
       user: item.user,
       specialty: item.specialty,
-      image: item.image,
+      image: item.avatar,
       experience: item.experience,
       qualification: item.qualification,
       bio: item.bio
@@ -81,7 +96,7 @@ const ListDoctor = () => {
         `http://localhost:6868/api/v1/doctors/${id}`,
         {
           user: editData.user,
-          specialty: editData.specialty,
+          specialty: editData.specialty.specialtyName,
           image: editData.image,
           experience: editData.experience,
           qualification: editData.qualification,
@@ -167,7 +182,7 @@ const ListDoctor = () => {
                       />
                     ) : (
                       field === "image" ? (
-                        item.image && <img src={item.image} alt="img" className="h-10 mx-auto" />
+                        item.image && <img src={`http://localhost:6868/uploads/${item.image}`} alt="img" className="h-10 mx-auto" />
                       ) : (
                         item[field]
                       )
@@ -186,9 +201,15 @@ const ListDoctor = () => {
                     </>
                   ) : (
                     <>
-                      <button className="bg-yellow-400 text-white px-2 py-1 rounded" onClick={() => handleEdit(item)}>
-                        Edit
+                      <button
+                        className="bg-blue-500 text-white px-2 py-1 rounded"
+                        onClick={() => navigate(`/admin/doctors/${item.id}`)}
+                      >
+                        View
                       </button>
+                      {/* <button className="bg-yellow-400 text-white px-2 py-1 rounded" onClick={() => handleEdit(item)}>
+                        Edit
+                      </button> */}
                       <button className="bg-red-500 text-white px-2 py-1 rounded" onClick={() => handleDelete(item.id)}>
                         Delete
                       </button>

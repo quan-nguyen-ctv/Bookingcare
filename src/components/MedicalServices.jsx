@@ -124,11 +124,13 @@
 
 
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const MedicalServices = () => {
   const [specialties, setSpecialties] = useState([]);
   const [activeTab, setActiveTab] = useState(0);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchSpecialties = async () => {
@@ -197,23 +199,40 @@ const MedicalServices = () => {
 
           {/* Tab Content */}
           <div className="md:w-2/3 w-full">
-  {specialties.length > 0 && (
-    <>
-      {console.log("SPECIALTY:", specialties[activeTab])}
-      <div
-        className="w-full h-[320px] bg-cover bg-center"
-        style={{
-  backgroundImage: `url("http://localhost:6868/uploads/${encodeURIComponent(specialties[activeTab].specialtyImage)}")`,
-}}
-
-      >
-        TEST
-      </div>
-      <p>{specialties[activeTab].specialtyImage}</p>
-    </>
-  )}
-</div>
-
+            {specialties.length > 0 && (
+              <>
+                <div
+                  className="w-full h-[320px] bg-cover bg-center rounded-lg mb-6 transition-all duration-300"
+                  style={{
+                    backgroundImage: `url("http://localhost:6868/uploads/${encodeURIComponent(
+                      specialties[activeTab].specialtyImage
+                    )}")`,
+                  }}
+                ></div>
+                {/* Thông tin chuyên khoa */}
+                <h3
+                  className="text-2xl font-bold text-[#223a66] mb-2 cursor-pointer hover:underline"
+                  onClick={() => navigate(`/MedicalServices/${specialties[activeTab].id}`)}
+                >
+                  Khoa: {specialties[activeTab].specialtyName}
+                </h3>
+               
+                <div className="flex flex-col gap-2 items-start text-[#223a66] font-medium">
+                  <div>
+                    <span className="font-semibold">Giá dịch vụ: </span>
+                    {specialties[activeTab].price?.toLocaleString("vi-VN")} đ
+                  </div>
+                  <div>
+                    <span className="font-semibold">Mô tả chuyên khoa: </span>
+                    <p className="text-[#6f8ba4] text-center mb-4">
+                  {specialties[activeTab].description}
+                </p>
+                  </div>
+                  {/* Thêm các trường khác nếu có */}
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </section>
     </main>

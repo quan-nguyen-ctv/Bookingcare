@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import ConfirmDeleteModal from "../ConfirmDeleteModal";
 
 const Toast = ({ message, type, onClose }) => (
@@ -24,6 +25,7 @@ const ListSpecialty = () => {
   const [editData, setEditData] = useState({ name: "", image: "", desc: "", price: "" });
   const [deleteId, setDeleteId] = useState(null);
   const [toast, setToast] = useState({ show: false, message: "", type: "success" });
+  const navigate = useNavigate();
 
   const showToast = (message, type = "success") => {
     setToast({ show: true, message, type });
@@ -51,7 +53,7 @@ const ListSpecialty = () => {
 
   const confirmDelete = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("admin_token");
       await fetch(`http://localhost:6868/api/v1/specialties/${deleteId}`, {
         method: "DELETE",
         headers: {
@@ -68,55 +70,55 @@ const ListSpecialty = () => {
   };
 
   const handleEdit = (item) => {
-  setEditId(item.id);
-  setEditData({
-    name: item.specialtyName,
-    image: item.specialtyImage,
-    desc: item.description,
-    price: item.price,
-  });
-};
-
-
- const handleSave = async (id) => {
-  try {
-    const token = localStorage.getItem("token");
-
-    const payload = {
-      specialty_name: editData.name,
-      specialty_image: editData.image,
-      description: editData.desc,
-      price: Number(editData.price),
-    };
-
-    console.log("Payload gửi đi:", payload);
-
-    const res = await fetch(`http://localhost:6868/api/v1/specialties/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, // Nếu không cần token thì bỏ dòng này
-      },
-      body: JSON.stringify(payload),
+    setEditId(item.id);
+    setEditData({
+      name: item.specialtyName,
+      image: item.specialtyImage,
+      desc: item.description,
+      price: item.price,
     });
+  };
 
-    if (!res.ok) {
-      const errorData = await res.json();
-      console.error("API error:", errorData);
-      throw new Error("API trả về lỗi 400");
+  const handleSave = async (id) => {
+    try {
+      const token = localStorage.getItem("admin_token");
+
+      const payload = {
+        specialty_name: editData.name,
+        specialty_image: editData.image,
+        description: editData.desc,
+        price: Number(editData.price),
+      };
+
+      console.log("Payload gửi đi:", payload);
+
+      const res = await fetch(`http://localhost:6868/api/v1/specialties/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Nếu không cần token thì bỏ dòng này
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        console.error("API error:", errorData);
+        throw new Error("API trả về lỗi 400");
+      }
+
+      showToast("Cập nhật thành công");
+      setEditId(null);
+      fetchSpecialties(); // Reload danh sách nếu có
+    } catch (err) {
+      console.error("Lỗi khi cập nhật:", err);
+      showToast("Cập nhật thất bại", "error");
     }
+  };
 
-    showToast("Cập nhật thành công");
-    setEditId(null);
-    fetchSpecialties(); // Reload danh sách nếu có
-  } catch (err) {
-    console.error("Lỗi khi cập nhật:", err);
-    showToast("Cập nhật thất bại", "error");
-  }
-};
-
-
-
+  const handlePreview = (id) => {
+    navigate(`/admin/specialties/${id}`);
+  };
 
   return (
     <div className="overflow-x-auto">
@@ -212,11 +214,17 @@ const ListSpecialty = () => {
                 ) : (
                   <>
                     <button
+                      className="bg-blue-500 text-white px-2 py-1 rounded"
+                      onClick={() => handlePreview(item.id)}
+                    >
+                      Xem trước
+                    </button>
+                    {/* <button
                       className="bg-yellow-400 text-white px-2 py-1 rounded"
                       onClick={() => handleEdit(item)}
                     >
                       Sửa
-                    </button>
+                    </button> */}
                     <button
                       className="bg-red-500 text-white px-2 py-1 rounded"
                       onClick={() => handleDelete(item.id)}

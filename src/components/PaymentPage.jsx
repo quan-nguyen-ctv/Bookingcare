@@ -6,24 +6,48 @@ const PaymentPage = () => {
   const { doctor, specialty, schedule } = location.state || {};
 
   const [paymentMethod, setPaymentMethod] = useState("");
-  const [showCardModal, setShowCardModal] = useState(false);
-  const [cardNumber, setCardNumber] = useState("");
+  const [showVNPayModal, setShowVNPayModal] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  // Khi chọn VNPay, mở modal nhập thẻ
+  // Mở modal VNPay
   const handleChooseVNPay = () => {
     setPaymentMethod("vnpay");
-    setShowCardModal(true);
+    setShowVNPayModal(true);
   };
 
   // Đóng modal
   const handleCloseModal = () => {
-    setShowCardModal(false);
+    setShowVNPayModal(false);
   };
 
-  // Xác nhận số thẻ
-  const handleConfirmCard = (e) => {
+  // Xử lý thanh toán VNPay
+  const handleVNPayPayment = async (e) => {
     e.preventDefault();
-    setShowCardModal(false);
+    setLoading(true);
+    try {
+      // Gửi thông tin booking lên backend để lấy link VNPay
+      const res = await fetch("http://localhost:6868/api/v1/payment/vnpay", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          doctorId: doctor?.id,
+          specialtyId: specialty?.id,
+          scheduleId: schedule?.id,
+          amount: schedule?.price || 100,
+          // Thêm các thông tin cần thiết khác
+        }),
+      });
+      const data = await res.json();
+      setLoading(false);
+      if (data?.vnpUrl) {
+        window.location.href = data.vnpUrl; // Redirect sang VNPay
+      } else {
+        alert("Không lấy được link thanh toán VNPay!");
+      }
+    } catch (err) {
+      setLoading(false);
+      alert("Lỗi khi tạo thanh toán VNPay!");
+    }
   };
 
   return (
@@ -143,8 +167,8 @@ const PaymentPage = () => {
         </form>
       </section>
 
-      {/* MODAL NHẬP SỐ THẺ VNPay */}
-      {showCardModal && (
+      {/* MODAL VNPay */}
+      {showVNPayModal && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md relative">
             <button
@@ -154,83 +178,23 @@ const PaymentPage = () => {
             >
               ×
             </button>
-            <h3 className="text-xl font-bold mb-6 text-[#223a66] text-center">Thanh toán VNPay</h3>
-            <form onSubmit={handleConfirmCard} className="space-y-4">
-              <input
-                type="email"
-                className="border rounded px-3 py-2 w-full"
-                placeholder="Email address"
-                required
-              />
-              <input
-                type="text"
-                className="border rounded px-3 py-2 w-full"
-                placeholder="Name on card"
-                required
-              />
-              <input
-                type="text"
-                className="border rounded px-3 py-2 w-full"
-                placeholder="Card number"
-                maxLength={19}
-                required
-              />
-              <div className="flex gap-4">
-                <input
-                  type="text"
-                  className="border rounded px-3 py-2 w-full"
-                  placeholder="Expiration date (MM/YY)"
-                  maxLength={5}
-                  required
-                />
-                <input
-                  type="text"
-                  className="border rounded px-3 py-2 w-full"
-                  placeholder="CVC"
-                  maxLength={4}
-                  required
-                />
-              </div>
-              <input
-                type="text"
-                className="border rounded px-3 py-2 w-full"
-                placeholder="Address"
-                required
-              />
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  className="border rounded px-3 py-2 w-full"
-                  placeholder="City"
-                  required
-                />
-                <input
-                  type="text"
-                  className="border rounded px-3 py-2 w-full"
-                  placeholder="State / Province"
-                  required
-                />
-                <input
-                  type="text"
-                  className="border rounded px-3 py-2 w-full"
-                  placeholder="Postal code"
-                  required
-                />
-              </div>
-              <div className="flex items-center gap-2">
-                <input type="checkbox" defaultChecked id="billing" />
-                <label htmlFor="billing" className="text-sm">Billing address is the same as shipping address</label>
-              </div>
+            <div className="flex flex-col items-center">
+              <img src="/images/download (1).png" alt="VNPay" className="h-12 mb-4" />
+              <h3 className="text-xl font-bold mb-4 text-[#223a66] text-center">Thanh toán qua VNPay</h3>
+              <p className="text-gray-600 mb-4 text-center">
+                Bạn sẽ được chuyển đến cổng thanh toán VNPay để hoàn tất giao dịch.
+              </p>
               <button
-                type="submit"
                 className="w-full bg-[#223a66] text-white font-semibold py-2 rounded mt-2"
+                onClick={handleVNPayPayment}
+                disabled={loading}
               >
-               Thanh toán
+                {loading ? "Đang chuyển hướng..." : "Tiếp tục thanh toán VNPay"}
               </button>
               <div className="text-xs text-gray-400 text-center mt-2">
-                <span role="img" aria-label="lock">🔒</span> Payment details stored in plain text
+                <span role="img" aria-label="lock">🔒</span> Bảo mật bởi VNPay
               </div>
-            </form>
+            </div>
           </div>
         </div>
       )}

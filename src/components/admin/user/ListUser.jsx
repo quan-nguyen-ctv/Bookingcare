@@ -32,7 +32,7 @@ const ListUser = () => {
 
   const fetchUsers = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("admin_token");
       const res = await fetch("http://localhost:6868/api/v1/users", {
         method: "GET",
         headers: {
@@ -65,7 +65,7 @@ const ListUser = () => {
 
   const confirmDelete = async () => {
   try {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("admin_token");
     const res = await fetch(`http://localhost:6868/api/v1/users/${deleteId}`, {
       method: "DELETE",
       headers: {
@@ -108,7 +108,7 @@ const ListUser = () => {
 
   const handleSave = async (id) => {
   try {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("admin_token");
     const res = await fetch(`http://localhost:6868/api/v1/users/admin/${id}`, {
       method: "PUT",
       headers: {

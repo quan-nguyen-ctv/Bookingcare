@@ -5,12 +5,12 @@ import { NavLink, useNavigate } from "react-router-dom";
 const AdminHeader = () => {
   const [accountMenu, setAccountMenu] = useState(false);
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("admin_user"));
 
   const handleLogout = () => {
-    localStorage.removeItem("user");
+    localStorage.removeItem("admin_user");
     setAccountMenu(false);
-    navigate("/login");
+    navigate("/admin-login");
   };
 
   return (
