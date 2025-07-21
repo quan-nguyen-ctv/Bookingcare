@@ -3,11 +3,14 @@ import { useLocation } from "react-router-dom";
 
 const PaymentPage = () => {
   const location = useLocation();
-  const { doctor, specialty, schedule } = location.state || {};
+  const { doctor, specialty, schedule, bookingId } = location.state || {};
 
   const [paymentMethod, setPaymentMethod] = useState("");
   const [showVNPayModal, setShowVNPayModal] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  console.log("bookingId:", bookingId );
+  
 
   // Mở modal VNPay
   const handleChooseVNPay = () => {
@@ -20,35 +23,33 @@ const PaymentPage = () => {
     setShowVNPayModal(false);
   };
 
+   
+
   // Xử lý thanh toán VNPay
-  const handleVNPayPayment = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      // Gửi thông tin booking lên backend để lấy link VNPay
-      const res = await fetch("http://localhost:6868/api/v1/payment/vnpay", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          doctorId: doctor?.id,
-          specialtyId: specialty?.id,
-          scheduleId: schedule?.id,
-          amount: schedule?.price || 100,
-          // Thêm các thông tin cần thiết khác
-        }),
-      });
-      const data = await res.json();
-      setLoading(false);
-      if (data?.vnpUrl) {
-        window.location.href = data.vnpUrl; // Redirect sang VNPay
-      } else {
-        alert("Không lấy được link thanh toán VNPay!");
-      }
-    } catch (err) {
-      setLoading(false);
-      alert("Lỗi khi tạo thanh toán VNPay!");
+ const handleVNPayPayment = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  try {
+    const token = localStorage.getItem("token");
+    const url = `http://localhost:6868/api/v1/payment/vn-pay?bookingId=${bookingId}&amount=${schedule?.price || 0}`;
+    const res = await fetch(url, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const data = await res.json();
+    setLoading(false);
+    if (data?.paymentUrl) {
+      window.location.href = data.paymentUrl;
+    } else {
+      alert("Không lấy được link thanh toán VNPay!");
     }
-  };
+  } catch (err) {
+    setLoading(false);
+    alert("Lỗi khi tạo thanh toán VNPay!");
+  }
+};
 
   return (
     <main className="bg-white min-h-screen">
@@ -95,8 +96,12 @@ const PaymentPage = () => {
           <div className="text-sm text-gray-700 mb-1">
             <span className="font-semibold">📍</span> Tầng 25, tòa nhà Ngọc Khánh Plaza, số 1 Phạm Huy Thông, Ba Đình, Hà Nội
           </div>
+          {/* Hiển thị Booking ID */}
           <div className="text-sm text-gray-700 mb-1">
-            <span className="font-semibold">Costs:</span> ${schedule?.price || "100"}
+            <span className="font-semibold">Booking ID:</span> {bookingId || "Chưa có"}
+          </div>
+          <div className="text-sm text-gray-700 mb-1">
+            <span className="font-semibold">Costs:</span> ${schedule?.price || ""}
           </div>
         </div>
 
@@ -185,12 +190,18 @@ const PaymentPage = () => {
                 Bạn sẽ được chuyển đến cổng thanh toán VNPay để hoàn tất giao dịch.
               </p>
               <button
-                className="w-full bg-[#223a66] text-white font-semibold py-2 rounded mt-2"
-                onClick={handleVNPayPayment}
-                disabled={loading}
-              >
-                {loading ? "Đang chuyển hướng..." : "Tiếp tục thanh toán VNPay"}
-              </button>
+  className="w-full bg-[#223a66] text-white font-semibold py-2 rounded mt-2 flex items-center justify-center gap-2"
+  onClick={handleVNPayPayment}
+  disabled={loading}
+>
+  {loading && (
+    <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+    </svg>
+  )}
+  {loading ? "Đang chuyển hướng..." : "Tiếp tục thanh toán VNPay"}
+</button>
               <div className="text-xs text-gray-400 text-center mt-2">
                 <span role="img" aria-label="lock">🔒</span> Bảo mật bởi VNPay
               </div>
