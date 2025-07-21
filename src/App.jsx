@@ -36,6 +36,8 @@ import DetailSpecialty from "./components/admin/specialties/DetailSpecialty";
 import DetailDoctor from "./components/admin/doctors/DetailDoctor";
 import DoctorDetail from "./components/DoctorDetail";
 import SpecialtyDetail from "./components/SpecialtyDetail";
+import ListClinic from "./components/admin/clinics/ListClinic";
+import AddClinic from "./components/admin/clinics/AddClinic";
 
 
 function AppContent() {
@@ -72,6 +74,8 @@ function AppContent() {
           <Route path="doctors/add" element={<AddDoctor />} />
           <Route path="doctors/list" element={<ListDoctor />} />
           <Route path="doctors/:id" element={<DetailDoctor />} />
+          <Route path="clinics/list" element={<ListClinic />} />
+<Route path="clinics/add" element={<AddClinic />} />
             
           <Route path="users/add" element={<AddUser />} />
           <Route path="users/list" element={<ListUser />} />
