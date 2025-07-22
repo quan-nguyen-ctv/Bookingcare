@@ -154,7 +154,7 @@ qualification: editData.qualification,
         <thead>
           <tr className="bg-gray-100">
             <th className="border px-3 py-2">#</th>
-            <th className="border px-3 py-2">User</th>
+            <th className="border px-3 py-2">Name</th>
             <th className="border px-3 py-2">Specialty</th>
             <th className="border px-3 py-2">Image</th>
             <th className="border px-3 py-2">Experience</th>

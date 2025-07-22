@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 const Toast = ({ message, type, onClose }) => (
   <div
@@ -18,52 +18,62 @@ const Toast = ({ message, type, onClose }) => (
 );
 
 const AddDoctor = () => {
-  const [user, setUser] = useState("");
-  const [specialty, setSpecialty] = useState("");
+  const [userId, setUserId] = useState("");
+  const [specialtyId, setSpecialtyId] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [experience, setExperience] = useState("");
   const [qualification, setQualification] = useState("");
   const [bio, setBio] = useState("");
   const [toast, setToast] = useState({ show: false, message: "", type: "success" });
-  const [specialties, setSpecialties] = useState([]);
-  const [users, setUsers] = useState([]);
-
-  useEffect(() => {
-    setSpecialties(JSON.parse(localStorage.getItem("specialties") || "[]"));
-    // Lấy user từ localStorage, lọc role doctor
-    const allUsers = JSON.parse(localStorage.getItem("users") || "[]");
-    setUsers(allUsers.filter(u => u.role === "doctor"));
-  }, []);
 
   const showToast = (message, type = "success") => {
     setToast({ show: true, message, type });
     setTimeout(() => setToast({ show: false, message: "", type }), 2000);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    let imageUrl = "";
+
+    const formData = new FormData();
+    formData.append("user_id", userId);
+    formData.append("specialty_id", specialtyId);
+    formData.append("experience", experience);
+    formData.append("qualification", qualification);
+    formData.append("bio", bio);
+    formData.append("active", "true");
+
     if (imageFile) {
-      imageUrl = URL.createObjectURL(imageFile);
+      formData.append("avatar", imageFile);
     }
-    const doctors = JSON.parse(localStorage.getItem("doctors") || "[]");
-    doctors.push({
-      id: Date.now(),
-      user,
-      specialty,
-      image: imageUrl,
-      experience,
-      qualification,
-      bio,
-    });
-    localStorage.setItem("doctors", JSON.stringify(doctors));
-    setUser("");
-    setSpecialty("");
-    setImageFile(null);
-    setExperience("");
-    setQualification("");
-    setBio("");
-    showToast("Thêm bác sĩ thành công!", "success");
+
+    try {
+      const token = localStorage.getItem("admin_token");
+
+      const response = await fetch("http://localhost:6868/api/v1/doctors", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        showToast("Thêm bác sĩ thành công!");
+        setUserId("");
+        setSpecialtyId("");
+        setImageFile(null);
+        setExperience("");
+        setQualification("");
+        setBio("");
+      } else {
+        showToast(result.message || "Thêm bác sĩ thất bại", "error");
+      }
+    } catch (error) {
+      console.error("Lỗi gửi dữ liệu:", error);
+      showToast("Lỗi kết nối đến server", "error");
+    }
   };
 
   return (
@@ -79,40 +89,36 @@ const AddDoctor = () => {
         <h2 className="text-lg font-bold text-[#20c0f3] mb-6">Doctor Info</h2>
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block font-semibold text-[#223a66] mb-2">User</label>
-            <select
+            <label className="block font-semibold text-[#223a66] mb-2">User ID</label>
+            <input
+              type="number"
+              placeholder="Nhập ID người dùng"
               className="block border border-gray-300 rounded px-3 py-2 w-full focus:outline-none focus:border-[#20c0f3]"
-              value={user}
-              onChange={e => setUser(e.target.value)}
+              value={userId}
+              onChange={(e) => setUserId(e.target.value)}
               required
-            >
-              <option value="">Select User</option>
-              {users.map(u => (
-                <option key={u.id} value={u.name}>{u.name}</option>
-              ))}
-            </select>
+            />
           </div>
+
           <div>
-            <label className="block font-semibold text-[#223a66] mb-2">Specialty</label>
-            <select
+            <label className="block font-semibold text-[#223a66] mb-2">Specialty ID</label>
+            <input
+              type="number"
+              placeholder="Nhập ID chuyên khoa"
               className="block border border-gray-300 rounded px-3 py-2 w-full focus:outline-none focus:border-[#20c0f3]"
-              value={specialty}
-              onChange={e => setSpecialty(e.target.value)}
+              value={specialtyId}
+              onChange={(e) => setSpecialtyId(e.target.value)}
               required
-            >
-              <option value="">Select Specialty</option>
-              {specialties.map(s => (
-                <option key={s.id} value={s.name}>{s.name}</option>
-              ))}
-            </select>
+            />
           </div>
+
           <div>
             <label className="block font-semibold text-[#223a66] mb-2">Doctor Image</label>
             <input
               type="file"
               accept="image/*"
               className="block border border-gray-300 rounded px-3 py-2 w-full bg-white"
-              onChange={e => setImageFile(e.target.files[0])}
+              onChange={(e) => setImageFile(e.target.files[0])}
             />
             {imageFile && (
               <img
@@ -122,40 +128,47 @@ const AddDoctor = () => {
               />
             )}
           </div>
+
           <div>
             <label className="block font-semibold text-[#223a66] mb-2">Experience</label>
             <input
               className="block border border-gray-300 rounded px-3 py-2 w-full focus:outline-none focus:border-[#20c0f3]"
               value={experience}
-              onChange={e => setExperience(e.target.value)}
+              onChange={(e) => setExperience(e.target.value)}
               placeholder="Experience"
+              required
             />
           </div>
+
           <div>
             <label className="block font-semibold text-[#223a66] mb-2">Qualification</label>
             <textarea
               className="block border border-gray-300 rounded px-3 py-2 w-full min-h-[40px] focus:outline-none focus:border-[#20c0f3]"
               value={qualification}
-              onChange={e => setQualification(e.target.value)}
+              onChange={(e) => setQualification(e.target.value)}
               placeholder="Qualification"
+              required
             />
           </div>
+
           <div>
             <label className="block font-semibold text-[#223a66] mb-2">Bio</label>
             <textarea
               className="block border border-gray-300 rounded px-3 py-2 w-full min-h-[60px] focus:outline-none focus:border-[#20c0f3]"
               value={bio}
-              onChange={e => setBio(e.target.value)}
+              onChange={(e) => setBio(e.target.value)}
               placeholder="Bio"
+              required
             />
           </div>
+
           <div className="flex justify-end gap-4 pt-2">
             <button
               type="button"
               className="bg-[#ffc107] hover:bg-yellow-400 text-white font-bold px-6 py-2 rounded"
               onClick={() => {
-                setUser("");
-                setSpecialty("");
+                setUserId("");
+                setSpecialtyId("");
                 setImageFile(null);
                 setExperience("");
                 setQualification("");
@@ -177,4 +190,4 @@ const AddDoctor = () => {
   );
 };
 
-export default AddDoctor;  
+export default AddDoctor;

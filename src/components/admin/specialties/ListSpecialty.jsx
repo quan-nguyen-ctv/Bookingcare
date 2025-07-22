@@ -52,22 +52,33 @@ const ListSpecialty = () => {
   };
 
   const confirmDelete = async () => {
-    try {
-      const token = localStorage.getItem("admin_token");
-      await fetch(`http://localhost:6868/api/v1/specialties/${deleteId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+  try {
+    const token = localStorage.getItem("admin_token");
+    const res = await fetch(`http://localhost:6868/api/v1/specialties/${deleteId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await res.json();
+
+    if (res.ok && data.status === "success") {
       showToast("Xóa chuyên khoa thành công!");
       fetchSpecialties();
-      setDeleteId(null);
-    } catch (err) {
-      console.error("Lỗi khi xóa:", err);
-      showToast("Xóa thất bại", "error");
+    } else {
+      // 🟡 Trường hợp lỗi từ backend
+      const errorMsg = data?.message || "Xóa thất bại";
+      showToast(errorMsg, "error");
     }
-  };
+  } catch (err) {
+    console.error("❌ Lỗi khi xóa:", err);
+    showToast("Lỗi khi kết nối tới máy chủ", "error");
+  } finally {
+    setDeleteId(null);
+  }
+};
+
 
   const handleEdit = (item) => {
     setEditId(item.id);

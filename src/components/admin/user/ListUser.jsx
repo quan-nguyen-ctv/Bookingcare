@@ -31,29 +31,29 @@ const ListUser = () => {
   };
 
   const fetchUsers = async () => {
-    try {
-      const token = localStorage.getItem("admin_token");
-      const res = await fetch("http://localhost:6868/api/v1/users", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        },
-      });
+  try {
+    const token = localStorage.getItem("admin_token");
+    const res = await fetch("http://localhost:6868/api/v1/users", {
+      headers: {
+        "Authorization": `Bearer ${token}`,
+      },
+    });
 
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(`Lỗi server: ${res.status} - ${text}`);
-      }
+    const json = await res.json();
 
-      const json = await res.json();
-      const usersArray = Array.isArray(json.data?.users) ? json.data.users : [];
-      setUsers(usersArray);
-    } catch (err) {
-      console.error("❌ Lỗi khi gọi API:", err);
-      showToast("Tải danh sách thất bại: " + (err.message || "Không rõ lỗi"), "error");
+    if (res.ok && json.data && json.data.users) {
+      // 👉 Lọc user đang hoạt động (is_active === true)
+      const activeUsers = json.data.users.filter(user => user.is_active === true);
+      setUsers(activeUsers); // setUsers là useState bạn đang dùng
+    } else {
+      showToast("Không thể lấy danh sách user", "error");
     }
-  };
+  } catch (err) {
+    console.error("❌ Lỗi khi lấy danh sách user:", err);
+    showToast("Lỗi khi lấy danh sách user", "error");
+  }
+};
+
 
   useEffect(() => {
     fetchUsers();
