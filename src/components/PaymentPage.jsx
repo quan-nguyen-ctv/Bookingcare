@@ -71,7 +71,7 @@ const PaymentPage = () => {
         <div className="w-full md:w-[350px] bg-white rounded-xl shadow p-6 mb-8 md:mb-0">
           <div className="flex items-center gap-4 mb-3">
             <img
-              src={doctor?.user?.avatar || "/images/doctor.png"}
+              src={`http://localhost:6868/api/v1/images/view/${doctor.avatar || "default.png"}`}
               alt="Doctor"
               className="w-16 h-16 rounded-full object-cover border"
             />
@@ -91,15 +91,15 @@ const PaymentPage = () => {
               : "Đang tải..."}
           </div>
           <div className="text-sm text-gray-700 mb-1">
-            <span className="font-semibold">🏥</span> Novena Clinics - Hà Nội
+            <span className="font-semibold">🏥</span> 
           </div>
           <div className="text-sm text-gray-700 mb-1">
             <span className="font-semibold">📍</span> Tầng 25, tòa nhà Ngọc Khánh Plaza, số 1 Phạm Huy Thông, Ba Đình, Hà Nội
           </div>
           {/* Hiển thị Booking ID */}
-          <div className="text-sm text-gray-700 mb-1">
+          {/* <div className="text-sm text-gray-700 mb-1">
             <span className="font-semibold">Booking ID:</span> {bookingId || "Chưa có"}
-          </div>
+          </div> */}
           <div className="text-sm text-gray-700 mb-1">
             <span className="font-semibold">Costs:</span> ${schedule?.price || ""}
           </div>

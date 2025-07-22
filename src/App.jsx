@@ -76,7 +76,7 @@ function AppContent() {
           <Route path="doctors/list" element={<ListDoctor />} />
           <Route path="doctors/:id" element={<DetailDoctor />} />
           <Route path="clinics/list" element={<ListClinic />} />
-<Route path="clinics/add" element={<AddClinic />} />
+          <Route path="clinics/add" element={<AddClinic />} />
             
           <Route path="users/add" element={<AddUser />} />
           <Route path="users/list" element={<ListUser />} />
