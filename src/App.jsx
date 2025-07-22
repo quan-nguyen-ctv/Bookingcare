@@ -38,6 +38,7 @@ import DoctorDetail from "./components/DoctorDetail";
 import SpecialtyDetail from "./components/SpecialtyDetail";
 import ListClinic from "./components/admin/clinics/ListClinic";
 import AddClinic from "./components/admin/clinics/AddClinic";
+import MedicalServiceDetail from "./components/MedicalServiceDetail";
 
 
 function AppContent() {
@@ -53,7 +54,7 @@ function AppContent() {
         <Route path="/" element={<HomePage />} />
         <Route path="/about" element={<About />} />
         <Route path="/medical-services" element={<MedicalServices />} />
-        <Route path="/MedicalServices/:id" element={<SpecialtyDetail />} />
+        <Route path="/MedicalServices/:idNameSpecialty" element={<MedicalServiceDetail />} />
         <Route path="/list-doctor" element={<Doctors />} />
          <Route path="/Doctors-detail/:id" element={<DoctorDetail />} />
         <Route path="/blog" element={<Blog />} />
