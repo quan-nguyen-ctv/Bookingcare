@@ -12,7 +12,10 @@ const adminMenu = [
     { label: "Thêm Người dùng", to: "/admin/users/add" },
     { label: "Danh sách Người dùng", to: "/admin/users/list" },
   ]},
-  { label: "Phòng khám", icon: <FaClinicMedical />, to: "/admin/clinics" },
+  { label: "Phòng khám", icon: <FaClinicMedical />, children: [
+    { label: "Thêm Phòng khám", to: "/admin/clinics/add" },
+    { label: "Danh sách Phòng khám", to: "/admin/clinics/list" }
+  ]},
   { label: "Chuyên ngành", icon: <FaList />, children: [
     { label: "Thêm Chuyên ngành", to: "/admin/specialties/add" },
     { label: "Danh sách Chuyên ngành", to: "/admin/specialties/list" }

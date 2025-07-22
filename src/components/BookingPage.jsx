@@ -1,6 +1,3 @@
-
-
-
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
@@ -21,6 +18,7 @@ const BookingPage = () => {
   const [userId, setUserId] = useState(null);
   const [submitted, setSubmitted] = useState(false);
   const [scheduleDate, setScheduleDate] = useState("");
+  const [bookingLoading, setBookingLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -88,7 +86,7 @@ const BookingPage = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        const scheduleList = Array.isArray(data?.data) ? data.data : [];
+const scheduleList = Array.isArray(data?.data) ? data.data : [];
         setSchedules(scheduleList);
         if (scheduleList.length > 0) {
           setSelectedSchedule(scheduleList[0]?.id || "");
@@ -109,6 +107,7 @@ const BookingPage = () => {
 
  const handleSubmit = async (e) => {
   e.preventDefault();
+  setBookingLoading(true); // Bắt đầu loading
   const token = localStorage.getItem("token");
   try {
     const response = await fetch("http://localhost:6868/api/v1/bookings", {
@@ -132,23 +131,25 @@ const BookingPage = () => {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    // Lấy thông tin bác sĩ, chuyên khoa, lịch khám đã chọn
+    const bookingData = await response.json(); // Lấy dữ liệu trả về
+    const bookingId = bookingData?.data?.id; // Lấy id booking từ API
+
     const doctor = doctors.find(d => d.id === Number(selectedDoctor));
     const specialty = specialties.find(s => s.id === Number(selectedSpecialty));
     const schedule = schedules.find(s => s.id === Number(selectedSchedule));
 
-    // Chuyển sang trang thanh toán và truyền dữ liệu
     navigate("/payment", {
       state: {
         doctor,
         specialty,
         schedule,
+        bookingId,
       },
     });
-
   } catch (err) {
-    console.error("Lỗi đặt lịch:", err);
     alert("Lỗi kết nối server!");
+  } finally {
+    setBookingLoading(false); // Kết thúc loading
   }
 };
 
@@ -183,7 +184,7 @@ const BookingPage = () => {
           </h2>
           <form className="space-y-5" onSubmit={handleSubmit}>
             <div>
-              <label className="block mb-1 font-semibold text-[#223a66]">
+<label className="block mb-1 font-semibold text-[#223a66]">
                 Chuyên khoa
               </label>
               <select
@@ -265,7 +266,7 @@ const BookingPage = () => {
         return (
           <option key={schedule.id} value={schedule.id}>
             {dateString} từ {startTimeString} đến {endTimeString} (
-            {schedule.booking_limit - schedule.number_booked} chỗ trống)
+{schedule.booking_limit - schedule.number_booked} chỗ trống)
           </option>
         );
       })}
@@ -275,8 +276,15 @@ const BookingPage = () => {
 
             <button
               type="submit"
-              className="w-full bg-[#f75757] hover:bg-[#223a66] text-white font-semibold px-8 py-3 rounded-xl transition text-sm mt-2"
+              className="w-full bg-[#f75757] hover:bg-[#223a66] text-white font-semibold px-8 py-3 rounded-xl transition text-sm mt-2 flex items-center justify-center gap-2"
+              disabled={bookingLoading}
             >
+              {bookingLoading && (
+                <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+    </svg>
+              )}
               Đặt lịch hẹn
             </button>
           </form>
