@@ -23,9 +23,10 @@ const statusBadge = (status) => {
 
 const ListBooking = () => {
   const navigate = useNavigate();
-  const [bookings, setBookings] = useState([]);
+  const [allBookings, setAllBookings] = useState([]); // Lưu toàn bộ booking
+  const [bookings, setBookings] = useState([]); // Booking hiển thị trang hiện tại
   const [error, setError] = useState("");
-  const [limit, setLimit] = useState(5);
+  const [limit, setLimit] = useState(10); // Mặc định 10 booking/trang
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [keyword, setKeyword] = useState("");
@@ -34,7 +35,7 @@ const ListBooking = () => {
   const [loading, setLoading] = useState(false);
   const timeoutRef = useRef(null);
 
-  // Fetch bookings
+  // Fetch all bookings once
   useEffect(() => {
     const fetchBookings = async () => {
       try {
@@ -52,17 +53,9 @@ const ListBooking = () => {
           setLoading(false);
           return;
         }
-        // Build query params
-        const params = new URLSearchParams({
-          page,
-          limit,
-        });
-        if (keyword) params.append("keyword", keyword);
-        if (status) params.append("status", status);
-        if (dateBooking) params.append("dateSchedule", dateBooking);
-
+        // Không truyền limit, page cho API
         const res = await fetch(
-          `http://localhost:6868/api/v1/bookings/user/${userId}?${params.toString()}`,
+          `http://localhost:6868/api/v1/bookings/user/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -72,8 +65,7 @@ const ListBooking = () => {
         );
         const json = await res.json();
         if (!res.ok) throw new Error(json.message || "Lỗi khi lấy danh sách lịch hẹn.");
-        setBookings(json.data?.rows || json.data || []);
-        setTotalPages(json.data?.totalPages || 1);
+        setAllBookings(json.data?.rows || json.data || []);
         setError("");
       } catch (err) {
         setError(err.message || "Đã xảy ra lỗi.");
@@ -82,7 +74,33 @@ const ListBooking = () => {
       }
     };
     fetchBookings();
-  }, [limit, page, keyword, status, dateBooking]);
+  }, []);
+
+  // Lọc và phân trang trên frontend
+  useEffect(() => {
+    let filtered = [...allBookings];
+    if (keyword) {
+      filtered = filtered.filter(
+        (b) =>
+          b.schedule?.specialty_name?.toLowerCase().includes(keyword.toLowerCase()) ||
+          b.payment_method?.toLowerCase().includes(keyword.toLowerCase()) ||
+          b.payment_code?.toLowerCase().includes(keyword.toLowerCase())
+      );
+    }
+    if (status) {
+      filtered = filtered.filter((b) => b.status?.toLowerCase() === status.toLowerCase());
+    }
+    if (dateBooking) {
+      filtered = filtered.filter((b) => b.date_booking === dateBooking);
+    }
+    const total = filtered.length;
+    setTotalPages(Math.ceil(total / limit) || 1);
+    const start = page * limit;
+    const end = start + limit;
+    setBookings(filtered.slice(start, end));
+    // Nếu page vượt quá tổng số trang sau khi filter, reset về 0
+    if (page > 0 && start >= total) setPage(0);
+  }, [allBookings, limit, page, keyword, status, dateBooking]);
 
   // Debounce search
   const handleSearchChange = (e) => {
@@ -191,11 +209,9 @@ const ListBooking = () => {
                     >
                       View
                     </button>
-                    {/* Nút Cancel chỉ hiển thị nếu trạng thái là paid, bạn có thể bổ sung điều kiện khác nếu muốn */}
                     <button
                       className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition text-sm disabled:opacity-50"
                       disabled={b.status !== "paid"}
-                      // onClick={() => handleCancel(b)}
                     >
                       Cancel
                     </button>

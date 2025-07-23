@@ -28,7 +28,7 @@ const adminMenu = [
   },
   {
     label: "Lịch trình", icon: <FaCalendarAlt />, children: [
-      { label: "Các khoảng thời gian", to: "/admin/schedules/timeslots" }
+      { label: "Thêm lịch trình", to: "/admin/schedules/add" }
     ]
   },
   { label: "Đặt chỗ", icon: <FaList />, children: [

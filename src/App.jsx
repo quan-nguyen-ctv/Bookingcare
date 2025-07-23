@@ -39,6 +39,7 @@ import SpecialtyDetail from "./components/SpecialtyDetail";
 import ListClinic from "./components/admin/clinics/ListClinic";
 import AddClinic from "./components/admin/clinics/AddClinic";
 import MedicalServiceDetail from "./components/MedicalServiceDetail";
+import BookingDetail from "./components/BookingDetail";
 
 
 function AppContent() {
@@ -64,6 +65,7 @@ function AppContent() {
         <Route path="/booking" element={<BookingPage />} />
         <Route path="/payment" element={<PaymentPage />} />
         <Route path="/list-booking" element={<ListBooking />} />
+        <Route path="/account/bookings/:id" element={<BookingDetail />} />
         <Route path="/booking-success" element={<BookingSuccess />} />
         <Route path="/profile" element={<ProfileView />} />
         <Route path="/profile/update" element={<ProfileUpdate />} />
