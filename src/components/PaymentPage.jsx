@@ -97,9 +97,9 @@ const PaymentPage = () => {
             <span className="font-semibold">📍</span> Tầng 25, tòa nhà Ngọc Khánh Plaza, số 1 Phạm Huy Thông, Ba Đình, Hà Nội
           </div>
           {/* Hiển thị Booking ID */}
-          {/* <div className="text-sm text-gray-700 mb-1">
+          <div className="text-sm text-gray-700 mb-1">
             <span className="font-semibold">Booking ID:</span> {bookingId || "Chưa có"}
-          </div> */}
+          </div>
           <div className="text-sm text-gray-700 mb-1">
             <span className="font-semibold">Costs:</span> ${schedule?.price || ""}
           </div>
