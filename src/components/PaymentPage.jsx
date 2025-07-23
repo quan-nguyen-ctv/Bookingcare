@@ -91,10 +91,10 @@ const PaymentPage = () => {
               : "Đang tải..."}
           </div>
           <div className="text-sm text-gray-700 mb-1">
-            <span className="font-semibold">🏥</span> 
+            <span className="font-semibold">🏥</span> {schedule?.clinic_address || "Không rõ"}
           </div>
           <div className="text-sm text-gray-700 mb-1">
-            <span className="font-semibold">📍</span> Tầng 25, tòa nhà Ngọc Khánh Plaza, số 1 Phạm Huy Thông, Ba Đình, Hà Nội
+            <span className="font-semibold">📍</span> {schedule?.clinic_name}
           </div>
           {/* Hiển thị Booking ID */}
           <div className="text-sm text-gray-700 mb-1">

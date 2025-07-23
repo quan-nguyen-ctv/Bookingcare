@@ -137,7 +137,8 @@ const scheduleList = Array.isArray(data?.data) ? data.data : [];
     const doctor = doctors.find(d => d.id === Number(selectedDoctor));
     const specialty = specialties.find(s => s.id === Number(selectedSpecialty));
     const schedule = schedules.find(s => s.id === Number(selectedSchedule));
-
+    
+    console.log("Schedule trước khi navigate:", schedule);
     navigate("/payment", {
       state: {
         doctor,
