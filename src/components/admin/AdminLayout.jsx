@@ -28,7 +28,8 @@ const adminMenu = [
   },
   {
     label: "Lịch trình", icon: <FaCalendarAlt />, children: [
-      { label: "Thêm lịch trình", to: "/admin/schedules/add" }
+      { label: "Thêm lịch trình", to: "/admin/schedules/add" },
+      { label: "DAnh sách lịch trình", to: "/admin/schedules/list" }
     ]
   },
   { label: "Đặt chỗ", icon: <FaList />, children: [

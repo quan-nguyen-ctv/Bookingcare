@@ -1,16 +1,42 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { NavLink, useNavigate } from "react-router-dom";
 
 const DoctorHeader = () => {
   const [accountMenu, setAccountMenu] = useState(false);
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user"));
+
+  useEffect(() => {
+    const token = localStorage.getItem("doctor_token");
+    console.log("Token:", token);
+    
+    if (!token) return;
+    const fetchDoctorDetails = async () => {
+      try {
+        const res = await fetch("http://localhost:6868/api/v1/users/details", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setUser(data?.data || null);
+          
+      localStorage.setItem("doctor_user", JSON.stringify(data));
+        }
+      } catch {
+        setUser(null);
+      }
+    };
+    fetchDoctorDetails();
+  }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("user");
+    localStorage.removeItem("doctor_user");
+    localStorage.removeItem("doctor_token");
     setAccountMenu(false);
-    navigate("/login");
+    navigate("/doctors-login");
   };
 
   return (
@@ -22,7 +48,7 @@ const DoctorHeader = () => {
             onClick={() => setAccountMenu((v) => !v)}
           >
             <FaUserCircle className="text-2xl" />
-            <span>{user?.name || "Doctor"}</span>
+            <span>{user?.user?.fullname || user?.name || "Doctor"}</span>
           </button>
           {accountMenu && user && (
             <div
