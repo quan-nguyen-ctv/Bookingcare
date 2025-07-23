@@ -40,6 +40,7 @@ import ListClinic from "./components/admin/clinics/ListClinic";
 import AddClinic from "./components/admin/clinics/AddClinic";
 import MedicalServiceDetail from "./components/MedicalServiceDetail";
 import BookingDetail from "./components/BookingDetail";
+import AddSchedule from "./components/admin/schedules/AddSchedule";
 
 
 function AppContent() {
@@ -63,6 +64,7 @@ function AppContent() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/booking" element={<BookingPage />} />
+         <Route path='/booking/result/:idBooking' element={<BookingSuccess />} />
         <Route path="/payment" element={<PaymentPage />} />
         <Route path="/list-booking" element={<ListBooking />} />
         <Route path="/account/bookings/:id" element={<BookingDetail />} />
@@ -84,6 +86,7 @@ function AppContent() {
           <Route path="users/list" element={<ListUser />} />
           <Route path="bookings/list" element={<ListBookings />} />
           <Route path="bookings/add" element={<AddBooking />} />
+          <Route path="schedules/add" element={<AddSchedule />} />
 
           
           {/* Các route con khác */}
