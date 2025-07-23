@@ -1,101 +1,127 @@
-import React, { useEffect } from "react";
-import { useBooking } from "./BookingContext";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { ToastError, ToastSuccess } from "../notification";
 
-const clinicInfo = {
-  name: "Novena Clinics - Hà Nội",
-  address:
-    "Tầng 25, tòa nhà Ngọc Khánh Plaza, số 1 Phạm Huy Thông, Phường Ngọc Khánh, Ba Đình, Hà Nội",
-  cost: "$100",
-};
 
 const BookingSuccess = () => {
-  const { bookings } = useBooking();
   const navigate = useNavigate();
+  const { idBooking } = useParams();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const vnp_TransactionNo = searchParams.get("vnp_TransactionNo");
+  const vnp_ResponseCode = searchParams.get("vnp_ResponseCode");
+  const [statusPay, setStatusPay] = useState("");
+  const idBookingSuccess = searchParams.get("bookingId");
 
-  // Lấy booking cuối cùng vừa đặt
-  const booking = bookings.length > 0 ? bookings[bookings.length - 1] : null;
-
-  // Nếu không có booking thì chuyển về trang booking
   useEffect(() => {
-    if (!booking) navigate("/booking");
-  }, [booking, navigate]);
+    if (
+      location.pathname.includes("/booking/result/") &&
+      idBooking &&
+      vnp_TransactionNo &&
+      vnp_ResponseCode === "00"
+    ) {
+      payOrderSuccess(idBooking, vnp_TransactionNo, vnp_ResponseCode);
 
-  if (!booking) return null;
-
-  // Tính giờ kết thúc (ví dụ cộng 30 phút)
-  let endTime = "";
-  if (booking.time) {
-    const [h, m] = booking.time.split(":");
-    const d = new Date();
-    d.setHours(+h, +m + 30);
-    endTime = d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  }
+      async function payOrderSuccess(bookingId, vnp_TransactionNo, vnp_ResponseCode) {
+        try {
+          const res = await fetch(
+            `http://localhost:6868/api/v1/bookings/payBooking/${bookingId}?vnp_TransactionNo=${vnp_TransactionNo}&vnp_ResponseCode=${vnp_ResponseCode}`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          );
+          const data = await res.json();
+          if (res.ok && data.status === "success") {
+            ToastSuccess("Booking payment successfully.");
+            navigate(`/booking/success?bookingId=${bookingId}`);
+          } else {
+            ToastError(data.message || "Payment failed.");
+          }
+        } catch (error) {
+          ToastError(error.message || "Payment failed.");
+        }
+      }
+    } else if (idBooking && vnp_TransactionNo && vnp_ResponseCode === "24") {
+      setStatusPay("Pay_failed");
+    }
+  }, [idBooking, vnp_TransactionNo, vnp_ResponseCode, location.pathname, navigate]);
 
   return (
-    <div className="max-w-3xl mx-auto my-10 bg-white rounded-lg shadow">
-      <div className="rounded-t-lg bg-green-600 p-6">
-        <h2 className="text-2xl md:text-3xl font-bold text-white">
-          Appointment Confirmation
-        </h2>
+    <div className="appointment-container mt-5">
+      <div className="appointment-check-icon">
+        {statusPay === "Pay_failed" ? (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            width="50"
+            height="50"
+          >
+            <rect x="2" y="2" width="20" height="14" rx="2" fill="#4A90E2" />
+            <path
+              d="M4 6h16M4 10h16M4 14h16"
+              stroke="#FFFFFF"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <circle cx="12" cy="12" r="5" fill="#FF3D00" />
+            <path
+              d="M10 10L14 14M14 10L10 14"
+              stroke="#FFFFFF"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        ) : (
+          <img
+            src="https://png.pngtree.com/png-vector/20221010/ourmid/pngtree-approval-symbol-check-mark-circle-drawn-hand-green-sign-ok-png-image_6251572.png"
+            alt="success"
+            className="tick-icon-sc"
+          />
+        )}
       </div>
-      <div className="p-8">
-        <h3 className="text-xl font-bold mb-2 text-[#223a66]">
-          Thank you for booking with our clinic!
-        </h3>
-        <p className="mb-6">
-          Your appointment has been successfully scheduled. Below are the details of your visit:
-        </p>
-        <div className="mb-4">
-          <div>
-            <span className="font-bold">Full Name:</span> {booking.name || "Chưa nhập"}
+      {statusPay === "Pay_failed" ? (
+        <>
+          <h1 className="appointment-title pay-failt-sc">Payment Failed!</h1>
+          <div className="box-appoint-note">
+            <p className="appointment-note">
+              Note: Your payment was not successful. Please try again or contact support.
+            </p>
           </div>
-          <div>
-            <span className="font-bold">Email:</span>{" "}
-            <a href={`mailto:${booking.email}`} className="text-blue-600 underline">
-              {booking.email}
-            </a>
+          <div className="appointment-btn-sc">
+            <button
+              className="btn btn-main btn-round-full btn-book-conf ic-appoint-sc"
+              onClick={() => navigate("/")}
+            >
+              Return to Home!
+              <i className="icofont-simple-right"></i>
+            </button>
           </div>
-          <div>
-            <span className="font-bold">Phone Number:</span> {booking.phone}
+        </>
+      ) : (
+        <>
+          <h1 className="appointment-title">Booking successful!</h1>
+          <div className="box-appoint-note">
+            <p className="appointment-note">
+              Note: Your appointment has been transferred to the medical facility. Please do not book through other channels to avoid duplicate schedules.
+            </p>
           </div>
-        </div>
-        <hr className="my-4" />
-        <div className="mb-4">
-          <div>
-            <span className="font-bold">Doctor:</span> Dr. {booking.doctor}
+          <div className="appointment-btn-sc">
+            <button
+              className="btn btn-main btn-round-full btn-book-conf ic-appoint-sc"
+              onClick={() => navigate(`/account/bookings/${idBookingSuccess}`)}
+            >
+              See detailed appointment schedule here!
+              <i className="icofont-simple-right"></i>
+            </button>
           </div>
-          <div>
-            <span className="font-bold">Specialty:</span> {booking.specialty}
-          </div>
-          <div>
-            <span className="font-bold">Clinic:</span> {clinicInfo.name}
-          </div>
-          <div>
-            <span className="font-bold">Clinic Address:</span> {clinicInfo.address}
-          </div>
-          <div>
-            <span className="font-bold">Appointment Date:</span> {booking.date}
-          </div>
-          <div>
-            <span className="font-bold">Start Time:</span> {booking.time}
-          </div>
-          <div>
-            <span className="font-bold">End Time:</span> {endTime}
-          </div>
-          <div>
-            <span className="font-bold">Costs:</span> {clinicInfo.cost}
-          </div>
-        </div>
-        <div className="mt-8 bg-gray-100 rounded p-4 text-center text-gray-700 text-sm">
-          If you have any questions, feel free to{" "}
-          <a href="/contact" className="text-green-600 underline">
-            contact us
-          </a>{" "}
-          or call our hotline at <span className="font-bold">1900 9999</span>.<br />
-          Novena Clinic thanks you for trusting us!
-        </div>
-      </div>
+        </>
+      )}
     </div>
   );
 };
