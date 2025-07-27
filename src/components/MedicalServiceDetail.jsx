@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { jwtDecode } from "jwt-decode"; // Thêm dòng này
 
 const API_BASE_URL = "http://localhost:6868/";
 
@@ -16,6 +17,66 @@ const MedicalServiceDetail = () => {
   const [doctors, setDoctors] = useState([]);
   const [schedules, setSchedules] = useState([]);
 
+const handleBooking = async (schedule, doctor) => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("Bạn cần đăng nhập để đặt lịch.");
+    return;
+  }
+
+  let userId;
+  try {
+    const decoded = jwtDecode(token);
+    userId = decoded.userId;
+  } catch (e) {
+    alert("Token không hợp lệ.");
+    return;
+  }
+
+  const paymentCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+  try {
+    const res = await fetch("http://localhost:6868/api/v1/bookings", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        schedule_id: schedule.id,
+        user_id: userId,
+        payment_method: "VNPay",
+        payment_code: paymentCode,
+        amount: schedule.price || 100000,
+        reason: "",
+        status: "PENDING",
+      }),
+    });
+
+    const result = await res.json();
+
+    if (result.status === "success") {
+      const bookingId = result.data.id;
+      navigate("/payment", {
+        state: {
+          bookingId,
+          schedule,
+          doctor,
+          specialty: doctor.specialty,
+          clinicId: schedule.clinic_id,
+        },
+      });
+    } else {
+      alert("Đặt lịch thất bại: " + result.message);
+    }
+  } catch (err) {
+    console.error("Lỗi đặt lịch:", err);
+    alert("Đã xảy ra lỗi khi đặt lịch.");
+  }
+};
+
+
+
   useEffect(() => {
     if (!id) return;
 
@@ -26,8 +87,12 @@ const MedicalServiceDetail = () => {
 
     fetch(`${API_BASE_URL}api/v1/clinics?specialtyId=${id}`)
       .then((res) => res.json())
-      .then((data) => setClinics(data?.data || []))
-      .catch(() => setClinics([]));
+      .then((data) => {
+        console.log("Clinic data:", data);
+        setClinics(data?.data?.clinicList || []);
+      })
+      .catch((error) => console.error("Error fetching clinics:", error));
+
 
     fetch(`${API_BASE_URL}api/v1/doctors?specialtyId=${id}`)
       .then((res) => res.json())
@@ -118,14 +183,15 @@ const MedicalServiceDetail = () => {
             <div className="mt-4">
               <h5 className="font-semibold text-[#223a66] mb-2">Address</h5>
               {clinics.length > 0 ? (
-                clinics.map((clinic) => (
-                  <p key={clinic.id} className="text-gray-700 text-sm">
-                    - {clinic?.address}
-                  </p>
-                ))
-              ) : (
-                <p className="text-gray-500 text-sm">Đang cập nhật địa chỉ</p>
-              )}
+  clinics.map((clinic) => (
+    <p key={clinic.id} className="text-gray-700 text-sm">
+      - {clinic.clinicName || "Phòng khám không tên"} | {clinic.address || "Địa chỉ chưa cập nhật"}
+    </p>
+  ))
+) : (
+  <p className="text-gray-500 text-sm">Đang cập nhật địa chỉ</p>
+)}
+
             </div>
           </div>
         </div>
@@ -197,13 +263,16 @@ const MedicalServiceDetail = () => {
   {doctorSchedules.length > 0 ? (
     <div className="flex flex-wrap gap-2">
       {doctorSchedules.map((s) => (
-        <button
-          key={s.id}
-          className="px-3 py-1 border rounded text-sm"
-        >
-          {s.start_time.slice(0, 5)} - {s.end_time.slice(0, 5)}
-        </button>
-      ))}
+  <button
+  key={s.id}
+  className="px-3 py-1 border rounded text-sm hover:bg-blue-100"
+  onClick={() => handleBooking(s, doctor)}
+>
+  {s.start_time.slice(0, 5)} - {s.end_time.slice(0, 5)}
+</button>
+
+))}
+
     </div>
   ) : (
     <span className="text-sm text-gray-500">Không có lịch hôm nay</span>

@@ -75,14 +75,14 @@ const ListBookings = () => {
             bookings.map((booking) => (
               <tr key={booking.id}>
                 <td className="border p-2">{booking.id}</td>
-                <td className="border p-2">{booking.user_id}</td>
+                <td className="border p-2">{booking.user.fullname}</td>
                 <td className="border p-2">{booking.payment_method}</td>
                 <td className="border p-2">{booking.payment_code}</td>
                 <td className="border p-2">{booking.change_count}</td>
                 <td className="border p-2">{booking.amount} VNĐ</td>
                 <td className="border p-2">{booking.status}</td>
                 <td className="border p-2">
-                  {new Date(booking.bookingDate).toLocaleString()}
+                  {new Date(booking.created_at).toLocaleString()}
                 </td>
               </tr>
             ))
