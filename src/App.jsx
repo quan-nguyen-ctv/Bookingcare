@@ -41,6 +41,10 @@ import AddClinic from "./components/admin/clinics/AddClinic";
 import MedicalServiceDetail from "./components/MedicalServiceDetail";
 import BookingDetail from "./components/BookingDetail";
 import AddSchedule from "./components/admin/schedules/AddSchedule";
+import DoctorLogin from "./login/DoctorLogin";
+import DoctorSchedule from "./components/doctor/schedule/DoctorSchedule";
+import ListSchedule from "./components/admin/schedules/ListSchedule";
+import ScheduleDetail from "./components/admin/schedules/ScheduleDetail";
 
 
 function AppContent() {
@@ -87,6 +91,8 @@ function AppContent() {
           <Route path="bookings/list" element={<ListBookings />} />
           <Route path="bookings/add" element={<AddBooking />} />
           <Route path="schedules/add" element={<AddSchedule />} />
+          <Route path="schedules/list" element={<ListSchedule />} />
+          <Route path="schedules/:id" element={<ScheduleDetail />} />
 
           
           {/* Các route con khác */}
@@ -94,12 +100,15 @@ function AppContent() {
           <Route path="/doctor/*" element={<DoctorLayout />}>
             <Route path="dashboard" element={<DoctorDashboard />} />
             <Route path="patients" element={<PatientBookingList />} />
+            <Route path="schedule" element={<DoctorSchedule />} />
+
 
 
           
           {/* Các route con khác */}
         </Route>
         <Route path="/admin-login" element={<AdminLogin />} />
+        <Route path="/doctors-login" element={<DoctorLogin />} />
       </Routes>
       {!isAdminRoute && !isDoctorRoute && <Footer />}
     </>

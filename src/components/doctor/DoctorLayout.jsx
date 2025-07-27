@@ -1,17 +1,25 @@
-import React, { useState } from "react";
-import { NavLink, Outlet } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import DoctorHeader from "./DoctorHeader";
 import { FaUserMd, FaCalendarAlt, FaHistory } from "react-icons/fa";
 
 const doctorMenu = [
   { label: "Manage Doctor's Patient", icon: <FaUserMd />, to: "/doctor/patients" },
-
   { label: "Doctor's Dashboard", icon: <FaCalendarAlt />, to: "/doctor/dashboard" },
   { label: "View Doctor's Schedule", icon: <FaCalendarAlt />, to: "/doctor/schedule" },
   { label: "History", icon: <FaHistory />, to: "/doctor/history" },
 ];
 
 const DoctorLayout = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("doctor_token");
+    if (!token) {
+      navigate("/doctor-login");
+    }
+  }, [navigate]);
+
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar */}
