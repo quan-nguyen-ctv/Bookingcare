@@ -2,6 +2,36 @@ import React, { useState, useEffect, useRef } from "react";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 
+// Modal xác nhận
+const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message, loading }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+        <h3 className="text-lg font-bold mb-4 text-gray-800">{title}</h3>
+        <p className="text-gray-600 mb-6">{message}</p>
+        <div className="flex gap-3 justify-end">
+          <button
+            className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500 transition"
+            onClick={onClose}
+            disabled={loading}
+          >
+            Hủy
+          </button>
+          <button
+            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition disabled:opacity-50"
+            onClick={onConfirm}
+            disabled={loading}
+          >
+            {loading ? "Đang xử lý..." : "Xác nhận"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const LIMIT_OPTIONS = [5, 10, 20];
 
 const statusBadge = (status) => {
@@ -33,6 +63,9 @@ const ListBooking = () => {
   const [status, setStatus] = useState("");
   const [dateBooking, setDateBooking] = useState("");
   const [loading, setLoading] = useState(false);
+  const [cancelLoading, setCancelLoading] = useState({});
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [selectedBookingId, setSelectedBookingId] = useState(null);
   const timeoutRef = useRef(null);
 
   // Fetch all bookings once
@@ -106,6 +139,59 @@ const ListBooking = () => {
   const handleSearchChange = (e) => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(() => setKeyword(e.target.value), 500);
+  };
+
+  const handleCancelBooking = async () => {
+    try {
+      setCancelLoading(prev => ({ ...prev, [selectedBookingId]: true }));
+      
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `http://localhost:6868/api/v1/refundInvoices/booking/${selectedBookingId}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.message || "Lỗi khi yêu cầu hoàn tiền");
+      }
+
+      // Cập nhật status của booking trong state
+      setAllBookings(prev => 
+        prev.map(booking => 
+          booking.id === selectedBookingId 
+            ? { ...booking, status: "Wait Refund" }
+            : booking
+        )
+      );
+
+      alert("Yêu cầu hoàn tiền đã được gửi thành công!");
+      setShowConfirmModal(false);
+      setSelectedBookingId(null);
+      
+    } catch (error) {
+      console.error("Error canceling booking:", error);
+      alert(error.message || "Có lỗi xảy ra khi yêu cầu hoàn tiền");
+    } finally {
+      setCancelLoading(prev => ({ ...prev, [selectedBookingId]: false }));
+    }
+  };
+
+  const openCancelModal = (bookingId) => {
+    setSelectedBookingId(bookingId);
+    setShowConfirmModal(true);
+  };
+
+  const closeCancelModal = () => {
+    setShowConfirmModal(false);
+    setSelectedBookingId(null);
   };
 
   return (
@@ -211,9 +297,10 @@ const ListBooking = () => {
                     </button>
                     <button
                       className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition text-sm disabled:opacity-50"
-                      disabled={b.status !== "paid"}
+                      disabled={b.status !== "paid" || cancelLoading[b.id]}
+                      onClick={() => openCancelModal(b.id)}
                     >
-                      Cancel
+                      {cancelLoading[b.id] ? "Canceling..." : "Cancel"}
                     </button>
                   </td>
                 </tr>
@@ -238,6 +325,16 @@ const ListBooking = () => {
           </div>
         )}
       </div>
+
+      {/* Confirm Modal */}
+      <ConfirmModal
+        isOpen={showConfirmModal}
+        onClose={closeCancelModal}
+        onConfirm={handleCancelBooking}
+        title="Xác nhận hủy lịch hẹn"
+        message="Bạn có chắc chắn muốn hủy lịch hẹn này và yêu cầu hoàn tiền? Hành động này không thể hoàn tác."
+        loading={cancelLoading[selectedBookingId]}
+      />
     </div>
   );
 };

@@ -37,7 +37,8 @@ const adminMenu = [
     { label: "Thêm Đặt chỗ", to: "/admin/bookings/add" }
   ]},
   { label: "Hóa đơn hoàn tiền", icon: <FaMoneyCheckAlt />, to: "/admin/refund-invoice" },
-  { label: "Liên hệ", icon: <FaEnvelope />, to: "/admin/contacts" },
+  { label: "Liên hệ", icon: <FaEnvelope />, to: "/admin/contacts/list" },
+  { label: "Kho thuốc", icon: <FaClinicMedical />, to : "/admin/medications" }
 ];
 
 const AdminLayout = () => {
