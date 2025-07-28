@@ -45,6 +45,11 @@ import DoctorLogin from "./login/DoctorLogin";
 import DoctorSchedule from "./components/doctor/schedule/DoctorSchedule";
 import ListSchedule from "./components/admin/schedules/ListSchedule";
 import ScheduleDetail from "./components/admin/schedules/ScheduleDetail";
+import ClinicDetail from "./components/admin/clinics/ClinicDetail";
+import ListContact from "./components/admin/contact/ListContact";
+import ContactDetail from "./components/admin/contact/ContactDetail";
+import ListRefund from "./components/admin/refund/ListRefund";
+import ListMedication from "./components/admin/medications/ListMedication";
 
 
 function AppContent() {
@@ -72,7 +77,7 @@ function AppContent() {
         <Route path="/payment" element={<PaymentPage />} />
         <Route path="/list-booking" element={<ListBooking />} />
         <Route path="/account/bookings/:id" element={<BookingDetail />} />
-        <Route path="/booking-success" element={<BookingSuccess />} />
+        <Route path="/booking/success" element={<BookingSuccess />} />
         <Route path="/profile" element={<ProfileView />} />
         <Route path="/profile/update" element={<ProfileUpdate />} />
         <Route path="/admin/*" element={<AdminLayout />}>
@@ -93,6 +98,11 @@ function AppContent() {
           <Route path="schedules/add" element={<AddSchedule />} />
           <Route path="schedules/list" element={<ListSchedule />} />
           <Route path="schedules/:id" element={<ScheduleDetail />} />
+          <Route path="contacts/list" element={<ListContact />} />
+<Route path="contacts/:id" element={<ContactDetail />} />
+          <Route path="medications" element={<ListMedication />} />
+
+          
 
           
           {/* Các route con khác */}

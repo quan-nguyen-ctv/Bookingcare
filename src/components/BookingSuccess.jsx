@@ -12,6 +12,10 @@ const BookingSuccess = () => {
   const vnp_ResponseCode = searchParams.get("vnp_ResponseCode");
   const [statusPay, setStatusPay] = useState("");
   const idBookingSuccess = searchParams.get("bookingId");
+  
+
+  console.log("Booking ID:", idBookingSuccess);
+  
 
   useEffect(() => {
     if (
@@ -54,6 +58,7 @@ const BookingSuccess = () => {
     <div className="appointment-container mt-5">
       <div className="appointment-check-icon">
         {statusPay === "Pay_failed" ? (
+          // ...icon thất bại...
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -77,13 +82,13 @@ const BookingSuccess = () => {
               strokeLinejoin="round"
             />
           </svg>
-        ) : (
+        ) : idBookingSuccess ? (
           <img
             src="https://png.pngtree.com/png-vector/20221010/ourmid/pngtree-approval-symbol-check-mark-circle-drawn-hand-green-sign-ok-png-image_6251572.png"
             alt="success"
             className="tick-icon-sc"
           />
-        )}
+        ) : null}
       </div>
       {statusPay === "Pay_failed" ? (
         <>
@@ -103,7 +108,7 @@ const BookingSuccess = () => {
             </button>
           </div>
         </>
-      ) : (
+      ) : idBookingSuccess ? (
         <>
           <h1 className="appointment-title">Booking successful!</h1>
           <div className="box-appoint-note">
@@ -121,6 +126,8 @@ const BookingSuccess = () => {
             </button>
           </div>
         </>
+      ) : (
+        <h1 className="appointment-title">No booking information found!</h1>
       )}
     </div>
   );
