@@ -8,17 +8,14 @@ const DoctorDashboard = () => {
     // Lấy userId từ localStorage
     const doctorData = JSON.parse(localStorage.getItem("doctor_user"));
     const userId = doctorData?.data?.id;
-    console.log("userId:", userId); // Đặt log ở đây
-    console.log("doctorData:", doctorData);
     const token = localStorage.getItem("doctor_token");
+
     if (!userId || !token) return;
-    console.log(userId);
-    
 
     // Gọi API GET /api/v1/doctors/user/{userId}
-    setLoading(true);
     const fetchDoctor = async () => {
       try {
+        setLoading(true);
         const res = await fetch(
           `http://localhost:6868/api/v1/doctors/user/${userId}`,
           {
@@ -28,20 +25,30 @@ const DoctorDashboard = () => {
             },
           }
         );
+
         if (res.ok) {
           const data = await res.json();
-          setDoctor(data?.data || null);
-      localStorage.setItem("doctor_details", JSON.stringify(data));
+          const doctorInfo = data?.data || null;
 
+          setDoctor(doctorInfo);
+          localStorage.setItem("doctor_details", JSON.stringify(doctorInfo));
+
+          // ✅ Lưu doctorId vào localStorage
+          if (doctorInfo?.id) {
+            localStorage.setItem("doctor_id", doctorInfo.id);
+            console.log("Doctor ID saved:", doctorInfo.id);
+          }
         } else {
           setDoctor(null);
         }
-      } catch {
+      } catch (error) {
+        console.error("Fetch doctor failed:", error);
         setDoctor(null);
       } finally {
         setLoading(false);
       }
     };
+
     fetchDoctor();
   }, []);
 
@@ -54,7 +61,7 @@ const DoctorDashboard = () => {
       <div className="flex flex-col items-center w-full md:w-1/3">
         <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center mb-4">
           <img
-             src={`http://localhost:6868/api/v1/images/view/${doctor.avatar || "default.png"}`}
+            src={`http://localhost:6868/api/v1/images/view/${doctor.avatar || "default.png"}`}
             alt={doctor.user?.fullname}
             className="w-20 h-20 object-cover rounded-full"
           />
@@ -83,8 +90,13 @@ const DoctorDashboard = () => {
           <span className="font-semibold">Address:</span> {doctor.user?.address}
         </div>
       </div>
+
       {/* Detail Info */}
       <div className="flex-1 bg-white rounded-xl shadow p-6">
+        <div className="mb-2">
+          <span className="font-semibold text-[#223a66]">Doctor ID:</span>{" "}
+          {doctor.id}
+        </div>
         <div className="mb-2">
           <span className="font-semibold text-[#223a66]">Doctor:</span>{" "}
           {doctor.user?.fullname}

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
 const DoctorLogin = () => {
   const [phone, setPhone] = useState("");
@@ -10,6 +11,7 @@ const DoctorLogin = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
+
     try {
       const response = await fetch("http://localhost:6868/api/v1/users/login", {
         method: "POST",
@@ -17,34 +19,49 @@ const DoctorLogin = () => {
         body: JSON.stringify({
           phone_number: phone,
           password: password,
-          role_id: 2 // 2 là role doctor
-        })
+          role_id: 2,
+        }),
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        setError(errorData.message || "Sai thông tin đăng nhập!");
-        return;
-      }
 
       const data = await response.json();
 
-      if (!data.token) {
-        setError("Token không hợp lệ!");
+      if (!response.ok || !data.token) {
+        setError(data.message || "Sai thông tin đăng nhập!");
         return;
       }
 
-      
-      localStorage.setItem("doctor_token", data.token);
+      const token = data.token;
+      localStorage.setItem("doctor_token", token);
 
-      navigate("/doctor");
+      // Decode token để lấy userId
+      const decoded = jwtDecode(token);
+      const userId = decoded.userId;
+
+      // Gọi API để lấy doctorId bằng userId
+      const doctorRes = await fetch(`http://localhost:6868/api/v1/doctors/user/${userId}`, {
+         method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const doctorData = await doctorRes.json();
+      console.log("✅ Dữ liệu từ API /doctors/user/{userId}:", doctorData);
+      
+      if (!doctorRes.ok || !doctorData.data?.id) {
+        setError("Không tìm thấy thông tin bác sĩ.");
+        return;
+      }
+
+      const doctorId = doctorData.data.id;
+      localStorage.setItem("doctorId", doctorId);
+
+      navigate("/doctor/patients");
     } catch (err) {
       console.error("Lỗi:", err);
       setError("Lỗi hệ thống. Vui lòng thử lại sau!");
     }
-    
   };
-  
 
   return (
     <main className="bg-white min-h-screen flex items-center justify-center">
@@ -55,14 +72,14 @@ const DoctorLogin = () => {
           placeholder="Phone number"
           className="w-full p-2 mb-3 rounded border border-gray-200"
           value={phone}
-          onChange={e => setPhone(e.target.value)}
+          onChange={(e) => setPhone(e.target.value)}
         />
         <input
           type="password"
           placeholder="Password"
           className="w-full p-2 mb-3 rounded border border-gray-200"
           value={password}
-          onChange={e => setPassword(e.target.value)}
+          onChange={(e) => setPassword(e.target.value)}
         />
         {error && <div className="text-red-500 text-sm mb-3">{error}</div>}
         <button

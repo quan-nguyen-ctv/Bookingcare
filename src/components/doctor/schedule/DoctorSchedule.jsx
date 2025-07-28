@@ -13,7 +13,10 @@ const DoctorSchedule = () => {
 
   // Lấy doctorId từ localStorage (giống DoctorDashboard)
   const doctorData = JSON.parse(localStorage.getItem("doctor_details"));
-  const doctorId = doctorData?.data?.id || doctorData?.user?.id;
+  const doctorId = doctorData?.id;
+
+console.log("doctorId:", doctorId);
+
   console.log("doctorId:", doctorData);
   
 
