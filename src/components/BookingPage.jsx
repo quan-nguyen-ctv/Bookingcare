@@ -250,27 +250,31 @@ const scheduleList = Array.isArray(data?.data) ? data.data : [];
   >
     <option value="">Chọn lịch</option>
     {schedules
-      .filter((schedule) => schedule.number_booked < schedule.booking_limit)
-      .map((schedule) => {
-        const dateString = Array.isArray(schedule.date_schedule)
-          ? schedule.date_schedule.join("-")
-          : schedule.date_schedule || "Không rõ ngày";
+  .filter(
+    (schedule) =>
+      schedule.active && schedule.number_booked < schedule.booking_limit
+  )
+  .map((schedule) => {
+    const dateString = Array.isArray(schedule.date_schedule)
+      ? schedule.date_schedule.join("-")
+      : schedule.date_schedule || "Không rõ ngày";
 
-        const startTimeString = Array.isArray(schedule.start_time)
-          ? schedule.start_time.join(":")
-          : schedule.start_time || "Không rõ";
+    const startTimeString = Array.isArray(schedule.start_time)
+      ? schedule.start_time.join(":")
+      : schedule.start_time || "Không rõ";
 
-        const endTimeString = Array.isArray(schedule.end_time)
-          ? schedule.end_time.join(":")
-          : schedule.end_time || "Không rõ";
+    const endTimeString = Array.isArray(schedule.end_time)
+      ? schedule.end_time.join(":")
+      : schedule.end_time || "Không rõ";
 
-        return (
-          <option key={schedule.id} value={schedule.id}>
-            {dateString} từ {startTimeString} đến {endTimeString} (
-{schedule.booking_limit - schedule.number_booked} chỗ trống)
-          </option>
-        );
-      })}
+    return (
+      <option key={schedule.id} value={schedule.id}>
+        {dateString} từ {startTimeString} đến {endTimeString} (
+        {schedule.booking_limit - schedule.number_booked} chỗ trống)
+      </option>
+    );
+  })}
+
   </select>
 </div>
 

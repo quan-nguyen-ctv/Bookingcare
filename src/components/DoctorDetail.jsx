@@ -171,18 +171,23 @@ const DoctorDetail = () => {
               <span className="font-semibold">Select Time:</span>
               <div className="flex flex-wrap gap-2 mt-2">
                 {schedules.length > 0 ? (
-                  schedules.map((schedule) => (
-                    <button
-                      key={schedule.id}
-                      className="px-3 py-1 border rounded text-sm hover:bg-blue-100"
-                      onClick={() => handleScheduleSelect(schedule)}
-                    >
-                      {schedule.start_time.slice(0, 5)} - {schedule.end_time.slice(0, 5)}
-                    </button>
-                  ))
-                ) : (
-                  <span className="text-sm text-gray-500">Không có lịch hôm nay</span>
-                )}
+  schedules
+    .filter((schedule) => schedule.active && schedule.number_booked < schedule.booking_limit)
+
+
+    .map((schedule) => (
+      <button
+        key={schedule.id}
+        className="px-3 py-1 border rounded text-sm hover:bg-blue-100"
+        onClick={() => handleScheduleSelect(schedule)}
+      >
+        {schedule.start_time.slice(0, 5)} - {schedule.end_time.slice(0, 5)}
+      </button>
+    ))
+) : (
+  <span className="text-sm text-gray-500">Không có lịch hôm nay</span>
+)}
+
               </div>
             </div>
           </div>

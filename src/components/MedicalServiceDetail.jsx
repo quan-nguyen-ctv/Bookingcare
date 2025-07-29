@@ -261,22 +261,23 @@ const handleBooking = async (schedule, doctor) => {
       <div className="md:w-1/2 mt-4 md:mt-0">
   <h5 className="font-semibold mb-2 text-[#223a66]">Today's Schedule:</h5>
   {doctorSchedules.length > 0 ? (
-    <div className="flex flex-wrap gap-2">
-      {doctorSchedules.map((s) => (
-  <button
-  key={s.id}
-  className="px-3 py-1 border rounded text-sm hover:bg-blue-100"
-  onClick={() => handleBooking(s, doctor)}
->
-  {s.start_time.slice(0, 5)} - {s.end_time.slice(0, 5)}
-</button>
+  <div className="flex flex-wrap gap-2">
+    {doctorSchedules
+      .filter((s) => s.active) // Lọc chỉ những lịch active
+      .map((s) => (
+        <button
+          key={s.id}
+          className="px-3 py-1 border rounded text-sm hover:bg-blue-100"
+          onClick={() => handleBooking(s, doctor)}
+        >
+          {s.start_time.slice(0, 5)} - {s.end_time.slice(0, 5)}
+        </button>
+      ))}
+  </div>
+) : (
+  <span className="text-sm text-gray-500">Không có lịch hôm nay</span>
+)}
 
-))}
-
-    </div>
-  ) : (
-    <span className="text-sm text-gray-500">Không có lịch hôm nay</span>
-  )}
 </div>
 
 

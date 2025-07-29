@@ -15,21 +15,35 @@ const AddSchedule = () => {
   });
 
   useEffect(() => {
-    fetch("http://localhost:6868/api/v1/doctors")
+    const token = localStorage.getItem("admin_token");
+
+    // Lấy danh sách bác sĩ
+    fetch("http://localhost:6868/api/v1/doctors", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
       .then((res) => res.json())
       .then((data) => {
-        if (Array.isArray(data.data)) setDoctors(data.data);
-        else if (Array.isArray(data.doctors)) setDoctors(data.doctors);
-        else setDoctors([]);
+        const doctorsArray = data?.data?.doctors || [];
+        setDoctors(doctorsArray);
       });
-    fetch("http://localhost:6868/api/v1/clinics")
+
+    // Lấy danh sách phòng khám
+    fetch("http://localhost:6868/api/v1/clinics", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
       .then((res) => res.json())
       .then((data) => {
-        if (Array.isArray(data.data)) setClinics(data.data);
-        else if (Array.isArray(data.clinics)) setClinics(data.clinics);
-        else setClinics([]);
+        const clinicsArray = data?.data?.clinicList || [];
+        setClinics(clinicsArray);
       });
   }, []);
+
+  console.log("Doctors:", doctors);
+  console.log("Clinics:", clinics);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -93,12 +107,19 @@ const AddSchedule = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h2 className="text-3xl font-bold text-[#223a66] mb-2">Schedule <span className="text-base font-normal text-gray-400">- Add Schedule</span></h2>
+      <h2 className="text-3xl font-bold text-[#223a66] mb-2">
+        Schedule{" "}
+        <span className="text-base font-normal text-gray-400">
+          - Add Schedule
+        </span>
+      </h2>
       <form
         className="bg-white rounded-xl shadow p-8 max-w-4xl mx-auto mt-4"
         onSubmit={handleSubmit}
       >
-        <div className="text-lg font-bold text-[#00bcd4] mb-6">Schedule Info</div>
+        <div className="text-lg font-bold text-[#00bcd4] mb-6">
+          Schedule Info
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Doctor */}
           <div>
@@ -111,12 +132,12 @@ const AddSchedule = () => {
               required
             >
               <option value="">Select Doctor</option>
-              {Array.isArray(doctors) && doctors.map((doctors) => (
-                <option key={doctors.id} value={doctors.id}>
-                  {doctors.user?.fullname || doctors.fullname || doctors.name || "No name"}
+              {doctors.map((doc) => (
+                <option key={doc.id} value={doc.id}>
+                  {doc.user?.fullname || "No name"}
                 </option>
               ))}
-            </select>   
+            </select>
           </div>
           {/* Clinic */}
           <div>
@@ -131,7 +152,7 @@ const AddSchedule = () => {
               <option value="">Select Clinic</option>
               {clinics.map((cl) => (
                 <option key={cl.id} value={cl.id}>
-                  {cl.name}
+                  {cl.clinicName}
                 </option>
               ))}
             </select>
@@ -204,7 +225,12 @@ const AddSchedule = () => {
             <select
               name="active"
               value={form.active ? "true" : "false"}
-              onChange={(e) => setForm((prev) => ({ ...prev, active: e.target.value === "true" }))}
+              onChange={(e) =>
+                setForm((prev) => ({
+                  ...prev,
+                  active: e.target.value === "true",
+                }))
+              }
               className="w-full border rounded px-3 py-2 bg-gray-100"
               disabled
             >
@@ -216,16 +242,18 @@ const AddSchedule = () => {
           <button
             type="button"
             className="bg-yellow-400 text-black px-6 py-2 rounded font-bold hover:bg-yellow-500"
-            onClick={() => setForm({
-              doctorId: "",
-              clinicId: "",
-              dateSchedule: "",
-              startTime: "",
-              endTime: "",
-              price: "",
-              bookingLimit: "",
-              active: true,
-            })}
+            onClick={() =>
+              setForm({
+                doctorId: "",
+                clinicId: "",
+                dateSchedule: "",
+                startTime: "",
+                endTime: "",
+                price: "",
+                bookingLimit: "",
+                active: true,
+              })
+            }
           >
             CANCEL
           </button>
