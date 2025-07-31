@@ -4,70 +4,42 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from "react-router-dom";
 
+// Toast Component
 const Toast = ({ message, type, onClose }) => (
   <div className={`fixed top-6 right-6 z-50 px-6 py-3 rounded shadow-lg text-white font-semibold transition-all
       ${type === "error" ? "bg-red-500" : "bg-green-500"}`}>
-      {message}
-      <button onClick={onClose} className="ml-4 text-white font-bold" style={{ background: "transparent", border: "none", cursor: "pointer" }}>×</button>
+    {message}
+    <button onClick={onClose} className="ml-4 text-white font-bold" style={{ background: "transparent", border: "none", cursor: "pointer" }}>×</button>
   </div>
 );
 
-// Modal component
+// Modal
 const RefundModal = ({ isOpen, onClose, refundData, onConfirm, loading }) => {
   if (!isOpen || !refundData) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
-        {/* Header */}
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-bold text-gray-800">Refund Invoice</h3>
-          <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 text-xl font-bold"
-            disabled={loading}
-          >
-            ×
-          </button>
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700 text-xl font-bold" disabled={loading}>×</button>
         </div>
 
-        {/* Content */}
         <div className="space-y-3 mb-6">
-          <div className="flex justify-between">
-            <span className="text-gray-600">Invoice ID:</span>
-            <span className="font-semibold text-blue-600">{refundData.id}</span>
-          </div>
-          
-          <div className="flex justify-between">
-            <span className="text-gray-600">Booking ID:</span>
-            <span className="font-semibold text-blue-600">{refundData.bookingId || refundData.booking_id}</span>
-          </div>
-          
-          <div className="flex justify-between">
-            <span className="text-gray-600">Refund amount:</span>
-            <span className="font-semibold text-blue-600">
-              {new Intl.NumberFormat('vi-VN', {
-                style: 'currency',
-                currency: 'VND'
-              }).format(refundData.refundAmount || refundData.amount || 0)}
-            </span>
-          </div>
-          
-          <div className="flex justify-between">
-            <span className="text-gray-600">Bank Name:</span>
-            <span className="font-semibold text-blue-600">{refundData.bankName || refundData.bank_name}</span>
-          </div>
-          
-          <div className="flex justify-between">
-            <span className="text-gray-600">Holder Name:</span>
-            <span className="font-semibold text-blue-600">{refundData.holderName || refundData.holder_name}</span>
-          </div>
-          
-          <div className="flex justify-between">
-            <span className="text-gray-600">Account Number:</span>
-            <span className="font-semibold text-blue-600">{refundData.accountNumber || refundData.account_number || "N/A"}</span>
-          </div>
-          
+          {[
+            ["Invoice ID", refundData.id],
+            ["Booking ID", refundData.bookingId || refundData.booking_id],
+            ["Refund amount", new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(refundData.amount || 0)],
+            ["Bank Name", refundData.bankName || refundData.bank_name],
+            ["Holder Name", refundData.holderName || refundData.holder_name],
+            ["Account Number", refundData.accountNumber || refundData.account_number || "N/A"]
+          ].map(([label, value], index) => (
+            <div className="flex justify-between" key={index}>
+              <span className="text-gray-600">{label}:</span>
+              <span className="font-semibold text-blue-600">{value}</span>
+            </div>
+          ))}
+
           <div className="flex justify-between">
             <span className="text-gray-600">Status:</span>
             <span className="bg-blue-500 text-white px-2 py-1 rounded text-xs">
@@ -76,21 +48,14 @@ const RefundModal = ({ isOpen, onClose, refundData, onConfirm, loading }) => {
           </div>
         </div>
 
-        {/* Actions */}
         <div className="flex gap-3">
-          <button
-            className="flex-1 bg-gray-400 text-white py-2 rounded hover:bg-gray-500 transition disabled:opacity-50"
-            onClick={onClose}
-            disabled={loading}
-          >
+          <button className="flex-1 bg-gray-400 text-white py-2 rounded hover:bg-gray-500 transition disabled:opacity-50" onClick={onClose} disabled={loading}>
             Cancel
           </button>
-          {refundData.status?.toLowerCase() !== 'completed' && refundData.status?.toLowerCase() !== 'refunded' && (
-            <button
-              className="flex-1 bg-green-500 text-white py-2 rounded hover:bg-green-600 transition disabled:opacity-50"
-              onClick={() => onConfirm(refundData.id)}
-              disabled={loading}
-            >
+          {refundData.status?.toUpperCase() !== "REFUNDED" && (
+
+            <button className="flex-1 bg-green-500 text-white py-2 rounded hover:bg-green-600 transition disabled:opacity-50"
+              onClick={() => onConfirm(refundData.id)} disabled={loading}>
               {loading ? "Processing..." : "Refunded"}
             </button>
           )}
@@ -102,6 +67,7 @@ const RefundModal = ({ isOpen, onClose, refundData, onConfirm, loading }) => {
 
 const ListRefund = () => {
   const [refunds, setRefunds] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState({ show: false, message: "", type: "success" });
   const [refresh, setRefresh] = useState(false);
   const [filters, setFilters] = useState({
@@ -116,40 +82,41 @@ const ListRefund = () => {
   const [showRefundModal, setShowRefundModal] = useState(false);
   const [selectedRefund, setSelectedRefund] = useState(null);
   const [refundLoading, setRefundLoading] = useState(false);
-  const navigate = useNavigate();
 
   const token = localStorage.getItem("admin_token");
 
   const showToast = (message, type = "success") => {
-      setToast({ show: true, message, type });
-      setTimeout(() => setToast({ show: false, message: "", type }), 2000);
+    setToast({ show: true, message, type });
+    setTimeout(() => setToast({ show: false, message: "", type }), 2500);
   };
 
   const fetchRefunds = async () => {
+    setLoading(true);
     try {
-      let url = `http://localhost:6868/api/v1/refundInvoices`;
-      const params = new URLSearchParams();
-      
-      if (filters.limit) params.append('limit', filters.limit);
-      if (filters.dateRefund) params.append('dateRefund', filters.dateRefund);
-      if (filters.status) params.append('status', filters.status);
-      if (filters.keyword) params.append('keyword', filters.keyword);
-      if (filters.page) params.append('page', filters.page);
-      if (filters.sort) params.append('sort', filters.sort);
-      
-      if (params.toString()) url += `?${params.toString()}`;
-      
-      const res = await axios.get(url, {
-          headers: { Authorization: `Bearer ${token}` }
-      });
-      setRefunds(res.data.data?.content || []);
+      const res = await axios.get("http://localhost:6868/api/v1/refundInvoices", {
+  headers: { Authorization: `Bearer ${token}` },
+  params: {
+    limit: filters.limit,
+    page: filters.page,
+    keyword: filters.keyword,
+    dateRefund: filters.dateRefund,
+    status: filters.status,
+    sort: filters.sort
+  }
+});
+
+      const data = res.data?.data?.refundInvoiceResponses || [];
+      setRefunds(data);
     } catch (err) {
+      console.error("Lỗi khi gọi API refund:", err);
       showToast("Lỗi khi tải danh sách", "error");
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-      fetchRefunds();
+    fetchRefunds();
   }, [refresh, filters]);
 
   const handleSearch = () => {
@@ -157,37 +124,12 @@ const ListRefund = () => {
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      handleSearch();
-    }
+    if (e.key === 'Enter') handleSearch();
   };
 
   const clearSearch = () => {
     setSearchTerm("");
     setFilters(prev => ({ ...prev, keyword: "" }));
-  };
-
-  const getStatusBadge = (status) => {
-    switch(status?.toLowerCase()) {
-      case 'completed':
-        return <span className="bg-green-500 text-white px-2 py-1 rounded text-xs">COMPLETED</span>;
-      case 'wait refund':
-      case 'waitrefund':
-        return <span className="bg-blue-500 text-white px-2 py-1 rounded text-xs">WAIT REFUND</span>;
-      case 'processing':
-        return <span className="bg-yellow-500 text-white px-2 py-1 rounded text-xs">PROCESSING</span>;
-      case 'cancelled':
-        return <span className="bg-red-500 text-white px-2 py-1 rounded text-xs">CANCELLED</span>;
-      default:
-        return <span className="bg-gray-500 text-white px-2 py-1 rounded text-xs">{status || 'UNKNOWN'}</span>;
-    }
-  };
-
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND'
-    }).format(amount || 0);
   };
 
   const handleViewRefund = (refund) => {
@@ -198,52 +140,52 @@ const ListRefund = () => {
   const handleConfirmRefund = async (refundId) => {
     try {
       setRefundLoading(true);
-      
-      const response = await axios.put(
-        `http://localhost:6868/api/v1/refundInvoices/${refundId}`,
-        { status: "COMPLETED" },
-        {
-          headers: { 
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json"
-          }
-        }
-      );
+      const res = await axios.put(
+  `http://localhost:6868/api/v1/refundInvoices/refunded/${refundId}`,
+  {},
+  {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json"
+    }
+  }
+);
 
-      if (response.status === 200) {
+
+      if (res.status === 200) {
         showToast("Hoàn tiền thành công!");
-        
-        // Cập nhật status trong state
-        setRefunds(prev => 
-          prev.map(refund => 
-            refund.id === refundId 
-              ? { ...refund, status: "COMPLETED" }
-              : refund
-          )
-        );
-        
+        setRefunds(prev => prev.map(r => r.id === refundId ? { ...r, status: "REFUNDED" } : r));
         setShowRefundModal(false);
         setSelectedRefund(null);
       }
-    } catch (error) {
-      console.error("Error confirming refund:", error);
+    } catch (err) {
+      console.error("Error confirming refund:", err);
       showToast("Lỗi khi xác nhận hoàn tiền", "error");
     } finally {
       setRefundLoading(false);
     }
   };
 
-  const closeRefundModal = () => {
-    setShowRefundModal(false);
-    setSelectedRefund(null);
+  const getStatusBadge = (status) => {
+  switch (status?.toUpperCase()) {
+    case 'WAIT REFUND':
+      return <span className="bg-blue-500 text-white px-2 py-1 rounded text-xs">WAIT REFUND</span>;
+    case 'REFUNDED':
+      return <span className="bg-green-500 text-white px-2 py-1 rounded text-xs">REFUNDED</span>;
+    default:
+      return <span className="bg-gray-500 text-white px-2 py-1 rounded text-xs">UNKNOWN</span>;
+  }
+};
+
+
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount || 0);
   };
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {toast.show && (
-          <Toast message={toast.message} type={toast.type} onClose={() => setToast({ show: false, message: "", type: toast.type })} />
-      )}
-      
+      {toast.show && <Toast message={toast.message} type={toast.type} onClose={() => setToast({ ...toast, show: false })} />}
+
       <h2 className="text-3xl font-bold text-[#223a66] mb-2">
         Refund Invoice <span className="text-base font-normal text-gray-400">- Invoice List</span>
       </h2>
@@ -252,70 +194,30 @@ const ListRefund = () => {
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
         <div>
           <label className="block text-sm font-medium mb-1">Limit</label>
-          <select
-            value={filters.limit}
-            onChange={(e) => setFilters(prev => ({ ...prev, limit: e.target.value }))}
-            className="border rounded px-3 py-2 w-full"
-          >
-            <option value={5}>5</option>
-            <option value={10}>10</option>
-            <option value={20}>20</option>
-            <option value={50}>50</option>
+          <select value={filters.limit} onChange={(e) => setFilters(prev => ({ ...prev, limit: e.target.value }))} className="border rounded px-3 py-2 w-full">
+            {[5, 10, 20, 50].map(val => <option key={val} value={val}>{val}</option>)}
           </select>
         </div>
-
         <div>
           <label className="block text-sm font-medium mb-1">Date Refund</label>
-          <input
-            type="date"
-            value={filters.dateRefund}
-            onChange={(e) => setFilters(prev => ({ ...prev, dateRefund: e.target.value }))}
-            className="border rounded px-3 py-2 w-full"
-          />
+          <input type="date" value={filters.dateRefund} onChange={(e) => setFilters(prev => ({ ...prev, dateRefund: e.target.value }))} className="border rounded px-3 py-2 w-full" />
         </div>
-        
         <div>
           <label className="block text-sm font-medium mb-1">Status</label>
-          <select
-            value={filters.status}
-            onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
-            className="border rounded px-3 py-2 w-full"
-          >
+          <select value={filters.status} onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))} className="border rounded px-3 py-2 w-full">
             <option value="">Select Status</option>
-            <option value="WAIT REFUND">Wait Refund</option>
-            <option value="PROCESSING">Processing</option>
-            <option value="COMPLETED">Completed</option>
-            <option value="CANCELLED">Cancelled</option>
+<option value="WAIT REFUND">Wait Refund</option>
+<option value="REFUNDED">Refunded</option>
+
           </select>
         </div>
-
         <div>
           <label className="block text-sm font-medium mb-1">Search</label>
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onKeyPress={handleKeyPress}
-            placeholder="Booking ID"
-            className="border rounded px-3 py-2 w-full"
-          />
+          <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} onKeyPress={handleKeyPress} placeholder="Booking ID" className="border rounded px-3 py-2 w-full" />
         </div>
-
         <div className="flex gap-2 items-end">
-          <button
-            onClick={handleSearch}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-          >
-            Search
-          </button>
-          {filters.keyword && (
-            <button
-              onClick={clearSearch}
-              className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
-            >
-              Clear
-            </button>
-          )}
+          <button onClick={handleSearch} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Search</button>
+          {filters.keyword && <button onClick={clearSearch} className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Clear</button>}
         </div>
       </div>
 
@@ -324,37 +226,27 @@ const ListRefund = () => {
         <table className="min-w-full border text-center">
           <thead>
             <tr className="bg-gray-100">
-              <th className="border px-3 py-2">ID</th>
-              <th className="border px-3 py-2">ID Booking</th>
-              <th className="border px-3 py-2">Refund Amount</th>
-              <th className="border px-3 py-2">Bank Name</th>
-              <th className="border px-3 py-2">Holder Name</th>
-              <th className="border px-3 py-2">Status</th>
-              <th className="border px-3 py-2">Action</th>
+              {["ID", "ID Booking", "Refund Amount", "Bank Name", "Holder Name", "Status", "Action"].map((col, i) => (
+                <th key={i} className="border px-3 py-2">{col}</th>
+              ))}
             </tr>
           </thead>
           <tbody>
-            {refunds.length === 0 ? (
-              <tr>
-                <td colSpan={7} className="py-4 text-gray-400">Không có hóa đơn hoàn tiền nào.</td>
-              </tr>
+            {loading ? (
+              <tr><td colSpan={7} className="py-4 text-gray-400">Đang tải dữ liệu...</td></tr>
+            ) : refunds.length === 0 ? (
+              <tr><td colSpan={7} className="py-4 text-gray-400">Không có hóa đơn hoàn tiền nào.</td></tr>
             ) : (
               refunds.map((item) => (
                 <tr key={item.id} className="border-b">
                   <td className="border px-3 py-2">#{item.id}</td>
                   <td className="border px-3 py-2">{item.bookingId || item.booking_id}</td>
-                  <td className="border px-3 py-2">{formatCurrency(item.refundAmount || item.amount)}</td>
+                  <td className="border px-3 py-2">{formatCurrency(item.amount)}</td>
                   <td className="border px-3 py-2">{item.bankName || item.bank_name}</td>
                   <td className="border px-3 py-2">{item.holderName || item.holder_name}</td>
+                  <td className="border px-3 py-2">{getStatusBadge(item.status)}</td>
                   <td className="border px-3 py-2">
-                    {getStatusBadge(item.status)}
-                  </td>
-                  <td className="border px-3 py-2">
-                    <button
-                      title="View"
-                      className="text-blue-500 hover:text-blue-700"
-                      onClick={() => handleViewRefund(item)}
-                    >
+                    <button className="text-blue-500 hover:text-blue-700" onClick={() => handleViewRefund(item)}>
                       <FontAwesomeIcon icon={faEye} />
                     </button>
                   </td>
@@ -368,29 +260,20 @@ const ListRefund = () => {
       {/* Pagination */}
       <div className="flex justify-center mt-6">
         <div className="flex gap-2">
-          <button
-            className="px-3 py-1 border rounded"
-            onClick={() => setFilters(prev => ({ ...prev, page: Math.max(0, prev.page - 1) }))}
-            disabled={filters.page === 0}
-          >
+          <button className="px-3 py-1 border rounded" onClick={() => setFilters(prev => ({ ...prev, page: Math.max(0, prev.page - 1) }))} disabled={filters.page === 0}>
             &lt;
           </button>
-          <span className="px-3 py-1 border rounded bg-gray-100">
-            {filters.page + 1}
-          </span>
-          <button
-            className="px-3 py-1 border rounded"
-            onClick={() => setFilters(prev => ({ ...prev, page: prev.page + 1 }))}
-          >
+          <span className="px-3 py-1 border rounded bg-gray-100">{filters.page + 1}</span>
+          <button className="px-3 py-1 border rounded" onClick={() => setFilters(prev => ({ ...prev, page: prev.page + 1 }))}>
             &gt;
           </button>
         </div>
       </div>
 
-      {/* Refund Modal */}
+      {/* Modal */}
       <RefundModal
         isOpen={showRefundModal}
-        onClose={closeRefundModal}
+        onClose={() => setShowRefundModal(false)}
         refundData={selectedRefund}
         onConfirm={handleConfirmRefund}
         loading={refundLoading}

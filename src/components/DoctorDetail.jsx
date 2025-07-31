@@ -78,7 +78,7 @@ const DoctorDetail = () => {
         body: JSON.stringify({
           schedule_id: schedule.id,
           user_id: userId,
-          payment_method: "VNPay", // Bạn có thể thay bằng "MOMO" nếu cần
+          payment_method: "", // Bạn có thể thay bằng "MOMO" nếu cần
           payment_code: randomPaymentCode,
           amount: schedule.price || 1000000, // fallback nếu không có giá
           reason: "",
@@ -172,8 +172,23 @@ const DoctorDetail = () => {
               <div className="flex flex-wrap gap-2 mt-2">
                 {schedules.length > 0 ? (
   schedules
-    .filter((schedule) => schedule.active && schedule.number_booked < schedule.booking_limit)
+     .filter((schedule) => {
+    const now = new Date();
+    const scheduleDateStr = Array.isArray(schedule.date_schedule)
+      ? schedule.date_schedule.join("-")
+      : schedule.date_schedule;
+    const startTimeStr = Array.isArray(schedule.start_time)
+      ? schedule.start_time.join(":")
+      : schedule.start_time;
 
+    const scheduleDateTime = new Date(`${scheduleDateStr}T${startTimeStr}`);
+
+    return (
+      schedule.active &&
+      schedule.number_booked < schedule.booking_limit &&
+      scheduleDateTime > now
+    );
+  })
 
     .map((schedule) => (
       <button

@@ -10,10 +10,10 @@ const BookingPage = () => {
   const [selectedSpecialty, setSelectedSpecialty] = useState("");
   const [selectedDoctor, setSelectedDoctor] = useState("");
   const [selectedSchedule, setSelectedSchedule] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("VNPay");
+  const [paymentMethod, setPaymentMethod] = useState("VNPAY");
   const [paymentCode, setPaymentCode] = useState("");
   const [amount, setAmount] = useState(0);
-  const [reason, setReason] = useState("Khám sức khỏe định kỳ");
+  const [reason, setReason] = useState("");
   const [status, setStatus] = useState("PENDING");
   const [userId, setUserId] = useState(null);
   const [submitted, setSubmitted] = useState(false);
@@ -250,11 +250,23 @@ const scheduleList = Array.isArray(data?.data) ? data.data : [];
   >
     <option value="">Chọn lịch</option>
     {schedules
-  .filter(
-    (schedule) =>
-      schedule.active && schedule.number_booked < schedule.booking_limit
-  )
+  .filter((schedule) => {
+    const { active, number_booked, booking_limit, date_schedule, start_time } = schedule;
+
+    // Không hiển thị nếu vượt giới hạn hoặc không active
+    if (!active || number_booked >= booking_limit) return false;
+
+    // Tạo đối tượng Date từ date_schedule và start_time
+    const dateStr = Array.isArray(date_schedule) ? date_schedule.join("-") : date_schedule;
+    const timeStr = Array.isArray(start_time) ? start_time.join(":") : start_time;
+
+    const fullStartTime = new Date(`${dateStr}T${timeStr}`);
+
+    // So sánh với thời gian hiện tại
+    return fullStartTime > new Date(); // chỉ lấy giờ trong tương lai
+  })
   .map((schedule) => {
+
     const dateString = Array.isArray(schedule.date_schedule)
       ? schedule.date_schedule.join("-")
       : schedule.date_schedule || "Không rõ ngày";

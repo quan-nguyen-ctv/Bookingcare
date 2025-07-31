@@ -45,7 +45,7 @@ const handleBooking = async (schedule, doctor) => {
       body: JSON.stringify({
         schedule_id: schedule.id,
         user_id: userId,
-        payment_method: "VNPay",
+        payment_method: "",
         payment_code: paymentCode,
         amount: schedule.price || 100000,
         reason: "",
@@ -206,12 +206,20 @@ const handleBooking = async (schedule, doctor) => {
            {doctors.length > 0 ? (
   doctors.map((doctor) => {
     const doctorSchedules = schedules
-  .filter(
-    (s) =>
+  .filter((s) => {
+    const today = new Date().toISOString().split("T")[0];
+    const now = new Date();
+    const endTime = new Date(`${today}T${s.end_time}`);
+
+    return (
       s.doctor_id === doctor.id &&
-      s.date_schedule === new Date().toISOString().split("T")[0]
-  )
+      s.date_schedule === today &&
+      s.active &&
+      endTime > now // chỉ lấy lịch chưa kết thúc
+    );
+  })
   .sort((a, b) => a.start_time.localeCompare(b.start_time));
+
 
 
     return (

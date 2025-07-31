@@ -218,54 +218,61 @@ const ListMedication = () => {
     setShowModal(true);
   };
 
-  const handleSaveMedication = async (formData) => {
-    try {
-      setModalLoading(true);
-      
-      const payload = {
-        name: formData.name,
-        price: parseFloat(formData.price),
-        description: formData.description
-      };
+const handleSaveMedication = async (formData) => {
+  try {
+    setModalLoading(true);
 
-      let response;
-      if (isEdit) {
-        response = await axios.put(
-          `http://localhost:6868/api/v1/medications/${selectedMedication.id}`,
-          payload,
-          {
-            headers: { 
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json"
-            }
-          }
-        );
-      } else {
-        response = await axios.post(
-          `http://localhost:6868/api/v1/medications`,
-          payload,
-          {
-            headers: { 
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json"
-            }
-          }
-        );
-      }
-
-      if (response.status === 200 || response.status === 201) {
-        showToast(isEdit ? "Cập nhật thuốc thành công!" : "Thêm thuốc thành công!");
-        setShowModal(false);
-        setSelectedMedication(null);
-        setRefresh(prev => !prev);
-      }
-    } catch (error) {
-      console.error("Error saving medication:", error);
-      showToast(isEdit ? "Lỗi khi cập nhật thuốc" : "Lỗi khi thêm thuốc", "error");
-    } finally {
+    if (!formData.name.trim()) {
+      showToast("Tên thuốc không được để trống", "error");
       setModalLoading(false);
+      return;
     }
-  };
+
+    const payload = {
+      medicationName: formData.name
+    };
+
+    let response;
+    if (isEdit) {
+      // Nếu API cập nhật yêu cầu khác thì sửa lại cho đúng
+      response = await axios.put(
+        `http://localhost:6868/api/v1/medications/${selectedMedication.id}`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json"
+          }
+        }
+      );
+    } else {
+      response = await axios.post(
+        `http://localhost:6868/api/v1/medications`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json"
+          }
+        }
+      );
+    }
+
+    if (response.status === 200 || response.status === 201) {
+      showToast(isEdit ? "Cập nhật thuốc thành công!" : "Thêm thuốc thành công!");
+      setShowModal(false);
+      setSelectedMedication(null);
+      setRefresh(prev => !prev);
+    }
+  } catch (error) {
+    console.error("Error saving medication:", error);
+    showToast(isEdit ? "Lỗi khi cập nhật thuốc" : "Lỗi khi thêm thuốc", "error");
+  } finally {
+    setModalLoading(false);
+  }
+};
+
+
 
   const handleDeleteMedication = async (id) => {
     if (!window.confirm("Bạn có chắc chắn muốn xóa thuốc này?")) return;

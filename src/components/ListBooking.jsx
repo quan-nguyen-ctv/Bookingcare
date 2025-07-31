@@ -2,31 +2,101 @@ import React, { useState, useEffect, useRef } from "react";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 
-// Modal xác nhận
+// Modal xác nhận với form nhập thông tin ngân hàng
 const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message, loading }) => {
+  const [formData, setFormData] = useState({
+    bank_name: "",
+    holder_name: "",
+    account_number: ""
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!formData.bank_name.trim() || !formData.holder_name.trim() || !formData.account_number.trim()) {
+      alert("Vui lòng điền đầy đủ thông tin ngân hàng!");
+      return;
+    }
+    onConfirm(formData);
+  };
+
+  const handleInputChange = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  // Reset form khi modal đóng
+  useEffect(() => {
+    if (!isOpen) {
+      setFormData({ bank_name: "", holder_name: "", account_number: "" });
+    }
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
         <h3 className="text-lg font-bold mb-4 text-gray-800">{title}</h3>
-        <p className="text-gray-600 mb-6">{message}</p>
-        <div className="flex gap-3 justify-end">
-          <button
-            className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500 transition"
-            onClick={onClose}
-            disabled={loading}
-          >
-            Hủy
-          </button>
-          <button
-            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition disabled:opacity-50"
-            onClick={onConfirm}
-            disabled={loading}
-          >
-            {loading ? "Đang xử lý..." : "Xác nhận"}
-          </button>
-        </div>
+        <p className="text-gray-600 mb-4">{message}</p>
+        
+        <form onSubmit={handleSubmit}>
+          <div className="space-y-4 mb-6">
+            <div>
+              <label className="block text-sm font-medium mb-1">Tên ngân hàng *</label>
+              <input
+                type="text"
+                value={formData.bank_name}
+                onChange={(e) => handleInputChange("bank_name", e.target.value)}
+                className="w-full border rounded px-3 py-2"
+                placeholder="Nhập tên ngân hàng"
+                required
+                disabled={loading}
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium mb-1">Tên chủ tài khoản *</label>
+              <input
+                type="text"
+                value={formData.holder_name}
+                onChange={(e) => handleInputChange("holder_name", e.target.value)}
+                className="w-full border rounded px-3 py-2"
+                placeholder="Nhập tên chủ tài khoản"
+                required
+                disabled={loading}
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium mb-1">Số tài khoản *</label>
+              <input
+                type="text"
+                value={formData.account_number}
+                onChange={(e) => handleInputChange("account_number", e.target.value)}
+                className="w-full border rounded px-3 py-2"
+                placeholder="Nhập số tài khoản"
+                required
+                disabled={loading}
+              />
+            </div>
+          </div>
+<div className="flex gap-3 justify-end">
+            <button
+              type="button"
+              className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500 transition"
+              onClick={onClose}
+              disabled={loading}
+            >
+              Hủy
+            </button>
+            <button
+              type="submit"
+              className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition disabled:opacity-50"
+              disabled={loading}
+            >
+              {loading ? "Đang xử lý..." : "Xác nhận yêu cầu hoàn tiền"}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
@@ -97,7 +167,7 @@ const ListBooking = () => {
           }
         );
         const json = await res.json();
-        if (!res.ok) throw new Error(json.message || "Lỗi khi lấy danh sách lịch hẹn.");
+if (!res.ok) throw new Error(json.message || "Lỗi khi lấy danh sách lịch hẹn.");
         setAllBookings(json.data?.rows || json.data || []);
         setError("");
       } catch (err) {
@@ -141,19 +211,29 @@ const ListBooking = () => {
     timeoutRef.current = setTimeout(() => setKeyword(e.target.value), 500);
   };
 
-  const handleCancelBooking = async () => {
+  const handleCancelBooking = async (bankingInfo) => {
     try {
       setCancelLoading(prev => ({ ...prev, [selectedBookingId]: true }));
       
       const token = localStorage.getItem("token");
+      const decoded = jwtDecode(token);
+      const userId = decoded.userId;
+
       const response = await fetch(
-        `http://localhost:6868/api/v1/refundInvoices/booking/${selectedBookingId}`,
+        `http://localhost:6868/api/v1/bookings/user/${userId}/detail?bookingId=${selectedBookingId}`,
         {
-          method: "GET",
+          method: "PUT",
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
+          body: JSON.stringify({
+            booking_id: selectedBookingId,
+            bank_name: bankingInfo.bank_name,
+            holder_name: bankingInfo.holder_name,
+            account_number: bankingInfo.account_number,
+            status: "paid"
+          }),
         }
       );
 
@@ -177,7 +257,7 @@ const ListBooking = () => {
       setSelectedBookingId(null);
       
     } catch (error) {
-      console.error("Error canceling booking:", error);
+console.error("Error canceling booking:", error);
       alert(error.message || "Có lỗi xảy ra khi yêu cầu hoàn tiền");
     } finally {
       setCancelLoading(prev => ({ ...prev, [selectedBookingId]: false }));
@@ -261,7 +341,7 @@ const ListBooking = () => {
         {loading ? (
           <div className="text-center py-8">Đang tải...</div>
         ) : bookings.length === 0 ? (
-          <div className="text-center text-gray-500 py-8">Chưa có lịch hẹn nào.</div>
+<div className="text-center text-gray-500 py-8">Chưa có lịch hẹn nào.</div>
         ) : (
           <table className="min-w-full table-auto">
             <thead>
@@ -324,15 +404,15 @@ const ListBooking = () => {
             </nav>
           </div>
         )}
-      </div>
+</div>
 
-      {/* Confirm Modal */}
+      {/* Confirm Modal với form */}
       <ConfirmModal
         isOpen={showConfirmModal}
         onClose={closeCancelModal}
         onConfirm={handleCancelBooking}
-        title="Xác nhận hủy lịch hẹn"
-        message="Bạn có chắc chắn muốn hủy lịch hẹn này và yêu cầu hoàn tiền? Hành động này không thể hoàn tác."
+        title="Yêu cầu hoàn tiền"
+        message="Vui lòng nhập thông tin tài khoản ngân hàng để nhận hoàn tiền:"
         loading={cancelLoading[selectedBookingId]}
       />
     </div>
