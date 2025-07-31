@@ -91,10 +91,41 @@ const BookingDetail = () => {
     }
   };
 
+  // Handle navigate to payment
+  const handlePayment = () => {
+    if (!booking) return;
+
+    // Tạo data để truyền sang PaymentPage
+    const paymentData = {
+      doctor: {
+        user: {
+          fullname: booking.schedule?.doctor_name,
+        },
+        avatar: booking.schedule?.avatar,
+      },
+      specialty: {
+        specialtyName: booking.schedule?.specialty_name,
+      },
+      schedule: {
+        start_time: convertToTimeString(booking.schedule?.start_time),
+        end_time: convertToTimeString(booking.schedule?.end_time),
+        date_schedule: convertToDateString(booking.schedule?.date_schedule),
+        clinic_address: booking.schedule?.clinic_address,
+        clinic_name: booking.schedule?.clinic_name,
+        price: booking.amount,
+      },
+      bookingId: booking.id,
+      reason: booking?.reason
+    };
+
+    // Navigate to payment page with data
+    navigate("/payment", { state: paymentData });
+  };
+
   return (
     <div className="container mx-auto px-4 py-10">
       <button
-        onClick={() => navigate(-1)}
+        onClick={() => navigate("/list-booking")}
         className="mb-6 px-4 py-2 bg-[#223a66] text-white rounded hover:bg-[#1b2c4a] transition"
       >
         Back
@@ -185,7 +216,7 @@ const BookingDetail = () => {
                 <strong>Reason: </strong>
                 {booking?.reason}
               </p>
-              <div className="mt-4 flex gap-3">
+              <div className="mt-4 flex gap-3 flex-wrap">
                 {booking?.status === "paid" ? (
                   <span className="bg-green-500 text-white px-4 py-2 rounded">Appointment booked</span>
                 ) : booking?.status === "pending" ? (
@@ -197,10 +228,29 @@ const BookingDetail = () => {
                 ) : (
                   <span className="bg-blue-600 text-white px-4 py-2 rounded">Refunded</span>
                 )}
-                {/* Nút sửa chỉ cho phép đổi nếu trạng thái là paid và chưa đổi lần nào (tuỳ backend) */}
+
+                {/* Nút thanh toán cho status pending */}
+                {booking?.status === "pending" && (
+                  <button
+                    className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition flex items-center gap-2"
+                    onClick={handlePayment}
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+                      />
+                    </svg>
+                    Pay Now
+                  </button>
+                )}
+
+                {/* Nút sửa chỉ cho phép đổi nếu trạng thái là pending và chưa đổi lần nào */}
                 {booking?.status === "pending" && booking?.change_count === 0 && (
                   <button
-                    className="ml-2 px-4 py-2 bg-[#223a66] text-white rounded hover:bg-[#1b2c4a] transition"
+                    className="px-4 py-2 bg-[#223a66] text-white rounded hover:bg-[#1b2c4a] transition"
                     onClick={() => {
                       setShowEditModal(true);
                       setSelectedDate("");
