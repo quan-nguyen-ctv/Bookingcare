@@ -39,7 +39,7 @@ const DoctorLogin = () => {
 
       // Gọi API để lấy doctorId bằng userId
       const doctorRes = await fetch(`http://localhost:6868/api/v1/doctors/user/${userId}`, {
-         method: "GET",
+         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
         },

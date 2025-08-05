@@ -81,8 +81,7 @@ const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message, loading }) =
               />
             </div>
           </div>
-          
-          <div className="flex gap-3 justify-end">
+<div className="flex gap-3 justify-end">
             <button
               type="button"
               className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500 transition"
@@ -180,7 +179,7 @@ const ListBooking = () => {
           }
         );
         const json = await res.json();
-        if (!res.ok) throw new Error(json.message || "Lỗi khi lấy danh sách lịch hẹn.");
+if (!res.ok) throw new Error(json.message || "Lỗi khi lấy danh sách lịch hẹn.");
         setAllBookings(json.data?.rows || json.data || []);
         setError("");
       } catch (err) {
@@ -276,9 +275,11 @@ const ListBooking = () => {
       setSelectedBookingId(null);
       
     } catch (error) {
+
       console.error("Error canceling booking:", error);
       // Thay alert bằng toast error
       toast.error(error.message || "Có lỗi xảy ra khi yêu cầu hoàn tiền");
+
     } finally {
       setCancelLoading(prev => ({ ...prev, [selectedBookingId]: false }));
     }
@@ -366,7 +367,7 @@ const ListBooking = () => {
         {loading ? (
           <div className="text-center py-8">Đang tải...</div>
         ) : bookings.length === 0 ? (
-          <div className="text-center text-gray-500 py-8">Chưa có lịch hẹn nào.</div>
+<div className="text-center text-gray-500 py-8">Chưa có lịch hẹn nào.</div>
         ) : (
           <table className="min-w-full table-auto">
             <thead>
@@ -431,7 +432,7 @@ const ListBooking = () => {
             </nav>
           </div>
         )}
-      </div>
+</div>
 
       {/* Confirm Modal với form */}
       <ConfirmModal

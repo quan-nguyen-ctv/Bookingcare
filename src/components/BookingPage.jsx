@@ -10,10 +10,11 @@ const BookingPage = () => {
   const [selectedSpecialty, setSelectedSpecialty] = useState("");
   const [selectedDoctor, setSelectedDoctor] = useState("");
   const [selectedSchedule, setSelectedSchedule] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("VNPay");
+  const [paymentMethod, setPaymentMethod] = useState("VNPAY");
   const [paymentCode, setPaymentCode] = useState("");
   const [amount, setAmount] = useState(0);
-  const [reason, setReason] = useState(""); // Bỏ giá trị mặc định
+  const [reason, setReason] = useState("");
+
   const [status, setStatus] = useState("PENDING");
   const [userId, setUserId] = useState(null);
   const [submitted, setSubmitted] = useState(false);
@@ -239,41 +240,58 @@ const BookingPage = () => {
               />
             </div>
 
-            <div>
-              <label className="block mb-1 font-semibold text-[#223a66]">
-                Lịch khám
-              </label>
-              <select
-                className="w-full p-3 rounded border border-gray-200 focus:outline-none"
-                value={selectedSchedule}
-                onChange={(e) => setSelectedSchedule(e.target.value)}
-                required
-              >
-                <option value="">Chọn lịch</option>
-                {schedules
-                  .filter((schedule) => schedule.number_booked < schedule.booking_limit)
-                  .map((schedule) => {
-                    const dateString = Array.isArray(schedule.date_schedule)
-                      ? schedule.date_schedule.join("-")
-                      : schedule.date_schedule || "Không rõ ngày";
+           <div>
+  <label className="block mb-1 font-semibold text-[#223a66]">
+    Lịch khám
+  </label>
+  <select
+    className="w-full p-3 rounded border border-gray-200 focus:outline-none"
+    value={selectedSchedule}
+    onChange={(e) => setSelectedSchedule(e.target.value)}
+    required
+  >
+    <option value="">Chọn lịch</option>
+    {schedules
+  .filter((schedule) => {
+    const { active, number_booked, booking_limit, date_schedule, start_time } = schedule;
 
-                    const startTimeString = Array.isArray(schedule.start_time)
-                      ? schedule.start_time.join(":")
-                      : schedule.start_time || "Không rõ";
+    // Không hiển thị nếu vượt giới hạn hoặc không active
+    if (!active || number_booked >= booking_limit) return false;
 
-                    const endTimeString = Array.isArray(schedule.end_time)
-                      ? schedule.end_time.join(":")
-                      : schedule.end_time || "Không rõ";
+    // Tạo đối tượng Date từ date_schedule và start_time
+    const dateStr = Array.isArray(date_schedule) ? date_schedule.join("-") : date_schedule;
+    const timeStr = Array.isArray(start_time) ? start_time.join(":") : start_time;
 
-                    return (
-                      <option key={schedule.id} value={schedule.id}>
-                        {dateString} từ {startTimeString} đến {endTimeString} (
-                        {schedule.booking_limit - schedule.number_booked} chỗ trống)
-                      </option>
-                    );
-                  })}
-              </select>
-            </div>
+    const fullStartTime = new Date(`${dateStr}T${timeStr}`);
+
+    // So sánh với thời gian hiện tại
+    return fullStartTime > new Date(); // chỉ lấy giờ trong tương lai
+  })
+  .map((schedule) => {
+
+    const dateString = Array.isArray(schedule.date_schedule)
+      ? schedule.date_schedule.join("-")
+      : schedule.date_schedule || "Không rõ ngày";
+
+    const startTimeString = Array.isArray(schedule.start_time)
+      ? schedule.start_time.join(":")
+      : schedule.start_time || "Không rõ";
+
+    const endTimeString = Array.isArray(schedule.end_time)
+      ? schedule.end_time.join(":")
+      : schedule.end_time || "Không rõ";
+
+    return (
+      <option key={schedule.id} value={schedule.id}>
+        {dateString} từ {startTimeString} đến {endTimeString} (
+        {schedule.booking_limit - schedule.number_booked} chỗ trống)
+      </option>
+    );
+  })}
+
+  </select>
+</div>
+
 
             {/* Thêm textarea cho reason */}
             <div>

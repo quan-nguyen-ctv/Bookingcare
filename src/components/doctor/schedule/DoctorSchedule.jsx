@@ -70,18 +70,21 @@ console.log("doctorId:", doctorId);
           ) : (
             <div className="flex flex-wrap gap-4">
               {schedules.length > 0 ? (
-                schedules.map(schedule => (
-                  <button
-                    key={schedule.id}
-                    className={`font-semibold px-6 py-2 rounded shadow ${
-                      schedule.active
-                        ? "bg-yellow-400 text-white"
-                        : "bg-gray-400 text-white"
-                    }`}
-                  >
-                    {schedule.start_time.slice(0, 5)} - {schedule.end_time.slice(0, 5)}
-                  </button>
-                ))
+               schedules.map(schedule => (
+  <button
+    key={schedule.id}
+    className={`font-semibold px-6 py-2 rounded shadow ${
+      schedule.active
+        ? "bg-yellow-400 text-white"
+        : "bg-gray-400 text-white"
+    }`}
+  >
+    {schedule.start_time && schedule.end_time
+      ? `${schedule.start_time.slice(0, 5)} - ${schedule.end_time.slice(0, 5)}`
+      : "Giờ không xác định"}
+  </button>
+))
+
               ) : (
                 <span className="text-gray-500">Không có lịch trong ngày này</span>
               )}

@@ -1,179 +1,196 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const Toast = ({ message, type, onClose }) => (
-  <div
-    className={`fixed top-6 right-6 z-50 px-6 py-3 rounded shadow-lg text-white font-semibold transition-all
-      ${type === "error" ? "bg-red-500" : "bg-green-500"}`}
-    style={{ minWidth: 220 }}
-  >
-    {message}
-    <button
-      onClick={onClose}
-      className="ml-4 text-white font-bold"
-      style={{ background: "transparent", border: "none", cursor: "pointer" }}
-    >
-      ×
-    </button>
-  </div>
-);
-
 const AddBooking = () => {
-  const [user, setUser] = useState("");
-  const [doctor, setDoctor] = useState("");
-  const [specialty, setSpecialty] = useState("");
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
-  const [toast, setToast] = useState({ show: false, message: "", type: "success" });
-
-  const [doctors, setDoctors] = useState([]);
-  const [specialties, setSpecialties] = useState([]);
   const [users, setUsers] = useState([]);
+  const [specialties, setSpecialties] = useState([]);
+  const [doctors, setDoctors] = useState([]);
+  const [schedules, setSchedules] = useState([]);
 
+  const [selectedUser, setSelectedUser] = useState("");
+  const [selectedSpecialty, setSelectedSpecialty] = useState("");
+  const [selectedDoctor, setSelectedDoctor] = useState("");
+  const [scheduleDate, setScheduleDate] = useState("");
+  const [selectedSchedule, setSelectedSchedule] = useState("");
+
+  const [amount, setAmount] = useState(0);
+  const [paymentMethod] = useState("");
+  const [paymentCode] = useState(Math.floor(100000 + Math.random() * 900000).toString());
+  const [reason] = useState("");
+  const [status] = useState("PENDING");
+
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  const token = localStorage.getItem("admin_token");
+
+  const axiosWithToken = axios.create({
+    baseURL: "http://localhost:6868/api/v1",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
   useEffect(() => {
-    setDoctors(JSON.parse(localStorage.getItem("doctors") || "[]"));
-    setSpecialties(JSON.parse(localStorage.getItem("specialties") || "[]"));
-    const allUsers = JSON.parse(localStorage.getItem("users") || "[]");
-    setUsers(allUsers.filter(u => u.role !== "doctor"));
+    if (!token) {
+      console.error("❌ Admin token not found.");
+      return;
+    }
+
+    axiosWithToken
+      .get("/users/role?roleName=user")
+      .then(res => setUsers(res.data?.data || []))
+      .catch(err => console.error("❌ User API error:", err));
+  }, [token]);
+
+  useEffect(() => {
+    axios.get("http://localhost:6868/api/v1/specialties")
+      .then(res => {
+        const list = res.data?.data?.specialtyList || [];
+        setSpecialties(list);
+        if (list.length > 0) {
+          setSelectedSpecialty(list[0].id);
+        }
+      })
+      .catch(err => {
+        console.error("❌ Specialty API error:", err);
+        setSpecialties([]);
+      });
   }, []);
 
-  // Lọc doctor theo specialty đã chọn
-  const filteredDoctors = specialty
-    ? doctors.filter(d => d.specialty === specialty)
-    : doctors;
+  useEffect(() => {
+    if (!selectedSpecialty) return;
 
-  const showToast = (message, type = "success") => {
-    setToast({ show: true, message, type });
-    setTimeout(() => setToast({ show: false, message: "", type }), 2000);
-  };
+    axios.get(`http://localhost:6868/api/v1/doctors?specialtyId=${selectedSpecialty}&page=0`)
+      .then(res => {
+        const list = res.data?.data?.doctors || [];
+        setDoctors(list);
+        setSelectedDoctor(list[0]?.id || "");
+      })
+      .catch(err => {
+        console.error("❌ Doctor API error:", err);
+        setDoctors([]);
+      });
+  }, [selectedSpecialty]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const bookings = JSON.parse(localStorage.getItem("bookings") || "[]");
-    bookings.push({
-      id: Date.now(),
-      user,
-      doctor,
-      specialty,
-      date,
-      time,
-      status: "pending"
-    });
-    localStorage.setItem("bookings", JSON.stringify(bookings));
-    setUser("");
-    setDoctor("");
-    setSpecialty("");
-    setDate("");
-    setTime("");
-    showToast("Đặt lịch thành công!", "success");
-    setTimeout(() => {
-      navigate("/admin/bookings/list");
-    }, 1200); // Đợi toast hiện xong rồi chuyển trang
-  };
+  useEffect(() => {
+    if (!selectedDoctor || !scheduleDate) return;
+
+    axios.get(`http://localhost:6868/api/v1/schedules/doctor?doctorId=${selectedDoctor}&dateSchedule=${scheduleDate}`)
+      .then(res => {
+        const list = Array.isArray(res.data?.data) ? res.data.data : [];
+        setSchedules(list);
+        if (list.length > 0) setSelectedSchedule(list[0]?.id.toString() || "");
+      })
+      .catch(err => {
+        console.error("❌ Schedule API error:", err);
+        setSchedules([]);
+      });
+  }, [selectedDoctor, scheduleDate]);
+
+  useEffect(() => {
+    const selected = schedules.find(s => String(s.id) === selectedSchedule);
+    if (selected) {
+      setAmount(selected.price || 0);
+    }
+  }, [selectedSchedule, schedules]);
+
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  const token = localStorage.getItem("admin_token"); // ← Thay bằng key bạn lưu token
+
+  try {
+    const res = await axios.post(
+      "http://localhost:6868/api/v1/bookings",
+      {
+        schedule_id: Number(selectedSchedule),
+        user_id: Number(selectedUser),
+        payment_method: paymentMethod,
+        payment_code: paymentCode,
+        amount: Number(amount),
+        reason,
+        status,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // ← TRUYỀN TOKEN Ở ĐÂY
+        },
+      }
+    );
+
+    alert("✅ Đặt lịch thành công!");
+    navigate("/admin/bookings/list");
+  } catch (err) {
+    alert("❌ Lỗi khi đặt lịch!");
+    console.error("❌ Booking API error:", err?.response?.data || err);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
-    <div className="flex flex-col items-center mt-8">
-      {toast.show && (
-        <Toast
-          message={toast.message}
-          type={toast.type}
-          onClose={() => setToast({ show: false, message: "", type: toast.type })}
-        />
-      )}
-      <div className="w-full max-w-xl bg-white rounded-2xl shadow p-8 border">
-        <h2 className="text-lg font-bold text-[#20c0f3] mb-6">Add Booking</h2>
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="block font-semibold text-[#223a66] mb-2">User</label>
-            <select
-              className="block border border-gray-300 rounded px-3 py-2 w-full"
-              value={user}
-              onChange={e => setUser(e.target.value)}
-              required
-            >
-              <option value="">Select User</option>
-              {users.map(u => (
-                <option key={u.id} value={u.name}>{u.name}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="block font-semibold text-[#223a66] mb-2">Specialty</label>
-            <select
-              className="block border border-gray-300 rounded px-3 py-2 w-full"
-              value={specialty}
-              onChange={e => {
-                setSpecialty(e.target.value);
-                setDoctor(""); // reset doctor khi đổi chuyên ngành
-              }}
-              required
-            >
-              <option value="">Select Specialty</option>
-              {specialties.map(s => (
-                <option key={s.id} value={s.name}>{s.name}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="block font-semibold text-[#223a66] mb-2">Doctor</label>
-            <select
-              className="block border border-gray-300 rounded px-3 py-2 w-full"
-              value={doctor}
-              onChange={e => setDoctor(e.target.value)}
-              required
-              disabled={!specialty}
-            >
-              <option value="">Select Doctor</option>
-              {filteredDoctors.map(d => (
-                <option key={d.id} value={d.user}>{d.user}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="block font-semibold text-[#223a66] mb-2">Date</label>
-            <input
-              type="date"
-              className="block border border-gray-300 rounded px-3 py-2 w-full"
-              value={date}
-              onChange={e => setDate(e.target.value)}
-              required
-            />
-          </div>
-          <div>
-            <label className="block font-semibold text-[#223a66] mb-2">Time</label>
-            <input
-              type="time"
-              className="block border border-gray-300 rounded px-3 py-2 w-full"
-              value={time}
-              onChange={e => setTime(e.target.value)}
-              required
-            />
-          </div>
-          <div className="flex justify-end gap-4 pt-2">
-            <button
-              type="button"
-              className="bg-[#ffc107] hover:bg-yellow-400 text-white font-bold px-6 py-2 rounded"
-              onClick={() => {
-                setUser("");
-                setDoctor("");
-                setSpecialty("");
-                setDate("");
-                setTime("");
-              }}
-            >
-              CANCEL
-            </button>
-            <button
-              type="submit"
-              className="bg-[#007bff] hover:bg-blue-600 text-white font-bold px-6 py-2 rounded"
-            >
-              SAVE
-            </button>
-          </div>
-        </form>
-      </div>
+    <div className="max-w-xl mx-auto p-6 bg-white rounded shadow mt-10">
+      <h2 className="text-xl font-bold mb-6 text-center text-[#223a66]">Đặt lịch khám (Admin)</h2>
+      <form className="space-y-5" onSubmit={handleSubmit}>
+        <div>
+          <label className="block font-semibold mb-1">Người dùng</label>
+          <select value={selectedUser} onChange={e => setSelectedUser(e.target.value)} required className="w-full p-2 border rounded">
+            <option value="">-- Chọn user --</option>
+            {users.map(u => (
+              <option key={u.id} value={u.id}>{u.fullname || u.name}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="block font-semibold mb-1">Chuyên khoa</label>
+          <select value={selectedSpecialty} onChange={e => setSelectedSpecialty(e.target.value)} required className="w-full p-2 border rounded">
+            {specialties.map(s => (
+              <option key={s.id} value={s.id}>{s.specialtyName}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="block font-semibold mb-1">Bác sĩ</label>
+          <select value={selectedDoctor} onChange={e => setSelectedDoctor(e.target.value)} required className="w-full p-2 border rounded">
+            <option value="">-- Chọn bác sĩ --</option>
+            {doctors.map(d => (
+              <option key={d.id} value={d.id}>{d.user?.fullname || "Không rõ tên"}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="block font-semibold mb-1">Ngày khám</label>
+          <input type="date" value={scheduleDate} onChange={e => setScheduleDate(e.target.value)} required className="w-full p-2 border rounded" />
+        </div>
+        <div>
+          <label className="block font-semibold mb-1">Lịch khám</label>
+          <select value={selectedSchedule} onChange={e => setSelectedSchedule(e.target.value)} required className="w-full p-2 border rounded">
+            <option value="">-- Chọn lịch --</option>
+            {schedules
+              .filter(s => s.active && s.number_booked < s.booking_limit)
+              .map(s => {
+                const date = typeof s.date_schedule === "string" ? s.date_schedule : (s.date_schedule || []).join("-");
+                const start = typeof s.start_time === "string" ? s.start_time : (s.start_time || []).join(":");
+                const end = typeof s.end_time === "string" ? s.end_time : (s.end_time || []).join(":");
+                return (
+                  <option key={s.id} value={s.id}>
+                    {date} từ {start} đến {end} ({s.booking_limit - s.number_booked} chỗ trống)
+                  </option>
+                );
+              })}
+          </select>
+        </div>
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded"
+        >
+          {loading ? "Đang xử lý..." : "Đặt lịch"}
+        </button>
+      </form>
     </div>
   );
 };

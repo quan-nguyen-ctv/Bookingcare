@@ -90,7 +90,7 @@ function AppContent() {
           <Route path="doctors/:id" element={<DetailDoctor />} />
           <Route path="clinics/list" element={<ListClinic />} />
           <Route path="clinics/add" element={<AddClinic />} />
-            
+          <Route path="refund-invoice" element={<ListRefund />} />
           <Route path="users/add" element={<AddUser />} />
           <Route path="users/list" element={<ListUser />} />
           <Route path="bookings/list" element={<ListBookings />} />

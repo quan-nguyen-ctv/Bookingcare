@@ -76,7 +76,9 @@ const BookingSuccess = () => {
             </div>
 
             <h1 className="text-3xl font-bold text-red-600 mb-6">
+
               Payment Failed!
+
             </h1>
             <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-8">
               <p className="text-red-700">
@@ -149,7 +151,8 @@ const BookingSuccess = () => {
               </div>
             </div>
 
-            <h1 className="text-3xl font-bold text-gray-600 mb-6">
+<h1 className="text-3xl font-bold text-gray-600 mb-6">
+
               No booking information found!
             </h1>
             <button

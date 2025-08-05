@@ -12,7 +12,7 @@ const ContactDetail = () => {
     email: "",
     message: "",
     reply: "",
-    status: "Pending",
+    status: "AwaitReply",
   });
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState({ show: false, message: "", type: "success" });
@@ -53,44 +53,53 @@ const ContactDetail = () => {
   };
 
   const handleSave = async () => {
-    try {
-      const token = localStorage.getItem("admin_token");
-      const payload = {
+  try {
+    const token = localStorage.getItem("admin_token");
+
+    const payload = {
+      name: contact.name,
+      email: contact.email,
+      message: contact.message,
+      reply: editData.reply,
+      status: editData.status,
+    };
+
+    const res = await axios.put(`http://localhost:6868/api/v1/contacts/${id}`, payload, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (res.status === 200) {
+      showToast("Đã phản hồi thành công!");
+      setEditMode(false);
+      setContact({
+        ...contact,
         reply: editData.reply,
         status: editData.status,
-      };
-      
-      const res = await axios.put(`http://localhost:6868/api/v1/contacts/${id}`, payload, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
       });
-      
-      if (res.status === 200) {
-        showToast("Cập nhật thành công!");
-        setEditMode(false);
-        setContact({
-          ...contact,
-          reply: editData.reply,
-          status: editData.status,
-        });
-      }
-    } catch (err) {
-      showToast("Lỗi khi cập nhật", "error");
     }
-  };
+  } catch (err) {
+    showToast("Lỗi khi gửi phản hồi", "error");
+  }
+  navigate("/admin/contacts/list", { state: { updated: true } });
+
+
+};
+
 
   const getStatusBadge = (status) => {
-    switch(status) {
-      case 'Answered':
-        return <span className="bg-green-500 text-white px-2 py-1 rounded text-xs">Answered</span>;
-      case 'AwaitReply':
-        return <span className="bg-blue-500 text-white px-2 py-1 rounded text-xs">Await Reply</span>;
-      default:
-        return <span className="bg-gray-500 text-white px-2 py-1 rounded text-xs">Pending</span>;
-    }
-  };
+  switch (status) {
+    case 'Replied':
+      return <span className="bg-green-500 text-white px-2 py-1 rounded text-xs">Đã phản hồi</span>;
+    case 'AwaitReply':
+      return <span className="bg-blue-500 text-white px-2 py-1 rounded text-xs">Chờ phản hồi</span>;
+    default:
+      return <span className="bg-gray-500 text-white px-2 py-1 rounded text-xs">Không xác định</span>;
+  }
+};
+
 
   if (loading) return <div className="p-8">Đang tải dữ liệu...</div>;
   if (!contact) return <div className="p-8">Không tìm thấy liên hệ.</div>;
@@ -140,14 +149,14 @@ const ContactDetail = () => {
         <strong>Trạng thái:</strong>{" "}
         {editMode ? (
           <select
-            className="border px-2 py-1 rounded w-full mt-2"
-            value={editData.status}
-            onChange={e => setEditData({ ...editData, status: e.target.value })}
-          >
-            <option value="Pending">Pending</option>
-            <option value="AwaitReply">Await Reply</option>
-            <option value="Answered">Answered</option>
-          </select>
+  className="border px-2 py-1 rounded w-full mt-2"
+  value={editData.status}
+  onChange={e => setEditData({ ...editData, status: e.target.value })}
+>
+  <option value="AwaitReply">Await Reply</option>
+  <option value="Replied">Replied</option>
+</select>
+
         ) : (
           <div className="mt-2">{getStatusBadge(contact.status)}</div>
         )}
