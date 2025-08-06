@@ -86,7 +86,7 @@ const BookingPage = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-const scheduleList = Array.isArray(data?.data) ? data.data : [];
+        const scheduleList = Array.isArray(data?.data) ? data.data : [];
         setSchedules(scheduleList);
         if (scheduleList.length > 0) {
           setSelectedSchedule(scheduleList[0]?.id || "");
@@ -107,7 +107,7 @@ const scheduleList = Array.isArray(data?.data) ? data.data : [];
 
  const handleSubmit = async (e) => {
   e.preventDefault();
-  setBookingLoading(true); // Bắt đầu loading
+  setBookingLoading(true);
   const token = localStorage.getItem("token");
   try {
     const response = await fetch("http://localhost:6868/api/v1/bookings", {
@@ -131,26 +131,27 @@ const scheduleList = Array.isArray(data?.data) ? data.data : [];
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const bookingData = await response.json(); // Lấy dữ liệu trả về
-    const bookingId = bookingData?.data?.id; // Lấy id booking từ API
+    const bookingData = await response.json();
+    const bookingId = bookingData?.data?.id;
 
     const doctor = doctors.find(d => d.id === Number(selectedDoctor));
     const specialty = specialties.find(s => s.id === Number(selectedSpecialty));
     const schedule = schedules.find(s => s.id === Number(selectedSchedule));
     
-    console.log("Schedule trước khi navigate:", schedule);
+    // Thêm reason vào state
     navigate("/payment", {
       state: {
         doctor,
         specialty,
         schedule,
         bookingId,
+        reason, // Thêm reason vào đây
       },
     });
   } catch (err) {
     alert("Lỗi kết nối server!");
   } finally {
-    setBookingLoading(false); // Kết thúc loading
+    setBookingLoading(false);
   }
 };
 
@@ -185,7 +186,7 @@ const scheduleList = Array.isArray(data?.data) ? data.data : [];
           </h2>
           <form className="space-y-5" onSubmit={handleSubmit}>
             <div>
-<label className="block mb-1 font-semibold text-[#223a66]">
+              <label className="block mb-1 font-semibold text-[#223a66]">
                 Chuyên khoa
               </label>
               <select
@@ -290,17 +291,35 @@ const scheduleList = Array.isArray(data?.data) ? data.data : [];
   </select>
 </div>
 
+            {/* Thêm textarea cho reason */}
+            <div>
+              <label className="block mb-1 font-semibold text-[#223a66]">
+                Lý do khám <span className="text-red-500">*</span>
+              </label>
+              <textarea
+                className="w-full p-3 rounded border border-gray-200 focus:outline-none focus:border-[#223a66] resize-none"
+                rows="4"
+                placeholder="Nhập lý do khám bệnh (vd: Đau đầu, sốt, khám sức khỏe định kỳ...)"
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                required
+                maxLength={500}
+              />
+              <div className="text-right text-xs text-gray-500 mt-1">
+                {reason.length}/500 ký tự
+              </div>
+            </div>
 
             <button
               type="submit"
               className="w-full bg-[#f75757] hover:bg-[#223a66] text-white font-semibold px-8 py-3 rounded-xl transition text-sm mt-2 flex items-center justify-center gap-2"
-              disabled={bookingLoading}
+              disabled={bookingLoading || !reason.trim()}
             >
               {bookingLoading && (
                 <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-    </svg>
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                </svg>
               )}
               Đặt lịch hẹn
             </button>

@@ -3,14 +3,38 @@ import { useLocation } from "react-router-dom";
 
 const PaymentPage = () => {
   const location = useLocation();
-  const { doctor, specialty, schedule, bookingId } = location.state || {};
-
+  const { doctor, specialty, schedule, bookingId, reason } = location.state || {};
+  
   const [paymentMethod, setPaymentMethod] = useState("");
   const [showVNPayModal, setShowVNPayModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState(null); // Thêm state cho user
 
-  console.log("bookingId:", bookingId );
-  
+  console.log("bookingId:", bookingId);
+  console.log("reason:", reason);
+
+  // Fetch user details
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+      try {
+        const res = await fetch("http://localhost:6868/api/v1/users/details", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setUser(data?.data || null);
+        }
+      } catch (err) {
+        console.error("Error fetching user details:", err);
+        setUser(null);
+      }
+    };
+    fetchUserDetails();
+  }, []);
 
   // Mở modal VNPay
   const handleChooseVNPay = () => {
@@ -23,33 +47,31 @@ const PaymentPage = () => {
     setShowVNPayModal(false);
   };
 
-   
-
   // Xử lý thanh toán VNPay
- const handleVNPayPayment = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  try {
-    const token = localStorage.getItem("token");
-    const url = `http://localhost:6868/api/v1/payment/vn-pay?bookingId=${bookingId}&amount=${schedule?.price || 0}`;
-    const res = await fetch(url, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    const data = await res.json();
-    setLoading(false);
-    if (data?.paymentUrl) {
-      window.location.href = data.paymentUrl;
-    } else {
-      alert("Không lấy được link thanh toán VNPay!");
+  const handleVNPayPayment = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const url = `http://localhost:6868/api/v1/payment/vn-pay?bookingId=${bookingId}&amount=${schedule?.price || 0}`;
+      const res = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await res.json();
+      setLoading(false);
+      if (data?.paymentUrl) {
+        window.location.href = data.paymentUrl;
+      } else {
+        alert("Không lấy được link thanh toán VNPay!");
+      }
+    } catch (err) {
+      setLoading(false);
+      alert("Lỗi khi tạo thanh toán VNPay!");
     }
-  } catch (err) {
-    setLoading(false);
-    alert("Lỗi khi tạo thanh toán VNPay!");
-  }
-};
+  };
 
   return (
     <main className="bg-white min-h-screen">
@@ -71,7 +93,7 @@ const PaymentPage = () => {
         <div className="w-full md:w-[350px] bg-white rounded-xl shadow p-6 mb-8 md:mb-0">
           <div className="flex items-center gap-4 mb-3">
             <img
-              src={`http://localhost:6868/api/v1/images/view/${doctor.avatar || "default.png"}`}
+              src={`http://localhost:6868/api/v1/images/view/${doctor?.avatar || "default.png"}`}
               alt="Doctor"
               className="w-16 h-16 rounded-full object-cover border"
             />
@@ -96,7 +118,6 @@ const PaymentPage = () => {
           <div className="text-sm text-gray-700 mb-1">
             <span className="font-semibold">📍</span> {schedule?.clinic_name}
           </div>
-          {/* Hiển thị Booking ID */}
           <div className="text-sm text-gray-700 mb-1">
             <span className="font-semibold">Booking ID:</span> {bookingId || "Chưa có"}
           </div>
@@ -111,37 +132,52 @@ const PaymentPage = () => {
             Book appointment
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            {/* Họ tên từ user details */}
             <input
               className="border rounded px-3 py-2 w-full bg-gray-100"
               placeholder="Họ tên"
-              defaultValue={doctor?.user?.fullname || ""}
+              value={user?.fullname || ""}
               disabled
             />
+            {/* Số điện thoại từ user details */}
             <input
               className="border rounded px-3 py-2 w-full bg-gray-100"
               placeholder="Số điện thoại"
-              defaultValue=""
+              value={user?.phone_number || ""}
+              disabled
             />
+            {/* Email từ user details */}
             <input
               className="border rounded px-3 py-2 w-full bg-gray-100"
               placeholder="Email"
-              defaultValue=""
+              value={user?.email || ""}
+              disabled
             />
-            <select className="border rounded px-3 py-2 w-full bg-gray-100" disabled>
-              <option>Male</option>
-              <option>Female</option>
-            </select>
+            {/* Giới tính từ user details */}
+            <input
+              className="border rounded px-3 py-2 w-full bg-gray-100 "
+              placeholder="Giới tính"
+              value={user?.gender || ""}
+              disabled
+            />
+            {/* Địa chỉ từ user details */}
             <input
               className="border rounded px-3 py-2 w-full bg-gray-100 col-span-2"
               placeholder="Địa chỉ"
-              defaultValue=""
+              value={user?.address || ""}
+              disabled
             />
           </div>
+          
+          {/* Hiển thị reason từ BookingPage */}
           <textarea
             className="border rounded px-3 py-2 w-full bg-gray-100 mb-4"
             placeholder="Reason for Medical Examination"
             rows={3}
+            value={reason || ""}
+            disabled
           />
+          
           <div className="mb-4">
             <div className="font-semibold mb-2">Choose payment method:</div>
             <div className="flex gap-4">
@@ -163,6 +199,7 @@ const PaymentPage = () => {
               </button>
             </div>
           </div>
+          
           <button
             type="submit"
             className="w-full bg-[#223a66] text-white font-semibold py-2 rounded mt-4"
@@ -190,18 +227,18 @@ const PaymentPage = () => {
                 Bạn sẽ được chuyển đến cổng thanh toán VNPay để hoàn tất giao dịch.
               </p>
               <button
-  className="w-full bg-[#223a66] text-white font-semibold py-2 rounded mt-2 flex items-center justify-center gap-2"
-  onClick={handleVNPayPayment}
-  disabled={loading}
->
-  {loading && (
-    <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-    </svg>
-  )}
-  {loading ? "Đang chuyển hướng..." : "Tiếp tục thanh toán VNPay"}
-</button>
+                className="w-full bg-[#223a66] text-white font-semibold py-2 rounded mt-2 flex items-center justify-center gap-2"
+                onClick={handleVNPayPayment}
+                disabled={loading}
+              >
+                {loading && (
+                  <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                  </svg>
+                )}
+                {loading ? "Đang chuyển hướng..." : "Tiếp tục thanh toán VNPay"}
+              </button>
               <div className="text-xs text-gray-400 text-center mt-2">
                 <span role="img" aria-label="lock">🔒</span> Bảo mật bởi VNPay
               </div>

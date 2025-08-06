@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // Modal xác nhận với form nhập thông tin ngân hàng
 const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message, loading }) => {
@@ -13,7 +15,7 @@ const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message, loading }) =
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!formData.bank_name.trim() || !formData.holder_name.trim() || !formData.account_number.trim()) {
-      alert("Vui lòng điền đầy đủ thông tin ngân hàng!");
+      toast.error("Vui lòng điền đầy đủ thông tin ngân hàng!");
       return;
     }
     onConfirm(formData);
@@ -121,6 +123,14 @@ const statusBadge = (status) => {
   }
 };
 
+function convertToDateString(dateStr) {
+  if (!dateStr) return "";
+  // Handles both ISO and yyyy-mm-dd
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return dateStr;
+  return date.toLocaleDateString("vi-VN");
+}
+
 const ListBooking = () => {
   const navigate = useNavigate();
   const [allBookings, setAllBookings] = useState([]); // Lưu toàn bộ booking
@@ -131,7 +141,7 @@ const ListBooking = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [keyword, setKeyword] = useState("");
   const [status, setStatus] = useState("");
-  const [dateBooking, setDateBooking] = useState("");
+  const [dateSchedule, setDateSchedule] = useState(""); // Đổi tên từ dateBooking thành dateSchedule
   const [loading, setLoading] = useState(false);
   const [cancelLoading, setCancelLoading] = useState({});
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -146,6 +156,7 @@ const ListBooking = () => {
         const token = localStorage.getItem("token");
         if (!token || token.split(".").length !== 3) {
           setError("Bạn chưa đăng nhập hoặc token không hợp lệ.");
+          toast.error("Bạn chưa đăng nhập hoặc token không hợp lệ.");
           setLoading(false);
           return;
         }
@@ -153,10 +164,11 @@ const ListBooking = () => {
         const userId = decoded.userId;
         if (!userId) {
           setError("Không thể lấy thông tin người dùng từ token.");
+          toast.error("Không thể lấy thông tin người dùng từ token.");
           setLoading(false);
           return;
         }
-        // Không truyền limit, page cho API
+        
         const res = await fetch(
           `http://localhost:6868/api/v1/bookings/user/${userId}`,
           {
@@ -171,7 +183,9 @@ if (!res.ok) throw new Error(json.message || "Lỗi khi lấy danh sách lịch 
         setAllBookings(json.data?.rows || json.data || []);
         setError("");
       } catch (err) {
-        setError(err.message || "Đã xảy ra lỗi.");
+        const errorMessage = err.message || "Đã xảy ra lỗi.";
+        setError(errorMessage);
+        toast.error(errorMessage);
       } finally {
         setLoading(false);
       }
@@ -193,8 +207,9 @@ if (!res.ok) throw new Error(json.message || "Lỗi khi lấy danh sách lịch 
     if (status) {
       filtered = filtered.filter((b) => b.status?.toLowerCase() === status.toLowerCase());
     }
-    if (dateBooking) {
-      filtered = filtered.filter((b) => b.date_booking === dateBooking);
+    if (dateSchedule) {
+      // Lọc theo b.schedule?.date_schedule
+      filtered = filtered.filter((b) => b.schedule?.date_schedule === dateSchedule);
     }
     const total = filtered.length;
     setTotalPages(Math.ceil(total / limit) || 1);
@@ -203,13 +218,13 @@ if (!res.ok) throw new Error(json.message || "Lỗi khi lấy danh sách lịch 
     setBookings(filtered.slice(start, end));
     // Nếu page vượt quá tổng số trang sau khi filter, reset về 0
     if (page > 0 && start >= total) setPage(0);
-  }, [allBookings, limit, page, keyword, status, dateBooking]);
+  }, [allBookings, limit, page, keyword, status, dateSchedule]); // Đổi dependency từ dateBooking thành dateSchedule
 
   // Debounce search
-  const handleSearchChange = (e) => {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    timeoutRef.current = setTimeout(() => setKeyword(e.target.value), 500);
-  };
+  // const handleSearchChange = (e) => {
+  //   if (timeoutRef.current) clearTimeout(timeoutRef.current);
+  //   timeoutRef.current = setTimeout(() => setKeyword(e.target.value), 500);
+  // };
 
   const handleCancelBooking = async (bankingInfo) => {
     try {
@@ -252,7 +267,10 @@ if (!res.ok) throw new Error(json.message || "Lỗi khi lấy danh sách lịch 
         )
       );
 
-      alert("Yêu cầu hoàn tiền đã được gửi thành công!");
+      // Thay alert bằng toast success
+      toast.success("Yêu cầu hoàn tiền đã được gửi thành công!");
+      
+      // Đóng modal sau khi thành công
       setShowConfirmModal(false);
       setSelectedBookingId(null);
       
@@ -276,6 +294,20 @@ console.error("Error canceling booking:", error);
 
   return (
     <div className="container mx-auto px-4 py-10">
+      {/* Thêm ToastContainer */}
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+      
       <div className="mb-6 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
         <div className="flex gap-4">
           <div>
@@ -294,13 +326,13 @@ console.error("Error canceling booking:", error);
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Date Booking</label>
+            <label className="block text-sm font-medium mb-1">Date Schedule</label>
             <input
               type="date"
               className="border rounded px-2 py-1"
-              value={dateBooking}
+              value={dateSchedule}
               onChange={(e) => {
-                setDateBooking(e.target.value);
+                setDateSchedule(e.target.value);
                 setPage(0);
               }}
             />
@@ -324,15 +356,6 @@ console.error("Error canceling booking:", error);
             </select>
           </div>
         </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Search</label>
-          <input
-            type="text"
-            className="border rounded px-2 py-1 w-48"
-            placeholder="Tìm kiếm..."
-            onChange={handleSearchChange}
-          />
-        </div>
       </div>
 
       <div className="bg-white rounded-xl shadow p-4 overflow-x-auto">
@@ -347,6 +370,7 @@ console.error("Error canceling booking:", error);
             <thead>
               <tr className="bg-[#f5f5f5]">
                 <th className="px-3 py-2 text-left">ID</th>
+                <th className="px-3 py-2 text-left">Date Booking</th>
                 <th className="px-3 py-2 text-left">Specialty</th>
                 <th className="px-3 py-2 text-left">Amount</th>
                 <th className="px-3 py-2 text-left">Payment Method</th>
@@ -359,6 +383,7 @@ console.error("Error canceling booking:", error);
               {bookings.map((b) => (
                 <tr key={b.id} className="hover:bg-[#f5f5f5]">
                   <td className="px-3 py-2 font-semibold">#{b.id}</td>
+                  <td className="px-3 py-2">{convertToDateString(b.schedule?.date_schedule)}</td>
                   <td className="px-3 py-2">{b.schedule?.specialty_name || "Không rõ"}</td>
                   <td className="px-3 py-2">{b.amount?.toLocaleString() || "0"} VND</td>
                   <td className="px-3 py-2">{b.payment_method || "-"}</td>

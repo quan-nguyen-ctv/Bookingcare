@@ -7,11 +7,42 @@ const Login = () => {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const navigate = useNavigate
+  const [fieldErrors, setFieldErrors] = useState({}); // Thêm state cho field errors
+  const navigate = useNavigate();
+
+  // Validation functions
+  const validatePhone = (phone) => {
+    const phoneRegex = /^[0-9]{10,11}$/;
+    return phoneRegex.test(phone);
+  };
+
+  const validateForm = () => {
+    const errors = {};
+    
+    if (!phone.trim()) {
+      errors.phone = "Số điện thoại không được để trống";
+    } else if (!validatePhone(phone)) {
+      errors.phone = "Số điện thoại phải có 10-11 chữ số";
+    }
+    
+    if (!password.trim()) {
+      errors.password = "Mật khẩu không được để trống";
+    } else if (password.length < 6) {
+      errors.password = "Mật khẩu phải có ít nhất 6 ký tự";
+    }
+    
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
+    setFieldErrors({});
+
+    if (!validateForm()) {
+      return;
+    }
 
     try {
       const response = await fetch("http://localhost:6868/api/v1/users/login", {
@@ -78,20 +109,26 @@ const Login = () => {
             </p>
           </div>
           <form className="space-y-2" onSubmit={handleLogin}>
-            <input
-              type="text"
-              placeholder="Number phone"
-              className="w-full p-2 rounded border border-gray-200 focus:outline-none text-sm"
-              value={phone}
-              onChange={e => setPhone(e.target.value)}
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              className="w-full p-2 rounded border border-gray-200 focus:outline-none text-sm"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-            />
+            <div>
+              <input
+                type="text"
+                placeholder="Number phone"
+                className={`w-full p-2 rounded border ${fieldErrors.phone ? 'border-red-500' : 'border-gray-200'} focus:outline-none text-sm`}
+                value={phone}
+                onChange={e => setPhone(e.target.value)}
+              />
+              {fieldErrors.phone && <div className="text-red-500 text-xs mt-1">{fieldErrors.phone}</div>}
+            </div>
+            <div>
+              <input
+                type="password"
+                placeholder="Password"
+                className={`w-full p-2 rounded border ${fieldErrors.password ? 'border-red-500' : 'border-gray-200'} focus:outline-none text-sm`}
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+              />
+              {fieldErrors.password && <div className="text-red-500 text-xs mt-1">{fieldErrors.password}</div>}
+            </div>
             {error && <div className="text-red-500 text-sm">{error}</div>}
             <div className="flex justify-center mt-2">
               <button
