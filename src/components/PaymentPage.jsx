@@ -37,12 +37,6 @@ const PaymentPage = () => {
     fetchUserDetails();
   }, []);
 
-  // Mở modal VNPay
-  const handleChooseVNPay = () => {
-    setPaymentMethod("vnpay");
-    setShowVNPayModal(true);
-  };
-
   // Đóng modal
   const handleCloseModal = () => {
     setShowVNPayModal(false);
@@ -71,6 +65,16 @@ const PaymentPage = () => {
     } catch (err) {
       setLoading(false);
       alert("Lỗi khi tạo thanh toán VNPay!");
+    }
+  };
+
+  // Xử lý khi ấn nút Complete Appointment Booking
+  const handleCompleteBooking = () => {
+    if (paymentMethod === "vnpay") {
+      setShowVNPayModal(true);
+    } else if (paymentMethod === "paypal") {
+      // Xử lý PayPal payment logic ở đây
+      alert("PayPal payment not implemented yet!");
     }
   };
 
@@ -263,7 +267,7 @@ const PaymentPage = () => {
                             ? "border-[#23cf7c] bg-[#23cf7c]/10 shadow-lg" 
                             : "border-gray-200 hover:border-[#23cf7c] hover:bg-gray-50"
                         }`}
-                        onClick={handleChooseVNPay}
+                        onClick={() => setPaymentMethod("vnpay")}
                       >
                         <img src="/images/download (1).png" alt="VNPay" className="h-8" />
                         <div className="text-left">
@@ -312,11 +316,7 @@ const PaymentPage = () => {
                     type="button"
                     className="w-full bg-[#23cf7c] hover:bg-[#1eb567] text-white font-semibold py-4 rounded-xl text-lg transition duration-300 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                     disabled={!paymentMethod}
-                    onClick={() => {
-                      if (paymentMethod === "vnpay") {
-                        handleChooseVNPay();
-                      }
-                    }}
+                    onClick={handleCompleteBooking}
                   >
                     Complete Appointment Booking
                   </button>
