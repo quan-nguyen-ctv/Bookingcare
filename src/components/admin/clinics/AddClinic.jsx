@@ -21,6 +21,8 @@ const Toast = ({ message, type, onClose }) => (
 const AddClinic = ({ onAdded }) => {
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [desc, setDesc] = useState("");
   const [toast, setToast] = useState({ show: false, message: "", type: "success" });
@@ -49,11 +51,11 @@ const AddClinic = ({ onAdded }) => {
       }
       await axios.post(
         "http://localhost:6868/api/v1/clinics",
-        { name, address, image: imageName, description: desc },
+        { name, address, image: imageName, phone, email, description: desc },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       showToast("Thêm phòng khám thành công!");
-      setName(""); setAddress(""); setImageFile(null); setDesc("");
+      setName(""); setAddress(""); setPhone(""); setEmail(""); setImageFile(null); setDesc("");
       if (onAdded) onAdded();
     } catch (err) {
       showToast("Thêm thất bại", "error");
@@ -89,6 +91,27 @@ const AddClinic = ({ onAdded }) => {
               value={address}
               onChange={e => setAddress(e.target.value)}
               placeholder="Address"
+              required
+            />
+          </div>
+          
+          <div>
+            <label className="block font-semibold text-[#223a66] mb-2">Phone</label>
+            <input
+              className="block border border-gray-300 rounded px-3 py-2 w-full focus:outline-none focus:border-[#20c0f3]"
+              value={phone}
+              onChange={e => setPhone(e.target.value)}
+              placeholder="Phone"
+              required
+            />
+          </div>
+          <div>
+            <label className="block font-semibold text-[#223a66] mb-2">Email</label>
+            <input
+              className="block border border-gray-300 rounded px-3 py-2 w-full focus:outline-none focus:border-[#20c0f3]"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              placeholder="Email"
               required
             />
           </div>
