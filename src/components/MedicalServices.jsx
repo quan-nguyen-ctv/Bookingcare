@@ -175,13 +175,13 @@ const MedicalServices = () => {
                     
                     {/* Action Buttons */}
                     <div className="flex flex-col sm:flex-row gap-4">
-                      <button
+                      {/* <button
                         onClick={() => navigate('/booking')}
                         className="bg-[#23cf7c] hover:bg-[#1eb567] text-white px-6 py-3 rounded-full font-medium transition duration-300 shadow-lg flex items-center justify-center gap-2"
                       >
                         <FaCalendarAlt />
                         Book Appointment
-                      </button>
+                      </button> */}
                       <button
                         onClick={() =>
                           navigate(
