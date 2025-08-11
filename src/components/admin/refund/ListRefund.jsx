@@ -14,8 +14,10 @@ const Toast = ({ message, type, onClose }) => (
 );
 
 // Modal
-const RefundModal = ({ isOpen, onClose, refundData, onConfirm, loading }) => {
+const RefundModal = ({ isOpen, onClose, refundData, onConfirm, onReject, loading }) => {
   if (!isOpen || !refundData) return null;
+
+  const isProcessed = refundData.status?.toUpperCase() === "REFUNDED" || refundData.status?.toUpperCase() === "REJECTED";
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -42,22 +44,42 @@ const RefundModal = ({ isOpen, onClose, refundData, onConfirm, loading }) => {
 
           <div className="flex justify-between">
             <span className="text-gray-600">Status:</span>
-            <span className="bg-blue-500 text-white px-2 py-1 rounded text-xs">
+            <span className={`px-2 py-1 rounded text-xs ${
+              refundData.status?.toUpperCase() === "REFUNDED" ? "bg-green-500 text-white" :
+              refundData.status?.toUpperCase() === "REJECTED" ? "bg-red-500 text-white" :
+              "bg-blue-500 text-white"
+            }`}>
               {refundData.status || 'Wait Refund'}
             </span>
           </div>
         </div>
 
         <div className="flex gap-3">
-          <button className="flex-1 bg-gray-400 text-white py-2 rounded hover:bg-gray-500 transition disabled:opacity-50" onClick={onClose} disabled={loading}>
+          <button 
+            className="flex-1 bg-gray-400 text-white py-2 rounded hover:bg-gray-500 transition disabled:opacity-50" 
+            onClick={onClose} 
+            disabled={loading}
+          >
             Cancel
           </button>
-          {refundData.status?.toUpperCase() !== "REFUNDED" && (
-
-            <button className="flex-1 bg-green-500 text-white py-2 rounded hover:bg-green-600 transition disabled:opacity-50"
-              onClick={() => onConfirm(refundData.id)} disabled={loading}>
-              {loading ? "Processing..." : "Refunded"}
-            </button>
+          
+          {!isProcessed && (
+            <>
+              <button 
+                className="flex-1 bg-red-500 text-white py-2 rounded hover:bg-red-600 transition disabled:opacity-50"
+                onClick={() => onReject(refundData.id)} 
+                disabled={loading}
+              >
+                {loading ? "Processing..." : "Reject"}
+              </button>
+              <button 
+                className="flex-1 bg-green-500 text-white py-2 rounded hover:bg-green-600 transition disabled:opacity-50"
+                onClick={() => onConfirm(refundData.id)} 
+                disabled={loading}
+              >
+                {loading ? "Processing..." : "Approve"}
+              </button>
+            </>
           )}
         </div>
       </div>
@@ -94,16 +116,16 @@ const ListRefund = () => {
     setLoading(true);
     try {
       const res = await axios.get("http://localhost:6868/api/v1/refundInvoices", {
-  headers: { Authorization: `Bearer ${token}` },
-  params: {
-    limit: filters.limit,
-    page: filters.page,
-    keyword: filters.keyword,
-    dateRefund: filters.dateRefund,
-    status: filters.status,
-    sort: filters.sort
-  }
-});
+        headers: { Authorization: `Bearer ${token}` },
+        params: {
+          limit: filters.limit,
+          page: filters.page,
+          keyword: filters.keyword,
+          dateRefund: filters.dateRefund,
+          status: filters.status,
+          sort: filters.sort
+        }
+      });
 
       const data = res.data?.data?.refundInvoiceResponses || [];
       setRefunds(data);
@@ -141,16 +163,15 @@ const ListRefund = () => {
     try {
       setRefundLoading(true);
       const res = await axios.put(
-  `http://localhost:6868/api/v1/refundInvoices/refunded/${refundId}`,
-  {},
-  {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json"
-    }
-  }
-);
-
+        `http://localhost:6868/api/v1/refundInvoices/refunded/${refundId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json"
+          }
+        }
+      );
 
       if (res.status === 200) {
         showToast("Hoàn tiền thành công!");
@@ -166,17 +187,46 @@ const ListRefund = () => {
     }
   };
 
-  const getStatusBadge = (status) => {
-  switch (status?.toUpperCase()) {
-    case 'WAIT REFUND':
-      return <span className="bg-blue-500 text-white px-2 py-1 rounded text-xs">WAIT REFUND</span>;
-    case 'REFUNDED':
-      return <span className="bg-green-500 text-white px-2 py-1 rounded text-xs">REFUNDED</span>;
-    default:
-      return <span className="bg-gray-500 text-white px-2 py-1 rounded text-xs">UNKNOWN</span>;
-  }
-};
+  const handleRejectRefund = async (refundId) => {
+    try {
+      setRefundLoading(true);
+      const res = await axios.put(
+        `http://localhost:6868/api/v1/refundInvoices/refunded/${refundId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json"
+          }
+        }
+      );
 
+      if (res.status === 200) {
+        showToast("Từ chối hoàn tiền thành công!", "success");
+        setRefunds(prev => prev.map(r => r.id === refundId ? { ...r, status: "REJECTED" } : r));
+        setShowRefundModal(false);
+        setSelectedRefund(null);
+      }
+    } catch (err) {
+      console.error("Error rejecting refund:", err);
+      showToast("Lỗi khi từ chối hoàn tiền", "error");
+    } finally {
+      setRefundLoading(false);
+    }
+  };
+
+  const getStatusBadge = (status) => {
+    switch (status?.toUpperCase()) {
+      case 'WAIT REFUND':
+        return <span className="bg-blue-500 text-white px-2 py-1 rounded text-xs">WAIT REFUND</span>;
+      case 'REFUNDED':
+        return <span className="bg-green-500 text-white px-2 py-1 rounded text-xs">REFUNDED</span>;
+      case 'REJECTED':
+        return <span className="bg-red-500 text-white px-2 py-1 rounded text-xs">REJECTED</span>;
+      default:
+        return <span className="bg-gray-500 text-white px-2 py-1 rounded text-xs">UNKNOWN</span>;
+    }
+  };
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount || 0);
@@ -206,9 +256,9 @@ const ListRefund = () => {
           <label className="block text-sm font-medium mb-1">Status</label>
           <select value={filters.status} onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))} className="border rounded px-3 py-2 w-full">
             <option value="">Select Status</option>
-<option value="WAIT REFUND">Wait Refund</option>
-<option value="REFUNDED">Refunded</option>
-
+            <option value="WAIT REFUND">Wait Refund</option>
+            <option value="REFUNDED">Refunded</option>
+            <option value="REJECTED">Rejected</option>
           </select>
         </div>
         <div>
@@ -276,6 +326,7 @@ const ListRefund = () => {
         onClose={() => setShowRefundModal(false)}
         refundData={selectedRefund}
         onConfirm={handleConfirmRefund}
+        onReject={handleRejectRefund}
         loading={refundLoading}
       />
     </div>
