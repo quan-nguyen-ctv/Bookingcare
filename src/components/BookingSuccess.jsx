@@ -69,7 +69,7 @@ const BookingSuccess = () => {
           </span>
           <h1 className="text-4xl md:text-6xl font-light mb-4 leading-tight mt-2">
             {statusPay === "Pay_failed" ? (
-              <>Payment <span className="font-bold text-red-400">Failed</span></>
+<>Payment <span className="font-bold text-red-400">Failed</span></>
             ) : idBookingSuccess ? (
               <>Booking <span className="font-bold text-[#23cf7c]">Success</span></>
             ) : (
@@ -128,7 +128,7 @@ const BookingSuccess = () => {
                   </div>
 
                   <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <button
+<button
                       onClick={() => navigate("/booking")}
                       className="bg-[#23cf7c] hover:bg-[#1eb567] text-white px-8 py-3 rounded-full font-medium transition duration-300 flex items-center justify-center gap-2"
                     >
@@ -179,7 +179,7 @@ const BookingSuccess = () => {
                       
                       <div className="bg-gray-50 rounded-xl p-6 text-center">
                         <div className="w-12 h-12 bg-[#223a66] rounded-full flex items-center justify-center mx-auto mb-3">
-                          <FaCalendarAlt className="text-white text-xl" />
+<FaCalendarAlt className="text-white text-xl" />
                         </div>
                         <h4 className="font-semibold text-[#223a66] mb-2">Scheduled</h4>
                         <p className="text-sm text-gray-600">Appointment added to your calendar</p>
@@ -231,7 +231,7 @@ const BookingSuccess = () => {
               /* No Information */
               <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
                 {/* Header */}
-                <div className="bg-gray-500 p-8 text-white text-center">
+<div className="bg-gray-500 p-8 text-white text-center">
                   <div className="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
                     <FaQuestionCircle className="text-4xl text-white" />
                   </div>

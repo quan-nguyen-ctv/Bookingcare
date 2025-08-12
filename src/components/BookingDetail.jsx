@@ -323,33 +323,48 @@ const BookingDetail = () => {
                         </div>
 
                         {/* Action Buttons */}
-                        <div className="flex flex-col sm:flex-row gap-4">
-                          {booking?.status === "pending" && (
-                            <button
-                              className="flex items-center justify-center gap-2 px-6 py-3 bg-[#23cf7c] hover:bg-[#1eb567] text-white rounded-full font-medium transition duration-300 shadow-lg"
-                              onClick={handlePayment}
-                            >
-                              <FaCreditCard />
-                              Pay Now
-                            </button>
-                          )}
+                        {/* Action Buttons */}
+<div className="flex flex-col sm:flex-row gap-4">
+  {booking?.status === "pending" &&
+    new Date(booking?.schedule?.date_schedule) >= new Date(new Date().setHours(0, 0, 0, 0)) && (
+      <button
+        className="flex items-center justify-center gap-2 px-6 py-3 bg-[#23cf7c] hover:bg-[#1eb567] text-white rounded-full font-medium transition duration-300 shadow-lg"
+        onClick={handlePayment}
+      >
+        <FaCreditCard />
+        Pay Now
+      </button>
+    )}
 
-                          {booking?.status === "pending" && booking?.change_count === 0 && (
-                            <button
-                              className="flex items-center justify-center gap-2 px-6 py-3 border-2 border-[#223a66] text-[#223a66] hover:bg-[#223a66] hover:text-white rounded-full font-medium transition duration-300"
-                              onClick={() => {
-                                setShowEditModal(true);
-                                setSelectedDate("");
-                                setAvailableTimes([]);
-                                setSelectedScheduleId(null);
-                                setSelectedTime("");
-                              }}
-                            >
-                              <FaEdit />
-                              Edit Appointment
-                            </button>
-                          )}
-                        </div>
+  {/* Nếu đã quá hạn thì hiển thị nút bị vô hiệu hóa */}
+  {booking?.status === "pending" &&
+    new Date(booking?.schedule?.date_schedule) < new Date(new Date().setHours(0, 0, 0, 0)) && (
+      <button
+        className="flex items-center justify-center gap-2 px-6 py-3 bg-gray-400 text-white rounded-full font-medium cursor-not-allowed shadow-lg"
+        disabled
+      >
+        <FaCreditCard />
+        Payment Expired
+      </button>
+    )}
+
+  {booking?.status === "pending" && booking?.change_count === 0 && (
+    <button
+      className="flex items-center justify-center gap-2 px-6 py-3 border-2 border-[#223a66] text-[#223a66] hover:bg-[#223a66] hover:text-white rounded-full font-medium transition duration-300"
+      onClick={() => {
+        setShowEditModal(true);
+        setSelectedDate("");
+        setAvailableTimes([]);
+        setSelectedScheduleId(null);
+        setSelectedTime("");
+      }}
+    >
+      <FaEdit />
+      Edit Appointment
+    </button>
+  )}
+</div>
+
                       </div>
                     </div>
                   </div>

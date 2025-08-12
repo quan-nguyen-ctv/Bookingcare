@@ -98,7 +98,7 @@ const MedicalServices = () => {
                         }`}
                         onClick={() => setActiveTab(idx)}
                       >
-                        <span className="text-2xl mr-3">🏥</span>
+                        
                         <span className="flex-1">{tab.specialtyName}</span>
                         <FaArrowRight className={`ml-2 transition-transform ${activeTab === idx ? 'rotate-90' : ''}`} />
                       </button>

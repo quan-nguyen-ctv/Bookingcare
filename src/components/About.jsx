@@ -103,19 +103,12 @@ const About = () => {
             <div className="relative">
               <div className="relative rounded-2xl overflow-hidden shadow-2xl">
                 <img
-                  src="/images/about.jpg"
+                  src="/src/components/img/home3.jpg"
                   alt="About Our Clinic"
                   className="w-full h-96 object-cover"
                 />
                 <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
-                  <a
-                    href="https://vimeo.com/45830194"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-20 h-20 bg-[#23cf7c] rounded-full flex items-center justify-center text-white hover:bg-[#1eb567] transition duration-300 shadow-lg group"
-                  >
-                    <FaPlay className="text-2xl ml-1 group-hover:scale-110 transition duration-300" />
-                  </a>
+                 
                 </div>
               </div>
               

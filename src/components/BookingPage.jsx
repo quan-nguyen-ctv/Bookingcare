@@ -372,45 +372,8 @@ const BookingPage = () => {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <span className="uppercase text-[#223a66] font-semibold tracking-widest text-sm">
-              Why Book With Us
-            </span>
-            <h2 className="text-4xl md:text-5xl font-light text-[#223a66] mb-4 mt-2">
-              Easy & <span className="font-bold">Secure</span> Booking
-            </h2>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                icon: "⚡",
-                title: "Quick Booking",
-                description: "Fast and easy appointment scheduling in just a few clicks"
-              },
-              {
-                icon: "🔒",
-                title: "Secure Platform",
-                description: "Your personal information is protected with advanced security"
-              },
-              {
-                icon: "📱",
-                title: "24/7 Support",
-                description: "Round-the-clock customer support for any assistance needed"
-              }
-            ].map((feature, index) => (
-              <div key={index} className="bg-gray-50 rounded-2xl p-8 text-center hover:shadow-lg transition duration-300">
-                <div className="text-4xl mb-4">{feature.icon}</div>
-                <h3 className="text-xl font-bold text-[#223a66] mb-3">{feature.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{feature.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+        
+      
     </main>
   );
 };

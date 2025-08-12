@@ -90,12 +90,13 @@ const Header = () => {
           {/* Logo */}
           <div className="flex items-center">
             <img 
-              src="/images/logo.png" 
-              alt="Medical Center Logo" 
-              className={`transition-all duration-300 ${
-                scrolled ? 'h-12 w-auto' : 'h-16 w-auto'
-              }`} 
-            />
+  src="/src/components/img/LOGO SPA-01.png"  
+  alt="" 
+  className={`transition-all duration-300 transform ${
+    scrolled ? 'scale-[2.2] h-12 w-auto' : 'scale-[2.2] h-16 w-auto'
+  }`} 
+/>
+
           </div>
 
           {/* Desktop Navigation */}

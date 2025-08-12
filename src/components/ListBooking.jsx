@@ -318,11 +318,8 @@ if (!res.ok) throw new Error(json.message || "Lỗi khi lấy danh sách lịch 
       setSelectedBookingId(null);
       
     } catch (error) {
-
-      console.error("Error canceling booking:", error);
-      // Thay alert bằng toast error
-      toast.error(error.message || "Có lỗi xảy ra khi yêu cầu hoàn tiền");
-
+console.error("Error canceling booking:", error);
+      alert(error.message || "Có lỗi xảy ra khi yêu cầu hoàn tiền");
     } finally {
       setCancelLoading(prev => ({ ...prev, [selectedBookingId]: false }));
     }
@@ -459,7 +456,7 @@ if (!res.ok) throw new Error(json.message || "Lỗi khi lấy danh sách lịch 
 
       <div className="bg-white rounded-2xl shadow-xl p-6 overflow-x-auto">
         <h2 className="text-3xl font-light text-[#223a66] mb-6 text-center">
-          My <span className="font-bold">Bookings</span>
+           <span className="font-bold">My Bookings</span>
         </h2>
         
         {error && <div className="text-red-500 text-center mb-4">{error}</div>}
