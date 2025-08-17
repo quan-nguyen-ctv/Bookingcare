@@ -1,38 +1,87 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
-// Mock user data
-const mockAccounts = [
-  { phone: "0123456789", password: "user123", role: "user", name: "User Demo" },
-  { phone: "0987654321", password: "doctor123", role: "doctor", name: "Doctor Demo" },
-  { phone: "0111222333", password: "admin123", role: "admin", name: "Admin Demo" },
-];
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Login = () => {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({}); // Thêm state cho field errors
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  // Validation functions
+  const validatePhone = (phone) => {
+    const phoneRegex = /^[0-9]{10,11}$/;
+    return phoneRegex.test(phone);
+  };
+
+  const validateForm = () => {
+    const errors = {};
+    
+    if (!phone.trim()) {
+      errors.phone = "Số điện thoại không được để trống";
+    } else if (!validatePhone(phone)) {
+      errors.phone = "Số điện thoại phải có 10-11 chữ số";
+    }
+    
+    if (!password.trim()) {
+      errors.password = "Mật khẩu không được để trống";
+    } else if (password.length < 6) {
+      errors.password = "Mật khẩu phải có ít nhất 6 ký tự";
+    }
+    
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleLogin = async (e) => {
     e.preventDefault();
-    const found = mockAccounts.find(
-      (acc) => acc.phone === phone && acc.password === password
-    );
-    if (found) {
-      // Lưu thông tin user vào localStorage/sessionStorage nếu muốn
-      localStorage.setItem("user", JSON.stringify(found));
-      // Phân luồng theo role
-      if (found.role === "admin") navigate("/admin");
-      else if (found.role === "doctor") navigate("/doctor");
-      else navigate("/");
-    } else {
-      setError("Sai số điện thoại hoặc mật khẩu!");
+    setError("");
+    setFieldErrors({});
+
+    if (!validateForm()) {
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:6868/api/v1/users/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          phone_number: phone,
+          password: password,
+          role_id: 3
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        setError(errorData.message || "Sai thông tin đăng nhập!");
+        toast.error(errorData.message || "Sai thông tin đăng nhập!");
+        return;
+      }
+
+      const data = await response.json();
+      localStorage.setItem("user", JSON.stringify(data));
+      localStorage.setItem("token", data.token);
+
+      toast.success("Đăng nhập thành công!");
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 1200);
+    } catch (err) {
+      console.error("Lỗi đăng nhập:", err);
+      setError("Lỗi hệ thống. Vui lòng thử lại sau!");
+      toast.error("Lỗi hệ thống. Vui lòng thử lại sau!");
     }
   };
 
   return (
     <main className="bg-white min-h-screen">
+      <ToastContainer position="top-right" autoClose={1500} />
       {/* Banner */}
       <section className="bg-[#223a66] h-56 flex flex-col justify-center items-center relative mb-8">
         <div
@@ -46,6 +95,7 @@ const Login = () => {
           </h1>
         </div>
       </section>
+
       {/* Login Form */}
       <section className="container mx-auto px-6 flex flex-col md:flex-row items-center justify-center gap-2">
         <div className="flex-1 flex justify-center">
@@ -55,24 +105,30 @@ const Login = () => {
           <div className="text-center mb-2">
             <h2 className="text-2xl md:text-3xl font-bold text-[#223a66] mb-2">Login</h2>
             <p className="text-[#6f8ba4] text-sm mb-4">
-              Mollitia dicta commodi est recusandae iste, natus eum asperiores corrupti qui velit. Iste dolorum atque similique praesentium soluta.
+              Vui lòng đăng nhập để sử dụng hệ thống.
             </p>
           </div>
           <form className="space-y-2" onSubmit={handleLogin}>
-            <input
-              type="text"
-              placeholder="Number phone"
-              className="w-full p-2 rounded border border-gray-200 focus:outline-none text-sm"
-              value={phone}
-              onChange={e => setPhone(e.target.value)}
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              className="w-full p-2 rounded border border-gray-200 focus:outline-none text-sm"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-            />
+            <div>
+              <input
+                type="text"
+                placeholder="Number phone"
+                className={`w-full p-2 rounded border ${fieldErrors.phone ? 'border-red-500' : 'border-gray-200'} focus:outline-none text-sm`}
+                value={phone}
+                onChange={e => setPhone(e.target.value)}
+              />
+              {fieldErrors.phone && <div className="text-red-500 text-xs mt-1">{fieldErrors.phone}</div>}
+            </div>
+            <div>
+              <input
+                type="password"
+                placeholder="Password"
+                className={`w-full p-2 rounded border ${fieldErrors.password ? 'border-red-500' : 'border-gray-200'} focus:outline-none text-sm`}
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+              />
+              {fieldErrors.password && <div className="text-red-500 text-xs mt-1">{fieldErrors.password}</div>}
+            </div>
             {error && <div className="text-red-500 text-sm">{error}</div>}
             <div className="flex justify-center mt-2">
               <button
