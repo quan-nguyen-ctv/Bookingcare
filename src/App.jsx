@@ -51,6 +51,7 @@ import ContactDetail from "./components/admin/contact/ContactDetail";
 import ListRefund from "./components/admin/refund/ListRefund";
 import ListMedication from "./components/admin/medications/ListMedication";
 import BookingDetailAdmin from "./components/admin/bookings/BookingDetail";
+import UserDetail from "./components/admin/user/UserDetail";
 
 
 function AppContent() {
@@ -95,6 +96,7 @@ function AppContent() {
           <Route path="refund-invoice" element={<ListRefund />} />
           <Route path="users/add" element={<AddUser />} />
           <Route path="users/list" element={<ListUser />} />
+          <Route path="users/:id" element={<UserDetail />} />
           <Route path="bookings/list" element={<ListBookings />} />
           <Route path="bookings/add" element={<AddBooking />} />
           <Route path="bookings/:id" element={<BookingDetailAdmin />} />
