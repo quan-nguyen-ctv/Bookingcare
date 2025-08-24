@@ -84,7 +84,7 @@ const Header = () => {
 
       {/* Main Navigation */}
       <div className={`bg-white/95 backdrop-blur-lg transition-all duration-300 ${
-        scrolled ? 'shadow-lg py-3' : 'shadow-md py-4'
+        scrolled ? 'shadow-lg ' : 'shadow-md py-4'
       }`}>
         <div className="max-w-7xl mx-auto flex items-center justify-between px-8">
           {/* Logo */}
