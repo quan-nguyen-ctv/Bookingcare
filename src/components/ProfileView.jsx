@@ -275,7 +275,7 @@ const ProfileView = () => {
                   View Bookings
                 </button>
                 <button
-                  onClick={() => navigate("/doctors")}
+                  onClick={() => navigate("/list-doctor")}
                   className="bg-white border-2 border-purple-500 text-purple-500 hover:bg-purple-500 hover:text-white p-4 rounded-xl font-semibold transition-all duration-300 flex items-center gap-3"
                 >
                   <FaUserCircle />

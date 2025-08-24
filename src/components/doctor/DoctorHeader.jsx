@@ -98,31 +98,8 @@ const DoctorHeader = () => {
   };
 
   // Mock notifications for demonstration
-  const notifications = [
-    {
-      id: 1,
-      title: "Cuộc hẹn mới",
-      message: "Bạn có cuộc hẹn mới lúc 14:00",
-      time: "10 phút trước",
-      read: false,
-    },
-    {
-      id: 2,
-      title: "Nhắc nhở",
-      message: "Cuộc hẹn với bệnh nhân sắp đến",
-      time: "30 phút trước",
-      read: false,
-    },
-    {
-      id: 3,
-      title: "Cập nhật hồ sơ",
-      message: "Vui lòng cập nhật thông tin cá nhân",
-      time: "2 giờ trước",
-      read: true,
-    },
-  ];
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+
 
   return (
     <>
@@ -173,7 +150,7 @@ const DoctorHeader = () => {
             </div>
 
             {/* Notifications */}
-            <div className="relative">
+            {/* <div className="relative">
               <button
                 className="relative p-2 text-gray-600 hover:text-[#20c0f3] hover:bg-blue-50 rounded-lg transition-colors duration-200"
                 onClick={() => setNotificationsMenu(!notificationsMenu)}
@@ -247,10 +224,10 @@ const DoctorHeader = () => {
                   )}
                 </div>
               )}
-            </div>
+            </div> */}
 
             {/* Search */}
-            <div className="hidden lg:block">
+            {/* <div className="hidden lg:block">
               <div className="relative">
                 <input
                   type="text"
@@ -261,7 +238,7 @@ const DoctorHeader = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </div>
-            </div>
+            </div> */}
 
             {/* User Account Menu */}
             <div className="relative">

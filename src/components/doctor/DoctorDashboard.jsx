@@ -605,7 +605,7 @@ const DoctorDashboard = () => {
         </div>
 
         {/* Quick Actions */}
-        <div className="mt-8 bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+        {/* <div className="mt-8 bg-white rounded-xl shadow-lg border border-gray-200 p-6">
           <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
             <svg
               className="w-5 h-5 text-[#20c0f3]"
@@ -689,7 +689,7 @@ const DoctorDashboard = () => {
               </div>
             </button>
           </div>
-        </div>
+        </div> */}
       </div>
 
       <ToastContainer

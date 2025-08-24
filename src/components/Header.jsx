@@ -14,18 +14,8 @@ const navLinks = [
 const Header = () => {
   const [open, setOpen] = useState(false);
   const [accountMenu, setAccountMenu] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
-
-  // Handle scroll effect
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -83,20 +73,15 @@ const Header = () => {
       </div>
 
       {/* Main Navigation */}
-      <div className={`bg-white/95 backdrop-blur-lg transition-all duration-300 ${
-        scrolled ? 'shadow-lg ' : 'shadow-md py-4'
-      }`}>
+      <div className="bg-white/95 backdrop-blur-lg shadow-md ">
         <div className="max-w-7xl mx-auto flex items-center justify-between px-8">
           {/* Logo */}
           <div className="flex items-center">
             <img 
-  src="/src/components/img/LOGO SPA-01.png"  
-  alt="" 
-  className={`transition-all duration-300 transform ${
-    scrolled ? 'scale-[2.2] h-12 w-auto' : 'scale-[2.2] h-16 w-auto'
-  }`} 
-/>
-
+              src="/src/components/img/LOGO SPA-01.png"  
+              alt="Health Clinic Logo" 
+              className="h-[75px] w-auto object-contain"
+            />
           </div>
 
           {/* Desktop Navigation */}
@@ -107,14 +92,14 @@ const Header = () => {
                   <NavLink
                     to={link.href}
                     className={({ isActive }) =>
-                      `relative text-[#223a66] font-medium transition-all duration-300 hover:text-[#23cf7c] py-2 ${
+                      `relative text-[#223a66] font-medium hover:text-[#23cf7c] py-2 ${
                         isActive ? 'text-[#23cf7c]' : ''
                       } group`
                     }
                     end={link.href === "/"}
                   >
                     {link.label}
-                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#23cf7c] transition-all duration-300 group-hover:w-full"></span>
+                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#23cf7c] group-hover:w-full"></span>
                   </NavLink>
                 </li>
               ))}
@@ -123,14 +108,11 @@ const Header = () => {
 
           {/* User Account & CTA */}
           <div className="flex items-center gap-4">
-            {/* Emergency Button */}
-            
-
             {/* Account Menu */}
             <div className="relative">
               {user ? (
                 <button
-                  className="flex items-center gap-2 text-[#223a66] font-medium focus:outline-none hover:text-[#23cf7c] transition-colors duration-300"
+                  className="flex items-center gap-2 text-[#223a66] font-medium focus:outline-none hover:text-[#23cf7c]"
                   onClick={() => setAccountMenu(!accountMenu)}
                 >
                   <div className="w-10 h-10 rounded-full bg-gradient-to-r from-[#23cf7c] to-[#20c997] flex items-center justify-center text-white font-semibold">
@@ -141,7 +123,7 @@ const Header = () => {
               ) : (
                 <NavLink
                   to="/login"
-                  className="flex items-center gap-2 text-[#223a66] font-medium hover:text-[#23cf7c] transition-colors duration-300"
+                  className="flex items-center gap-2 text-[#223a66] font-medium hover:text-[#23cf7c]"
                 >
                   <FaUserCircle className="text-2xl" />
                   <span className="hidden md:block">Login</span>
@@ -161,7 +143,7 @@ const Header = () => {
                   
                   <NavLink
                     to="/profile"
-                    className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 text-[#223a66] text-sm transition-colors duration-200"
+                    className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 text-[#223a66] text-sm"
                     onClick={() => setAccountMenu(false)}
                   >
                     <FaUserCircle className="text-[#23cf7c]" />
@@ -170,7 +152,7 @@ const Header = () => {
                   
                   <NavLink
                     to="/profile/update"
-                    className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 text-[#223a66] text-sm transition-colors duration-200"
+                    className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 text-[#223a66] text-sm"
                     onClick={() => setAccountMenu(false)}
                   >
                     <svg className="w-4 h-4 text-[#23cf7c]" fill="currentColor" viewBox="0 0 20 20">
@@ -181,7 +163,7 @@ const Header = () => {
                   
                   <NavLink
                     to="/list-booking"
-                    className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 text-[#223a66] text-sm transition-colors duration-200"
+                    className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 text-[#223a66] text-sm"
                     onClick={() => setAccountMenu(false)}
                   >
                     <svg className="w-4 h-4 text-[#23cf7c]" fill="currentColor" viewBox="0 0 20 20">
@@ -193,7 +175,7 @@ const Header = () => {
                   <div className="border-t border-gray-100 mt-2 pt-2">
                     <button
                       onClick={handleLogout}
-                      className="flex items-center gap-3 w-full px-4 py-3 hover:bg-red-50 text-[#f75757] text-sm transition-colors duration-200"
+                      className="flex items-center gap-3 w-full px-4 py-3 hover:bg-red-50 text-[#f75757] text-sm"
                     >
                       <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clipRule="evenodd" />
@@ -207,7 +189,7 @@ const Header = () => {
 
             {/* Mobile Menu Button */}
             <button
-              className="lg:hidden text-[#223a66] text-2xl hover:text-[#23cf7c] transition-colors duration-300"
+              className="lg:hidden text-[#223a66] text-2xl hover:text-[#23cf7c]"
               onClick={() => setOpen(true)}
               aria-label="Open menu"
             >
@@ -223,9 +205,9 @@ const Header = () => {
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setOpen(false)} />
           <div className="fixed right-0 top-0 h-full w-80 bg-white shadow-2xl">
             <div className="flex items-center justify-between p-6 border-b border-gray-100">
-              <img src="/images/logo.png" alt="Logo" className="h-12 w-auto" />
+              <img src="/src/components/img/LOGO SPA-01.png" alt="Logo" className="h-8 w-auto" />
               <button
-                className="text-[#223a66] text-2xl hover:text-[#f75757] transition-colors"
+                className="text-[#223a66] text-2xl hover:text-[#f75757]"
                 onClick={() => setOpen(false)}
                 aria-label="Close menu"
               >
@@ -253,7 +235,7 @@ const Header = () => {
                     <NavLink
                       to={link.href}
                       className={({ isActive }) =>
-                        `block px-4 py-3 rounded-lg text-[#223a66] font-medium transition-all duration-300 ${
+                        `block px-4 py-3 rounded-lg text-[#223a66] font-medium ${
                           isActive 
                             ? 'bg-[#23cf7c]/10 text-[#23cf7c] border-l-4 border-[#23cf7c]' 
                             : 'hover:bg-gray-50 hover:text-[#23cf7c]'
@@ -273,7 +255,7 @@ const Header = () => {
                     <li>
                       <NavLink
                         to="/profile"
-                        className="block px-4 py-3 rounded-lg text-[#223a66] font-medium hover:bg-gray-50 hover:text-[#23cf7c] transition-all duration-300"
+                        className="block px-4 py-3 rounded-lg text-[#223a66] font-medium hover:bg-gray-50 hover:text-[#23cf7c]"
                         onClick={() => setOpen(false)}
                       >
                         My Profile
@@ -282,7 +264,7 @@ const Header = () => {
                     <li>
                       <NavLink
                         to="/list-booking"
-                        className="block px-4 py-3 rounded-lg text-[#223a66] font-medium hover:bg-gray-50 hover:text-[#23cf7c] transition-all duration-300"
+                        className="block px-4 py-3 rounded-lg text-[#223a66] font-medium hover:bg-gray-50 hover:text-[#23cf7c]"
                         onClick={() => setOpen(false)}
                       >
                         My Bookings
@@ -291,7 +273,7 @@ const Header = () => {
                     <li>
                       <button
                         onClick={handleLogout}
-                        className="w-full text-left px-4 py-3 rounded-lg text-[#f75757] font-medium hover:bg-red-50 transition-all duration-300"
+                        className="w-full text-left px-4 py-3 rounded-lg text-[#f75757] font-medium hover:bg-red-50"
                       >
                         Logout
                       </button>
