@@ -65,13 +65,13 @@ const RefundModal = ({ isOpen, onClose, refundData, onConfirm, onReject, loading
           
           {!isProcessed && (
             <>
-              <button 
+              {/* <button 
                 className="flex-1 bg-red-500 text-white py-2 rounded hover:bg-red-600 transition disabled:opacity-50"
                 onClick={() => onReject(refundData.id)} 
                 disabled={loading}
               >
                 {loading ? "Processing..." : "Reject"}
-              </button>
+              </button> */}
               <button 
                 className="flex-1 bg-green-500 text-white py-2 rounded hover:bg-green-600 transition disabled:opacity-50"
                 onClick={() => onConfirm(refundData.id)} 
@@ -258,7 +258,7 @@ const ListRefund = () => {
             <option value="">Select Status</option>
             <option value="WAIT REFUND">Wait Refund</option>
             <option value="REFUNDED">Refunded</option>
-            <option value="REJECTED">Rejected</option>
+            {/* <option value="REJECTED">Rejected</option> */}
           </select>
         </div>
         <div>

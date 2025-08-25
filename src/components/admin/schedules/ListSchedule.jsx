@@ -344,7 +344,7 @@ const ListSchedule = () => {
                           </button>
                           <button
                             className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded-lg transition-colors duration-200 flex items-center gap-1"
-                            onClick={() => navigate(`/admin/schedules/edit/${sch.id}`)}
+                            onClick={() => navigate(`/admin/schedules/${sch.id}`)}
                             title="Chỉnh sửa"
                           >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
