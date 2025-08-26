@@ -115,7 +115,7 @@ const AdminHeader = () => {
           {/* Right side - Actions and User Menu */}
           <div className="flex items-center gap-4">
             {/* Quick Actions */}
-            <div className="hidden md:flex items-center gap-2">
+            {/* <div className="hidden md:flex items-center gap-2">
               <button
                 onClick={() => navigate("/admin/users/add")}
                 className="p-2 text-gray-600 hover:text-[#20c0f3] hover:bg-blue-50 rounded-lg transition-colors duration-200"
@@ -155,10 +155,10 @@ const AdminHeader = () => {
                   />
                 </svg>
               </button>
-            </div>
+            </div> */}
 
             {/* Notifications */}
-            <div className="relative">
+            {/* <div className="relative">
               <button
                 className="relative p-2 text-gray-600 hover:text-[#20c0f3] hover:bg-blue-50 rounded-lg transition-colors duration-200"
                 onClick={() => setNotificationsMenu(!notificationsMenu)}
@@ -261,10 +261,10 @@ const AdminHeader = () => {
                   )}
                 </div>
               )}
-            </div>
+            </div> */}
 
             {/* Search */}
-            <div className="hidden lg:block">
+            {/* <div className="hidden lg:block">
               <div className="relative">
                 <input
                   type="text"
@@ -285,7 +285,7 @@ const AdminHeader = () => {
                   />
                 </svg>
               </div>
-            </div>
+            </div> */}
 
             {/* User Account Menu */}
             <div className="relative">
@@ -332,7 +332,7 @@ const AdminHeader = () => {
                   </div>
 
                   <div className="py-2">
-                    <button
+                    {/* <button
                       onClick={handleProfileClick}
                       className="w-full flex items-center gap-3 px-4 py-2 text-left hover:bg-gray-50 transition-colors duration-200"
                     >
@@ -379,7 +379,7 @@ const AdminHeader = () => {
                         />
                       </svg>
                       <span className="text-gray-700">Cài đặt</span>
-                    </button>
+                    </button> */}
 
                     <div className="border-t border-gray-200 my-2"></div>
 

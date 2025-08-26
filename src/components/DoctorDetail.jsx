@@ -39,32 +39,40 @@ const DoctorDetail = () => {
     };
 
     const fetchSchedules = async () => {
-      try {
-        const token = localStorage.getItem("admin_token");
-        const today = new Date().toISOString().split("T")[0];
+  try {
+    const token = localStorage.getItem("admin_token");
+    const today = new Date().toISOString().split("T")[0];
 
-        const res = await fetch(
-          `http://localhost:6868/api/v1/schedules/doctor?doctorId=${id}`,
-          {
-             method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        const json = await res.json();
-        const sorted = (json?.data || []).sort(
-          (a, b) =>
-            new Date(`1970-01-01T${a.start_time}`) -
-            new Date(`1970-01-01T${b.start_time}`)
-        );
-        setSchedules(sorted);
-      } catch (error) {
-        console.error("Error fetching schedules:", error);
-        setSchedules([]);
+    const res = await fetch(
+      `http://localhost:6868/api/v1/schedules/doctor?doctorId=${id}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
-    };
+    );
+
+    const json = await res.json();
+    const allSchedules = json?.data || [];
+
+    // 👉 Lọc chỉ lấy lịch hôm nay
+    const todaySchedules = allSchedules.filter(
+      (s) => s.date_schedule === today
+    );
+
+    const sorted = todaySchedules.sort(
+      (a, b) =>
+        new Date(`1970-01-01T${a.start_time}`) -
+        new Date(`1970-01-01T${b.start_time}`)
+    );
+    setSchedules(sorted);
+  } catch (error) {
+    console.error("Error fetching schedules:", error);
+    setSchedules([]);
+  }
+};
+
 
     fetchDoctor();
     fetchSchedules();

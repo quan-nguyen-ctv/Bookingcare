@@ -227,7 +227,7 @@ const ProfileView = () => {
             </div>
 
             {/* Account Information */}
-            <div className="mt-8 pt-8 border-t border-gray-200">
+            {/* <div className="mt-8 pt-8 border-t border-gray-200">
               <h3 className="text-xl font-semibold text-[#223a66] mb-6 flex items-center gap-2">
                 <FaIdCard className="text-[#23cf7c]" />
                 Account Information
@@ -254,7 +254,7 @@ const ProfileView = () => {
                   </p>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             {/* Quick Actions */}
             <div className="mt-8 pt-8 border-t border-gray-200">

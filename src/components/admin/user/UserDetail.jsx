@@ -3,29 +3,31 @@ import { useParams, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const ClinicDetail = () => {
+const UserDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [clinic, setClinic] = useState(null);
+  const [user, setUser] = useState(null);
   const [editMode, setEditMode] = useState(false);
-  const [originalClinic, setOriginalClinic] = useState(null);
+  const [originalUser, setOriginalUser] = useState(null);
   const [editData, setEditData] = useState({
-    clinicName: "",
+    fullname: "",
     email: "",
-    phone: "",
+    phone_number: "",
     address: "",
-    description: "",
-    active: true,
+    birthday: "",
+    gender: "",
+    role_id: 3,
+    is_active: true,
+    password: "",
+    retype_password: ""
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [showImageModal, setShowImageModal] = useState(false);
-  const [newImageFile, setNewImageFile] = useState(null);
 
   useEffect(() => {
     if (!id) return;
     
-    const fetchDetail = async () => {
+    const fetchUserDetail = async () => {
       setLoading(true);
       try {
         const token = localStorage.getItem("admin_token");
@@ -38,29 +40,33 @@ const ClinicDetail = () => {
           return;
         }
 
-        const res = await fetch(`http://localhost:6868/api/v1/clinics/${id}`, {
+        const res = await fetch(`http://localhost:6868/api/v1/users/get-by-id/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         
         if (!res.ok) {
-          throw new Error("Không thể tải thông tin phòng khám");
+          throw new Error("Không thể tải thông tin người dùng");
         }
 
         const result = await res.json();
-        const clinicData = result.data || null;
-        setClinic(clinicData);
-        setOriginalClinic(clinicData);
+        const userData = result.data || null;
+        setUser(userData);
+        setOriginalUser(userData);
         setEditData({
-          clinicName: clinicData?.clinicName || "",
-          email: clinicData?.email || "",
-          phone: clinicData?.phone || "",
-          address: clinicData?.address || "",
-          description: clinicData?.description || "",
-          active: !!clinicData?.active,
+          fullname: userData?.fullname || "",
+          email: userData?.email || "",
+          phone_number: userData?.phone_number || "",
+          address: userData?.address || "",
+          birthday: userData?.birthday ? userData.birthday.split("T")[0] : "",
+          gender: userData?.gender || "",
+          role_id: userData?.role?.id || 3,
+          is_active: userData?.is_active ?? true,
+          password: "",
+          retype_password: ""
         });
       } catch (error) {
-        console.error("Error fetching clinic:", error);
-        toast.error("Lỗi khi tải thông tin phòng khám", {
+        console.error("Error fetching user:", error);
+        toast.error("Lỗi khi tải thông tin người dùng", {
           position: "top-right",
           autoClose: 4000,
         });
@@ -68,7 +74,7 @@ const ClinicDetail = () => {
         setLoading(false);
       }
     };
-    fetchDetail();
+    fetchUserDetail();
   }, [id, navigate]);
 
   const handleChange = (e) => {
@@ -80,8 +86,8 @@ const ClinicDetail = () => {
   };
 
   const validateForm = () => {
-    if (!editData.clinicName.trim()) {
-      toast.error("Vui lòng nhập tên phòng khám", {
+    if (!editData.fullname.trim()) {
+      toast.error("Vui lòng nhập họ tên", {
         position: "top-right",
         autoClose: 4000,
       });
@@ -105,7 +111,7 @@ const ClinicDetail = () => {
       return false;
     }
 
-    if (!editData.phone.trim()) {
+    if (!editData.phone_number.trim()) {
       toast.error("Vui lòng nhập số điện thoại", {
         position: "top-right",
         autoClose: 4000,
@@ -113,8 +119,16 @@ const ClinicDetail = () => {
       return false;
     }
 
-    if (!editData.address.trim()) {
-      toast.error("Vui lòng nhập địa chỉ", {
+    if (editData.password && editData.password !== editData.retype_password) {
+      toast.error("Mật khẩu xác nhận không khớp", {
+        position: "top-right",
+        autoClose: 4000,
+      });
+      return false;
+    }
+
+    if (editData.password && editData.password.length < 6) {
+      toast.error("Mật khẩu phải có ít nhất 6 ký tự", {
         position: "top-right",
         autoClose: 4000,
       });
@@ -131,15 +145,23 @@ const ClinicDetail = () => {
     try {
       const token = localStorage.getItem("admin_token");
       const payload = {
-        clinic_name: editData.clinicName,
+        fullname: editData.fullname,
         email: editData.email,
-        phone: editData.phone,
+        phone_number: editData.phone_number,
         address: editData.address,
-        description: editData.description,
-        active: editData.active,
+        birthday: editData.birthday,
+        gender: editData.gender,
+        role_id: editData.role_id,
+        active: editData.is_active,
       };
+
+      // Chỉ thêm password nếu có nhập
+      if (editData.password) {
+        payload.password = editData.password;
+        payload.retype_password = editData.retype_password;
+      }
       
-      const res = await fetch(`http://localhost:6868/api/v1/clinics/${id}`, {
+      const res = await fetch(`http://localhost:6868/api/v1/users/admin/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -148,25 +170,25 @@ const ClinicDetail = () => {
         body: JSON.stringify(payload),
       });
       
-      const data = await res.json();
-      
       if (res.ok) {
-        toast.success("Cập nhật phòng khám thành công!", {
+        toast.success("Cập nhật người dùng thành công!", {
           position: "top-right",
           autoClose: 3000,
         });
         setEditMode(false);
-        const updatedClinic = { ...clinic, ...payload };
-        setClinic(updatedClinic);
-        setOriginalClinic(updatedClinic);
+        const updatedUser = { ...user, ...payload, role: { ...user.role, id: payload.role_id } };
+        setUser(updatedUser);
+        setOriginalUser(updatedUser);
+        setEditData(prev => ({ ...prev, password: "", retype_password: "" }));
       } else {
-        toast.error(data.message || "Cập nhật thất bại!", {
+        const errorData = await res.text();
+        toast.error(errorData || "Cập nhật thất bại!", {
           position: "top-right",
           autoClose: 4000,
         });
       }
     } catch (err) {
-      console.error("Error updating clinic:", err);
+      console.error("Error updating user:", err);
       toast.error("Lỗi kết nối đến server", {
         position: "top-right",
         autoClose: 4000,
@@ -176,59 +198,66 @@ const ClinicDetail = () => {
     }
   };
 
-  const handleImageUpload = async () => {
-    if (!newImageFile) return;
-    try {
-      const token = localStorage.getItem("admin_token");
-      const formData = new FormData();
-      formData.append("file", newImageFile);
-      formData.append("oldImage", clinic.clinicImage || "");
-      
-      const res = await fetch(`http://localhost:6868/api/v1/images/clinic-upload?clinicId=${id}`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
-      const result = await res.json();
-      if (!res.ok) {
-        toast.error(result.message || "Cập nhật ảnh thất bại", {
-          position: "top-right",
-          autoClose: 4000,
-        });
-        return;
-      }
-      toast.success("Cập nhật ảnh thành công!", {
-        position: "top-right",
-        autoClose: 3000,
-      });
-      const updatedClinic = { ...clinic, clinicImage: result.image || newImageFile.name };
-      setClinic(updatedClinic);
-      setShowImageModal(false);
-      setNewImageFile(null);
-    } catch (err) {
-      toast.error("Lỗi khi cập nhật ảnh", {
-        position: "top-right",
-        autoClose: 4000,
-      });
-    }
-  };
-
   const handleCancel = () => {
     if (editMode) {
       setEditData({
-        clinicName: originalClinic?.clinicName || "",
-        email: originalClinic?.email || "",
-        phone: originalClinic?.phone || "",
-        address: originalClinic?.address || "",
-        description: originalClinic?.description || "",
-        active: !!originalClinic?.active,
+        fullname: originalUser?.fullname || "",
+        email: originalUser?.email || "",
+        phone_number: originalUser?.phone_number || "",
+        address: originalUser?.address || "",
+        birthday: originalUser?.birthday ? originalUser.birthday.split("T")[0] : "",
+        gender: originalUser?.gender || "",
+        role_id: originalUser?.role?.id || 3,
+        is_active: originalUser?.is_active ?? true,
+        password: "",
+        retype_password: ""
       });
       setEditMode(false);
     } else {
-      navigate("/admin/clinics/list");
+      navigate("/admin/users");
     }
+  };
+
+  const getRoleColor = (roleName) => {
+    switch (roleName?.toLowerCase()) {
+      case 'admin':
+        return 'bg-red-100 text-red-800';
+      case 'doctor':
+        return 'bg-blue-100 text-blue-800';
+      default:
+        return 'bg-green-100 text-green-800';
+    }
+  };
+
+  const getRoleLabel = (roleName) => {
+    switch (roleName?.toLowerCase()) {
+      case 'admin':
+        return 'Quản Trì Viên';
+      case 'doctor':
+        return 'Bác Sĩ';
+      case 'user':
+        return 'Khách Hàng';
+      default:
+        return roleName || '—';
+    }
+  };
+
+  const getGenderDisplay = (gender) => {
+    switch (gender?.toLowerCase()) {
+      case 'male':
+        return 'Nam';
+      case 'female':
+        return 'Nữ';
+      case 'other':
+        return 'Khác';
+      default:
+        return gender || '—';
+    }
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "—";
+    return new Date(dateString).toLocaleDateString('vi-VN');
   };
 
   if (!id) {
@@ -238,7 +267,7 @@ const ClinicDetail = () => {
           <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          <h3 className="text-lg font-semibold text-gray-600">Không tìm thấy phòng khám</h3>
+          <h3 className="text-lg font-semibold text-gray-600">Không tìm thấy người dùng</h3>
         </div>
       </div>
     );
@@ -252,21 +281,21 @@ const ClinicDetail = () => {
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
             <path className="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
           </svg>
-          <span className="font-medium">Đang tải thông tin phòng khám...</span>
+          <span className="font-medium">Đang tải thông tin người dùng...</span>
         </div>
       </div>
     );
   }
 
-  if (!clinic) {
+  if (!user) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50">
         <div className="text-center">
           <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          <h3 className="text-lg font-semibold text-gray-600 mb-2">Không tìm thấy phòng khám</h3>
-          <p className="text-gray-500">Phòng khám không tồn tại hoặc đã bị xóa</p>
+          <h3 className="text-lg font-semibold text-gray-600 mb-2">Không tìm thấy người dùng</h3>
+          <p className="text-gray-500">Người dùng không tồn tại hoặc đã bị xóa</p>
         </div>
       </div>
     );
@@ -282,11 +311,11 @@ const ClinicDetail = () => {
               <div>
                 <h2 className="text-2xl font-bold text-white flex items-center gap-3">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
-                  Chi Tiết Phòng Khám #{id}
+                  Chi Tiết Người Dùng #{id}
                 </h2>
-                <p className="text-blue-100 mt-1">Xem và cập nhật thông tin phòng khám</p>
+                <p className="text-blue-100 mt-1">Xem và cập nhật thông tin người dùng</p>
               </div>
               {!editMode && (
                 <button
@@ -309,19 +338,19 @@ const ClinicDetail = () => {
                 <svg className="w-5 h-5 text-[#20c0f3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                Thông Tin Phòng Khám
+                Thông Tin Cá Nhân
               </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Clinic Name */}
+                {/* Full Name */}
                 <div className="space-y-2">
                   <label className="block text-sm font-semibold text-gray-700">
-                    Tên Phòng Khám <span className="text-red-500">*</span>
+                    Họ Tên <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
-                    name="clinicName"
-                    value={editMode ? editData.clinicName : clinic.clinicName || ""}
+                    name="fullname"
+                    value={editMode ? editData.fullname : user.fullname || ""}
                     onChange={handleChange}
                     className={`w-full px-4 py-3 border border-gray-300 rounded-lg transition-all duration-200 ${
                       editMode 
@@ -340,7 +369,7 @@ const ClinicDetail = () => {
                   <input
                     type="email"
                     name="email"
-                    value={editMode ? editData.email : clinic.email || ""}
+                    value={editMode ? editData.email : user.email || ""}
                     onChange={handleChange}
                     className={`w-full px-4 py-3 border border-gray-300 rounded-lg transition-all duration-200 ${
                       editMode 
@@ -351,15 +380,15 @@ const ClinicDetail = () => {
                   />
                 </div>
 
-                {/* Phone */}
+                {/* Phone Number */}
                 <div className="space-y-2">
                   <label className="block text-sm font-semibold text-gray-700">
                     Số Điện Thoại <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="tel"
-                    name="phone"
-                    value={editMode ? editData.phone : clinic.phone || ""}
+                    name="phone_number"
+                    value={editMode ? editData.phone_number : user.phone_number || ""}
                     onChange={handleChange}
                     className={`w-full px-4 py-3 border border-gray-300 rounded-lg transition-all duration-200 ${
                       editMode 
@@ -370,18 +399,87 @@ const ClinicDetail = () => {
                   />
                 </div>
 
-                {/* Active Status */}
+                {/* Birthday */}
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold text-gray-700">
+                    Ngày Sinh
+                  </label>
+                  {editMode ? (
+                    <input
+                      type="date"
+                      name="birthday"
+                      value={editData.birthday}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#20c0f3] focus:border-transparent transition-all duration-200"
+                    />
+                  ) : (
+                    <div className="px-4 py-3 border border-gray-300 rounded-lg bg-gray-50">
+                      {formatDate(user.birthday)}
+                    </div>
+                  )}
+                </div>
+
+                {/* Gender */}
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold text-gray-700">
+                    Giới Tính
+                  </label>
+                  {editMode ? (
+                    <select
+                      name="gender"
+                      value={editData.gender}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#20c0f3] focus:border-transparent transition-all duration-200"
+                    >
+                      <option value="">Chọn giới tính</option>
+                      <option value="male">Nam</option>
+                      <option value="female">Nữ</option>
+                      <option value="other">Khác</option>
+                    </select>
+                  ) : (
+                    <div className="px-4 py-3 border border-gray-300 rounded-lg bg-gray-50">
+                      {getGenderDisplay(user.gender)}
+                    </div>
+                  )}
+                </div>
+
+                {/* Role */}
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold text-gray-700">
+                    Vai Trò
+                  </label>
+                  {editMode ? (
+                    <select
+                      name="role_id"
+                      value={editData.role_id}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#20c0f3] focus:border-transparent transition-all duration-200"
+                    >
+                      <option value={1}>Quản Trị Viên</option>
+                      <option value={2}>Bác Sĩ</option>
+                      <option value={3}>Khách Hàng</option>
+                    </select>
+                  ) : (
+                    <div className="px-4 py-3 border border-gray-300 rounded-lg bg-gray-50">
+                      <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${getRoleColor(user.role?.name)}`}>
+                        {getRoleLabel(user.role?.name)}
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Status */}
                 <div className="space-y-2">
                   <label className="block text-sm font-semibold text-gray-700">
                     Trạng Thái
                   </label>
                   {editMode ? (
                     <select
-                      name="active"
-                      value={editData.active ? "true" : "false"}
+                      name="is_active"
+                      value={editData.is_active ? "true" : "false"}
                       onChange={e => setEditData(prev => ({
                         ...prev,
-                        active: e.target.value === "true"
+                        is_active: e.target.value === "true"
                       }))}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#20c0f3] focus:border-transparent transition-all duration-200"
                     >
@@ -390,20 +488,20 @@ const ClinicDetail = () => {
                     </select>
                   ) : (
                     <div className={`px-4 py-3 border rounded-lg ${
-                      clinic.active 
+                      user.is_active 
                         ? "bg-green-50 border-green-200 text-green-700" 
                         : "bg-red-50 border-red-200 text-red-700"
                     }`}>
                       <div className="flex items-center gap-2">
-                        <svg className={`w-5 h-5 ${clinic.active ? "text-green-600" : "text-red-600"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          {clinic.active ? (
+                        <svg className={`w-5 h-5 ${user.is_active ? "text-green-600" : "text-red-600"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          {user.is_active ? (
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                           ) : (
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                           )}
                         </svg>
                         <span className="font-medium">
-                          {clinic.active ? "Hoạt Động" : "Không Hoạt Động"}
+                          {user.is_active ? "Hoạt Động" : "Không Hoạt Động"}
                         </span>
                       </div>
                     </div>
@@ -413,12 +511,12 @@ const ClinicDetail = () => {
                 {/* Address - Full width */}
                 <div className="md:col-span-2 space-y-2">
                   <label className="block text-sm font-semibold text-gray-700">
-                    Địa Chỉ <span className="text-red-500">*</span>
+                    Địa Chỉ
                   </label>
                   <input
                     type="text"
                     name="address"
-                    value={editMode ? editData.address : clinic.address || ""}
+                    value={editMode ? editData.address : user.address || ""}
                     onChange={handleChange}
                     className={`w-full px-4 py-3 border border-gray-300 rounded-lg transition-all duration-200 ${
                       editMode 
@@ -426,79 +524,43 @@ const ClinicDetail = () => {
                         : "bg-gray-50 cursor-not-allowed"
                     }`}
                     disabled={!editMode}
+                    placeholder="Nhập địa chỉ..."
                   />
                 </div>
 
-                {/* Description - Full width */}
-                <div className="md:col-span-2 space-y-2">
-                  <label className="block text-sm font-semibold text-gray-700">
-                    Mô Tả
-                  </label>
-                  <textarea
-                    name="description"
-                    value={editMode ? editData.description : clinic.description || ""}
-                    onChange={handleChange}
-                    rows={4}
-                    className={`w-full px-4 py-3 border border-gray-300 rounded-lg transition-all duration-200 ${
-                      editMode 
-                        ? "focus:outline-none focus:ring-2 focus:ring-[#20c0f3] focus:border-transparent" 
-                        : "bg-gray-50 cursor-not-allowed"
-                    }`}
-                    disabled={!editMode}
-                    placeholder="Nhập mô tả về phòng khám..."
-                  />
-                </div>
+                {/* Password fields - Only show in edit mode */}
+                {editMode && (
+                  <>
+                    <div className="space-y-2">
+                      <label className="block text-sm font-semibold text-gray-700">
+                        Mật Khẩu Mới
+                        <span className="text-sm text-gray-500 font-normal ml-2">(Để trống nếu không đổi)</span>
+                      </label>
+                      <input
+                        type="password"
+                        name="password"
+                        value={editData.password}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#20c0f3] focus:border-transparent transition-all duration-200"
+                        placeholder="Nhập mật khẩu mới..."
+                      />
+                    </div>
 
-                {/* Clinic Image - Full width */}
-                {/* <div className="md:col-span-2 space-y-2">
-                  <label className="block text-sm font-semibold text-gray-700">
-                    Hình Ảnh Phòng Khám
-                  </label>
-                  <div className="border border-gray-300 rounded-lg p-4">
-                    {clinic.clinicImage ? (
-                      <div className="flex items-start gap-4">
-                        <img
-                          src={`http://localhost:6868/uploads/${clinic.clinicImage}`}
-                          alt="clinic"
-                          className="h-32 w-32 object-cover rounded-lg border border-gray-200"
-                        />
-                        <div className="flex-1">
-                          <p className="text-sm text-gray-600 mb-2">Hình ảnh hiện tại</p>
-                          {editMode && (
-                            <button
-                              type="button"
-                              onClick={() => setShowImageModal(true)}
-                              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center gap-2"
-                            >
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                              </svg>
-                              Thay Đổi Ảnh
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="flex items-center justify-center h-32 bg-gray-100 rounded-lg border-2 border-dashed border-gray-300">
-                        <div className="text-center">
-                          <svg className="w-12 h-12 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                          </svg>
-                          <p className="text-sm text-gray-500">Chưa có hình ảnh</p>
-                          {editMode && (
-                            <button
-                              type="button"
-                              onClick={() => setShowImageModal(true)}
-                              className="mt-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors duration-200 text-sm"
-                            >
-                              Thêm Ảnh
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div> */}
+                    <div className="space-y-2">
+                      <label className="block text-sm font-semibold text-gray-700">
+                        Xác Nhận Mật Khẩu
+                      </label>
+                      <input
+                        type="password"
+                        name="retype_password"
+                        value={editData.retype_password}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#20c0f3] focus:border-transparent transition-all duration-200"
+                        placeholder="Nhập lại mật khẩu mới..."
+                      />
+                    </div>
+                  </>
+                )}
               </div>
             </div>
 
@@ -506,7 +568,7 @@ const ClinicDetail = () => {
             <div className="flex justify-between items-center pt-6 border-t border-gray-200">
               <button
                 className="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-lg transition-colors duration-200 flex items-center gap-2"
-                onClick={() => navigate("/admin/clinics/list")}
+                onClick={() => navigate("/admin/users/list")}
                 disabled={saving}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -559,49 +621,6 @@ const ClinicDetail = () => {
         </div>
       </div>
 
-      {/* Image Upload Modal */}
-      {showImageModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl shadow-xl p-6 w-full max-w-md mx-4">
-            <h3 className="text-lg font-bold mb-4 text-gray-800">Chọn Ảnh Mới</h3>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={e => setNewImageFile(e.target.files[0])}
-              className="w-full mb-4 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#20c0f3] focus:border-transparent"
-            />
-            {newImageFile && (
-              <div className="mb-4">
-                <p className="text-sm text-gray-600 mb-2">Xem trước:</p>
-                <img
-                  src={URL.createObjectURL(newImageFile)}
-                  alt="preview"
-                  className="h-32 w-full object-cover rounded-lg border border-gray-200"
-                />
-              </div>
-            )}
-            <div className="flex gap-3 justify-end">
-              <button
-                className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-lg transition-colors duration-200"
-                onClick={() => {
-                  setShowImageModal(false);
-                  setNewImageFile(null);
-                }}
-              >
-                Hủy
-              </button>
-              <button
-                className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                onClick={handleImageUpload}
-                disabled={!newImageFile}
-              >
-                Lưu Ảnh
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       <ToastContainer
         position="top-right"
         autoClose={3000}
@@ -622,4 +641,4 @@ const ClinicDetail = () => {
   );
 };
 
-export default ClinicDetail;
+export default UserDetail;

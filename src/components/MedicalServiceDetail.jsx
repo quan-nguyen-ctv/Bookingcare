@@ -381,54 +381,51 @@ const MedicalServiceDetail = () => {
                               <FaCalendarAlt className="text-[#23cf7c]" />
                               Available Times
                             </h4>
-                            {(() => {
-                              // Filter schedules for this doctor
-                              const doctorSchedules = schedules.filter(s => s.doctor_id == doctor.id);
-                              
-                              return doctorSchedules.length > 0 ? (
-                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                                  {doctorSchedules
-                                    .filter((schedule) => {
-                                      const now = new Date();
-                                      const scheduleDateStr = Array.isArray(schedule.date_schedule)
-                                        ? schedule.date_schedule.join("-")
-                                        : schedule.date_schedule;
-                                      const startTimeStr = Array.isArray(schedule.start_time)
-                                        ? schedule.start_time.join(":")
-                                        : schedule.start_time;
+                           {(() => {
+  const today = new Date().toISOString().split("T")[0];
 
-                                      const scheduleDateTime = new Date(`${scheduleDateStr}T${startTimeStr}`);
+  // Lọc lịch hôm nay của bác sĩ
+  const doctorSchedules = schedules.filter(
+    (s) => s.doctor_id == doctor.id && s.date_schedule === today
+  );
 
-                                      return (
-                                        schedule.active &&
-                                        schedule.number_booked < schedule.booking_limit &&
-                                        scheduleDateTime > now
-                                      );
-                                    })
-                                    .map((schedule) => (
-                                      <button
-                                        key={schedule.id}
-                                        className="bg-gradient-to-r from-[#23cf7c]/10 to-[#20c997]/10 border-2 border-[#23cf7c] text-[#23cf7c] hover:from-[#23cf7c] hover:to-[#20c997] hover:text-white px-4 py-3 rounded-xl font-semibold transition-all duration-300 disabled:opacity-50"
-                                        onClick={() => handleBooking(schedule, doctor)}
-                                        disabled={false} // Add loading state if needed
-                                      >
-                                        <div className="text-sm">
-                                          {schedule.start_time.slice(0, 5)} - {schedule.end_time.slice(0, 5)}
-                                        </div>
-                                        <div className="text-xs opacity-75">
-                                          {schedule.booking_limit - schedule.number_booked} slots left
-                                        </div>
-                                      </button>
-                                    ))}
-                                </div>
-                              ) : (
-                                <div className="bg-gray-100 rounded-xl p-4 text-center">
-                                  <FaCalendarAlt className="text-gray-400 text-2xl mb-2 mx-auto" />
-                                  <p className="text-gray-500 text-sm">No available slots</p>
-                                  <p className="text-gray-400 text-xs mt-1">Please check back later</p>
-                                </div>
-                              );
-                            })()}
+  return doctorSchedules.length > 0 ? (
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+      {doctorSchedules
+        .filter((schedule) => {
+          const now = new Date();
+          const scheduleDateTime = new Date(`${schedule.date_schedule}T${schedule.start_time}`);
+
+          return (
+            schedule.active &&
+            schedule.number_booked < schedule.booking_limit &&
+            scheduleDateTime > now
+          );
+        })
+        .map((schedule) => (
+          <button
+            key={schedule.id}
+            className="bg-gradient-to-r from-[#23cf7c]/10 to-[#20c997]/10 border-2 border-[#23cf7c] text-[#23cf7c] hover:from-[#23cf7c] hover:to-[#20c997] hover:text-white px-4 py-3 rounded-xl font-semibold transition-all duration-300 disabled:opacity-50"
+            onClick={() => handleBooking(schedule, doctor)}
+          >
+            <div className="text-sm">
+              {schedule.start_time.slice(0, 5)} - {schedule.end_time.slice(0, 5)}
+            </div>
+            <div className="text-xs opacity-75">
+              {schedule.booking_limit - schedule.number_booked} slots left
+            </div>
+          </button>
+        ))}
+    </div>
+  ) : (
+    <div className="bg-gray-100 rounded-xl p-4 text-center">
+      <FaCalendarAlt className="text-gray-400 text-2xl mb-2 mx-auto" />
+      <p className="text-gray-500 text-sm">No available slots today</p>
+      <p className="text-gray-400 text-xs mt-1">Please check back later</p>
+    </div>
+  );
+})()}
+
                           </div>
                         </div>
                       </div>
