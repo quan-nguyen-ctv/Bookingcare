@@ -3,12 +3,12 @@ import { FaEnvelope, FaMapMarkerAlt, FaBars, FaTimes, FaUserCircle, FaPhone, FaC
 import { NavLink, useNavigate } from "react-router-dom";
 
 const navLinks = [
-  { label: "Home", href: "/" },
-  { label: "About", href: "/about" },
-  { label: "Medical Services", href: "/medical-services" },
-  { label: "Doctors", href: "/list-doctor" },
-  { label: "Blog", href: "/blog" },
-  { label: "Contact", href: "/contact" },
+  { label: "Trang Chủ", href: "/" },
+  { label: "Chúng Tôi", href: "/about" },
+  { label: "Dịch Vụ", href: "/medical-services" },
+  { label: "Bác Sĩ", href: "/list-doctor" },
+  { label: "Tin Tức", href: "/blog" },
+  { label: "Liên Hệ", href: "/contact" },
 ];
 
 const Header = () => {
@@ -54,20 +54,20 @@ const Header = () => {
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-2">
               <FaPhone className="text-[#23cf7c]" />
-              <span>+1 (555) 123-4567</span>
+              <span>0123 654 789</span>
             </div>
             <div className="flex items-center gap-2">
               <FaEnvelope className="text-[#23cf7c]" />
-              <span>info@medicalcenter.com</span>
+              <span>clinic@gmail.com.com</span>
             </div>
             <div className="flex items-center gap-2">
               <FaClock className="text-[#23cf7c]" />
-              <span>Mon - Fri: 7:00 - 17:00</span>
+              <span>Mon - Fri: 7:00 - 21:00</span>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <FaMapMarkerAlt className="text-[#23cf7c]" />
-            <span>123 Medical Center, Health City</span>
+            <span>Tôn Thất Thuyết, Trịnh Văn Bô</span>
           </div>
         </div>
       </div>
@@ -126,7 +126,7 @@ const Header = () => {
                   className="flex items-center gap-2 text-[#223a66] font-medium hover:text-[#23cf7c]"
                 >
                   <FaUserCircle className="text-2xl" />
-                  <span className="hidden md:block">Login</span>
+                  <span className="hidden md:block">Đăng Nhập</span>
                 </NavLink>
               )}
 
@@ -147,7 +147,7 @@ const Header = () => {
                     onClick={() => setAccountMenu(false)}
                   >
                     <FaUserCircle className="text-[#23cf7c]" />
-                    My Profile
+                    Thông Tin Cá Nhân
                   </NavLink>
                   
                   <NavLink
@@ -158,7 +158,7 @@ const Header = () => {
                     <svg className="w-4 h-4 text-[#23cf7c]" fill="currentColor" viewBox="0 0 20 20">
                       <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                     </svg>
-                    Update Profile
+                    Cập Nhật
                   </NavLink>
                   
                   <NavLink
@@ -169,7 +169,7 @@ const Header = () => {
                     <svg className="w-4 h-4 text-[#23cf7c]" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
                     </svg>
-                    My Bookings
+                    Lịch Sử 
                   </NavLink>
                   
                   <div className="border-t border-gray-100 mt-2 pt-2">
@@ -180,7 +180,7 @@ const Header = () => {
                       <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clipRule="evenodd" />
                       </svg>
-                      Logout
+                      Đăng Xuất
                     </button>
                   </div>
                 </div>
@@ -258,7 +258,7 @@ const Header = () => {
                         className="block px-4 py-3 rounded-lg text-[#223a66] font-medium hover:bg-gray-50 hover:text-[#23cf7c]"
                         onClick={() => setOpen(false)}
                       >
-                        My Profile
+                        Thông Tin Cá Nhân
                       </NavLink>
                     </li>
                     <li>
@@ -267,7 +267,7 @@ const Header = () => {
                         className="block px-4 py-3 rounded-lg text-[#223a66] font-medium hover:bg-gray-50 hover:text-[#23cf7c]"
                         onClick={() => setOpen(false)}
                       >
-                        My Bookings
+                        Lịch Sử
                       </NavLink>
                     </li>
                     <li>
@@ -275,7 +275,7 @@ const Header = () => {
                         onClick={handleLogout}
                         className="w-full text-left px-4 py-3 rounded-lg text-[#f75757] font-medium hover:bg-red-50"
                       >
-                        Logout
+                        Đăng Xuất
                       </button>
                     </li>
                   </>
@@ -286,7 +286,7 @@ const Header = () => {
                       className="block px-4 py-3 rounded-lg text-center bg-gradient-to-r from-[#23cf7c] to-[#20c997] text-white font-medium"
                       onClick={() => setOpen(false)}
                     >
-                      Login / Register
+                      Đăng Nhập / Đăng Kí
                     </NavLink>
                   </li>
                 )}
@@ -296,10 +296,10 @@ const Header = () => {
               <div className="mt-6 space-y-3">
                 <button className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#f75757] to-[#ff6b6b] text-white px-4 py-3 rounded-lg font-medium">
                   <FaPhone className="animate-pulse" />
-                  Emergency Call
+                  Cuộc gọi khẩn cấp
                 </button>
                 <button className="w-full flex items-center justify-center bg-gradient-to-r from-[#23cf7c] to-[#20c997] text-white px-4 py-3 rounded-lg font-medium">
-                  Book Appointment
+                  Đặt Lịch
                 </button>
               </div>
             </div>

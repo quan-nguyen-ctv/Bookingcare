@@ -137,13 +137,13 @@ const MedicalServiceDetail = () => {
         />
         <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto">
           <span className="uppercase text-blue-200 font-semibold tracking-widest text-sm">
-            Medical Department
+            Dịch Vụ
           </span>
           <h1 className="text-4xl md:text-6xl font-light mb-4 leading-tight mt-2">
             {specialty?.specialtyName || <span className="font-bold">Specialty</span>}
           </h1>
           <p className="text-lg md:text-xl font-light opacity-90">
-            Expert care and advanced treatment options
+            Chăm sóc chuyên nghiệp và các lựa chọn điều trị tiên tiến
           </p>
         </div>
       </section>
@@ -169,7 +169,7 @@ const MedicalServiceDetail = () => {
                   
                   <div className="mb-6">
                     <span className="uppercase text-[#223a66] font-semibold tracking-widest text-sm">
-                      About Department
+                      Về Dịch Vụ Của Chúng Tôi
                     </span>
                     <h2 className="text-3xl font-light text-[#223a66] mb-4 mt-2">
                       {specialty?.specialtyName || <span className="font-bold">Specialty Overview</span>}
@@ -193,7 +193,7 @@ const MedicalServiceDetail = () => {
                   <div className="bg-gradient-to-r from-[#223a66] to-[#2c4a7a] p-6 text-white">
                     <h3 className="text-xl font-bold flex items-center gap-2">
                       <FaClock />
-                      Schedule & Information
+                      Thông Tin Và Lịch Trình
                     </h3>
                   </div>
                   
@@ -203,13 +203,13 @@ const MedicalServiceDetail = () => {
                     <div className="mb-8">
                       <h4 className="font-semibold text-[#223a66] mb-4 flex items-center gap-2">
                         <FaClock className="text-[#23cf7c]" />
-                        Working Hours
+                        Thời Gian Làm Việc
                       </h4>
                       <div className="space-y-3">
                         {[
-                          ["Monday - Friday", "7:00 - 17:00"],
-                          ["Saturday", "7:00 - 16:00"],
-                          ["Sunday", "Closed"]
+                          ["Thứ 2 - Thứ 6", "7:00 - 21:00"],
+                          ["Thứ 7", "8:00 - 19:00"],
+                          ["Chủ Nhật", "Đóng cửa"]
                         ].map(([day, time], index) => (
                           <div key={index} className="flex justify-between items-center py-2 border-b border-gray-100">
                             <span className="text-gray-700 font-medium">{day}</span>
@@ -223,14 +223,14 @@ const MedicalServiceDetail = () => {
                     <div className="mb-8">
                       <h4 className="font-semibold text-[#223a66] mb-4 flex items-center gap-2">
                         <FaDollarSign className="text-[#23cf7c]" />
-                        Consultation Fee
+                        Chi Phí Chăm Sóc
                       </h4>
                       <div className="bg-[#23cf7c]/10 rounded-xl p-4 border border-[#23cf7c]/20">
                         <div className="text-center">
                           <span className="text-[#23cf7c] font-bold text-2xl">
-                            ${specialty?.price || "Contact us"}
+                            {specialty?.price || "Contact us"} VNĐ
                           </span>
-                          <p className="text-gray-600 text-sm mt-1">Starting from</p>
+                          
                         </div>
                       </div>
                     </div>
@@ -239,7 +239,7 @@ const MedicalServiceDetail = () => {
                     <div>
                       <h4 className="font-semibold text-[#223a66] mb-4 flex items-center gap-2">
                         <FaMapMarkerAlt className="text-[#23cf7c]" />
-                        Our Locations
+                       Địa Chỉ Của Chúng Tôi
                       </h4>
                       <div className="space-y-3">
                         {clinics.length > 0 ? (
@@ -267,13 +267,13 @@ const MedicalServiceDetail = () => {
             <div className="bg-white rounded-2xl shadow-xl p-8">
               <div className="mb-8">
                 <span className="uppercase text-[#223a66] font-semibold tracking-widest text-sm">
-                  Our Medical Team
+                  Đội ngũ y tế của chúng tôi
                 </span>
                 <h2 className="text-3xl font-light text-[#223a66] mb-4 mt-2">
-                  Expert <span className="font-bold">Doctors</span>
+                  Chuyên Gia <span className="font-bold">Bác Sĩ</span>
                 </h2>
                 <p className="text-gray-600">
-                  Meet our experienced medical professionals specialized in this department
+                  Gặp gỡ các chuyên gia y tế giàu kinh nghiệm của chúng tôi chuyên về khoa này
                 </p>
               </div>
               
@@ -323,20 +323,20 @@ const MedicalServiceDetail = () => {
                                 {doctor?.user?.fullname}
                               </h3>
                               <p className="text-[#23cf7c] font-medium mb-4">
-                                {specialty?.specialtyName} Specialist
+                                {specialty?.specialtyName} 
                               </p>
                               <button
                                 className="bg-[#223a66] hover:bg-[#1a2d52] text-white px-6 py-2 rounded-full transition duration-300 text-sm"
                                 onClick={() => navigate(`/Doctors-detail/${doctor.id}`)}
                               >
-                                View Profile
+                                Thông Tin
                               </button>
                             </div>
                           </div>
 
                           {/* Doctor Details */}
                           <div className="lg:col-span-1">
-                            <h4 className="font-semibold text-[#223a66] mb-4">Doctor Information</h4>
+                            <h4 className="font-semibold text-[#223a66] mb-4">Thông Tin Về Bác Sĩ</h4>
                             <div className="space-y-3">
                               <div className="flex items-center gap-3">
                                 <FaEnvelope className="text-[#23cf7c] w-4" />
@@ -359,7 +359,7 @@ const MedicalServiceDetail = () => {
                               </div>
                               <div className="flex items-center gap-3">
                                 <FaAward className="text-[#23cf7c] w-4" />
-                                <span className="text-gray-700 text-sm">{doctor?.experience} years experience</span>
+                                <span className="text-gray-700 text-sm">{doctor?.experience} năm kinh nghiệm</span>
                               </div>
                               {doctor?.qualification && (
                                 <div className="flex items-center gap-3">
@@ -379,7 +379,7 @@ const MedicalServiceDetail = () => {
                           <div className="lg:col-span-1">
                             <h4 className="font-semibold text-[#223a66] mb-4 flex items-center gap-2">
                               <FaCalendarAlt className="text-[#23cf7c]" />
-                              Available Times
+                              Thời Gian
                             </h4>
                            {(() => {
   const today = new Date().toISOString().split("T")[0];
@@ -420,8 +420,8 @@ const MedicalServiceDetail = () => {
   ) : (
     <div className="bg-gray-100 rounded-xl p-4 text-center">
       <FaCalendarAlt className="text-gray-400 text-2xl mb-2 mx-auto" />
-      <p className="text-gray-500 text-sm">No available slots today</p>
-      <p className="text-gray-400 text-xs mt-1">Please check back later</p>
+      <p className="text-gray-500 text-sm">Không Có Lịch Trong Ngày Hôm Nay</p>
+      <p className="text-gray-400 text-xs mt-1">Vui Lòng Xem Lại Sau</p>
     </div>
   );
 })()}
@@ -436,7 +436,7 @@ const MedicalServiceDetail = () => {
                     <FaUserMd className="text-gray-300 text-6xl mb-4 mx-auto" />
                     <h3 className="text-xl font-semibold text-gray-500 mb-2">No Doctors Available</h3>
                     <p className="text-gray-400">
-                      Currently no doctors are assigned to this specialty.
+                      Hiện tại không có bác sĩ nào được phân công phụ trách chuyên khoa này.
                     </p>
                   </div>
                 )}

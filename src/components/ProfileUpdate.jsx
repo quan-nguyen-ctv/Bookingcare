@@ -17,7 +17,7 @@ import {
   FaEdit
 } from "react-icons/fa";
 
-// Enhanced Toast component
+// Toast thông báo
 const Toast = ({ message, type = "success", onClose }) => (
   <div className="fixed top-6 right-6 z-50 animate-slide-in">
     <div className={`flex items-center bg-white border rounded-xl shadow-xl px-6 py-4 min-w-[320px] ${
@@ -71,7 +71,7 @@ const ProfileUpdate = () => {
       setLoading(true);
       const token = localStorage.getItem("token");
       if (!token) {
-        setToast({ show: true, message: "Please login to continue", type: "error" });
+        setToast({ show: true, message: "Vui lòng đăng nhập để tiếp tục", type: "error" });
         setLoading(false);
         return;
       }
@@ -103,7 +103,7 @@ const ProfileUpdate = () => {
         setUserId(data.id);
       } catch (err) {
         console.error("Error fetching user:", err);
-        setToast({ show: true, message: "Failed to load profile data", type: "error" });
+        setToast({ show: true, message: "Không thể tải dữ liệu hồ sơ", type: "error" });
       } finally {
         setLoading(false);
       }
@@ -116,7 +116,6 @@ const ProfileUpdate = () => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
     
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: "" }));
     }
@@ -125,16 +124,16 @@ const ProfileUpdate = () => {
   const validateForm = () => {
     const newErrors = {};
     
-    if (!form.fullname.trim()) newErrors.fullname = "Full name is required";
-    if (!form.email.trim()) newErrors.email = "Email is required";
-    if (!form.phone_number.trim()) newErrors.phone_number = "Phone number is required";
+    if (!form.fullname.trim()) newErrors.fullname = "Họ tên không được để trống";
+    if (!form.email.trim()) newErrors.email = "Email không được để trống";
+    if (!form.phone_number.trim()) newErrors.phone_number = "Số điện thoại không được để trống";
     
     if (form.password && form.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
+      newErrors.password = "Mật khẩu phải có ít nhất 6 ký tự";
     }
     
     if (form.password && form.password !== form.retype_password) {
-      newErrors.retype_password = "Passwords do not match";
+      newErrors.retype_password = "Mật khẩu nhập lại không khớp";
     }
 
     setErrors(newErrors);
@@ -145,7 +144,7 @@ const ProfileUpdate = () => {
     e.preventDefault();
     
     if (!validateForm()) {
-      setToast({ show: true, message: "Please fix the errors below", type: "error" });
+      setToast({ show: true, message: "Vui lòng sửa các lỗi trong biểu mẫu", type: "error" });
       return;
     }
 
@@ -153,7 +152,7 @@ const ProfileUpdate = () => {
     const token = localStorage.getItem("token");
     
     if (!token || !userId) {
-      setToast({ show: true, message: "Session expired. Please login again", type: "error" });
+      setToast({ show: true, message: "Phiên làm việc đã hết hạn. Vui lòng đăng nhập lại", type: "error" });
       setUpdating(false);
       return;
     }
@@ -163,13 +162,13 @@ const ProfileUpdate = () => {
         headers: { Authorization: `Bearer ${token}` }
       });
       
-      setToast({ show: true, message: "Profile updated successfully!", type: "success" });
+      setToast({ show: true, message: "Cập nhật hồ sơ thành công!", type: "success" });
       setTimeout(() => {
         navigate("/profile");
       }, 2000);
     } catch (err) {
       console.error("Error updating user:", err);
-      setToast({ show: true, message: "Failed to update profile. Please try again.", type: "error" });
+      setToast({ show: true, message: "Cập nhật thất bại. Vui lòng thử lại.", type: "error" });
     } finally {
       setUpdating(false);
     }
@@ -180,7 +179,7 @@ const ProfileUpdate = () => {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <FaSpinner className="animate-spin text-[#23cf7c] text-4xl mb-4 mx-auto" />
-          <p className="text-[#223a66] text-lg">Loading profile...</p>
+          <p className="text-[#223a66] text-lg">Đang tải hồ sơ...</p>
         </div>
       </div>
     );
@@ -208,19 +207,19 @@ const ProfileUpdate = () => {
         <div className="relative z-10 flex items-center justify-center h-full text-center text-white px-4">
           <div className="max-w-4xl mx-auto">
             <span className="uppercase text-blue-200 font-semibold tracking-widest text-sm">
-              Account Settings
+              Cài đặt tài khoản
             </span>
             <h1 className="text-4xl md:text-5xl font-light mb-4 leading-tight mt-2">
-              Update <span className="font-bold">Profile</span>
+              Cập nhật <span className="font-bold">Hồ sơ</span>
             </h1>
             <p className="text-lg md:text-xl font-light opacity-90">
-              Keep your information up to date
+              Giữ thông tin của bạn luôn chính xác và mới nhất
             </p>
           </div>
         </div>
       </section>
 
-      {/* Update Form */}
+      {/* Form cập nhật */}
       <section className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
           <div className="bg-white rounded-2xl shadow-xl p-8">
@@ -230,19 +229,19 @@ const ProfileUpdate = () => {
                   <FaEdit className="text-white text-xl" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-[#223a66]">Profile Information</h2>
-                  <p className="text-gray-600">Update your personal details</p>
+                  <h2 className="text-2xl font-bold text-[#223a66]">Thông tin cá nhân</h2>
+                  <p className="text-gray-600">Cập nhật chi tiết hồ sơ của bạn</p>
                 </div>
               </div>
             </div>
 
             <form onSubmit={handleUpdate} className="space-y-8">
-              {/* Personal Information */}
+              {/* Thông tin cá nhân */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-[#223a66] font-semibold mb-2 text-sm flex items-center gap-2">
                     <FaUser className="text-[#23cf7c]" />
-                    Full Name *
+                    Họ và tên *
                   </label>
                   <input
                     className={`w-full p-4 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#23cf7c] focus:border-transparent transition-all duration-300 ${
@@ -251,7 +250,7 @@ const ProfileUpdate = () => {
                     name="fullname"
                     value={form.fullname}
                     onChange={handleChange}
-                    placeholder="Enter your full name"
+                    placeholder="Nhập họ và tên"
                     required
                   />
                   {errors.fullname && <p className="text-red-500 text-xs mt-1">{errors.fullname}</p>}
@@ -260,7 +259,7 @@ const ProfileUpdate = () => {
                 <div>
                   <label className="block text-[#223a66] font-semibold mb-2 text-sm flex items-center gap-2">
                     <FaEnvelope className="text-[#23cf7c]" />
-                    Email Address *
+                    Email *
                   </label>
                   <input
                     className={`w-full p-4 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#23cf7c] focus:border-transparent transition-all duration-300 ${
@@ -270,7 +269,7 @@ const ProfileUpdate = () => {
                     value={form.email}
                     onChange={handleChange}
                     type="email"
-                    placeholder="Enter your email"
+                    placeholder="Nhập email của bạn"
                     required
                   />
                   {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
@@ -279,7 +278,7 @@ const ProfileUpdate = () => {
                 <div>
                   <label className="block text-[#223a66] font-semibold mb-2 text-sm flex items-center gap-2">
                     <FaPhone className="text-[#23cf7c]" />
-                    Phone Number *
+                    Số điện thoại *
                   </label>
                   <input
                     className={`w-full p-4 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#23cf7c] focus:border-transparent transition-all duration-300 ${
@@ -288,7 +287,7 @@ const ProfileUpdate = () => {
                     name="phone_number"
                     value={form.phone_number}
                     onChange={handleChange}
-                    placeholder="Enter your phone number"
+                    placeholder="Nhập số điện thoại"
                     required
                   />
                   {errors.phone_number && <p className="text-red-500 text-xs mt-1">{errors.phone_number}</p>}
@@ -297,21 +296,21 @@ const ProfileUpdate = () => {
                 <div>
                   <label className="block text-[#223a66] font-semibold mb-2 text-sm flex items-center gap-2">
                     <FaMapMarkerAlt className="text-[#23cf7c]" />
-                    Address
+                    Địa chỉ
                   </label>
                   <input
                     className="w-full p-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#23cf7c] focus:border-transparent transition-all duration-300"
                     name="address"
                     value={form.address}
                     onChange={handleChange}
-                    placeholder="Enter your address"
+                    placeholder="Nhập địa chỉ"
                   />
                 </div>
 
                 <div>
                   <label className="block text-[#223a66] font-semibold mb-2 text-sm flex items-center gap-2">
                     <FaBirthdayCake className="text-[#23cf7c]" />
-                    Birthday
+                    Ngày sinh
                   </label>
                   <input
                     className="w-full p-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#23cf7c] focus:border-transparent transition-all duration-300"
@@ -328,7 +327,7 @@ const ProfileUpdate = () => {
                       <FaVenus className="text-[#23cf7c]" /> : 
                       <FaMars className="text-[#23cf7c]" />
                     }
-                    Gender
+                    Giới tính
                   </label>
                   <select
                     className="w-full p-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#23cf7c] focus:border-transparent transition-all duration-300"
@@ -336,24 +335,24 @@ const ProfileUpdate = () => {
                     value={form.gender}
                     onChange={handleChange}
                   >
-                    <option value="">Select Gender</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Other">Other</option>
+                    <option value="">Chọn giới tính</option>
+                    <option value="Male">Nam</option>
+                    <option value="Female">Nữ</option>
+                    <option value="Other">Khác</option>
                   </select>
                 </div>
               </div>
 
-              {/* Password Section */}
+              {/* Mật khẩu */}
               <div className="border-t border-gray-200 pt-8">
                 <h3 className="text-xl font-semibold text-[#223a66] mb-6 flex items-center gap-2">
                   <FaLock className="text-[#23cf7c]" />
-                  Change Password
+                  Đổi mật khẩu
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-[#223a66] font-semibold mb-2 text-sm">
-                      New Password
+                      Mật khẩu mới
                     </label>
                     <input
                       className={`w-full p-4 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#23cf7c] focus:border-transparent transition-all duration-300 ${
@@ -363,14 +362,14 @@ const ProfileUpdate = () => {
                       value={form.password}
                       onChange={handleChange}
                       type="password"
-                      placeholder="Enter new password"
+                      placeholder="Nhập mật khẩu mới"
                     />
                     {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
                   </div>
 
                   <div>
                     <label className="block text-[#223a66] font-semibold mb-2 text-sm">
-                      Confirm Password
+                      Nhập lại mật khẩu
                     </label>
                     <input
                       className={`w-full p-4 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#23cf7c] focus:border-transparent transition-all duration-300 ${
@@ -380,14 +379,14 @@ const ProfileUpdate = () => {
                       value={form.retype_password}
                       onChange={handleChange}
                       type="password"
-                      placeholder="Confirm new password"
+                      placeholder="Nhập lại mật khẩu"
                     />
                     {errors.retype_password && <p className="text-red-500 text-xs mt-1">{errors.retype_password}</p>}
                   </div>
                 </div>
               </div>
 
-              {/* Action Buttons */}
+              {/* Nút hành động */}
               <div className="flex flex-col sm:flex-row gap-4 pt-8 border-t border-gray-200">
                 <button
                   type="button"
@@ -396,7 +395,7 @@ const ProfileUpdate = () => {
                   disabled={updating}
                 >
                   <FaTimes />
-                  Cancel
+                  Hủy
                 </button>
                 <button
                   type="submit"
@@ -406,12 +405,12 @@ const ProfileUpdate = () => {
                   {updating ? (
                     <>
                       <FaSpinner className="animate-spin" />
-                      Updating...
+                      Đang cập nhật...
                     </>
                   ) : (
                     <>
                       <FaSave />
-                      Update Profile
+                      Cập nhật hồ sơ
                     </>
                   )}
                 </button>

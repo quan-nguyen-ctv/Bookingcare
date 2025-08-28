@@ -47,13 +47,13 @@ const MedicalServices = () => {
         />
         <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto">
           <span className="uppercase text-blue-200 font-semibold tracking-widest text-sm">
-            Healthcare Excellence
+            Chăm sóc sức khỏe xuất sắc
           </span>
           <h1 className="text-4xl md:text-6xl font-light mb-4 leading-tight mt-2">
-            Medical <span className="font-bold text-[#23cf7c]">Services</span>
+            Dịch Vụ<span className="font-bold text-[#23cf7c]">Chăm Sóc</span>
           </h1>
           <p className="text-lg md:text-xl font-light opacity-90">
-            Comprehensive healthcare solutions with cutting-edge technology
+            Giải pháp chăm sóc sức khỏe toàn diện với công nghệ tiên tiến
           </p>
         </div>
       </section>
@@ -64,13 +64,13 @@ const MedicalServices = () => {
           {/* Section Header */}
           <div className="text-center mb-16">
             <span className="uppercase text-[#223a66] font-semibold tracking-widest text-sm">
-              Our Specialties
+              Dịch Vụ Của Chúng Tôi
             </span>
             <h2 className="text-4xl md:text-5xl font-light text-[#223a66] mb-4 mt-2">
-              Award Winning <span className="font-bold">Patient Care</span>
+              Thành Tựu <span className="font-bold">Chăm Sóc Tận Tâm</span>
             </h2>
             <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-              Let us better understand the need for pain so that we can become more resilient.
+              Chúng ta hãy hiểu rõ hơn về nhu cầu đau đớn để có thể trở nên kiên cường hơn.
             </p>
           </div>
 
@@ -85,7 +85,7 @@ const MedicalServices = () => {
             <div className="lg:col-span-1">
               <div className="bg-gray-50 rounded-2xl p-6">
                 <h3 className="text-xl font-bold text-[#223a66] mb-6">
-                  Medical Departments
+                 Dịch Vụ
                 </h3>
                 <ul className="space-y-3">
                   {specialties.map((tab, idx) => (
@@ -144,7 +144,7 @@ const MedicalServices = () => {
                           <FaDollarSign className="text-white text-lg" />
                         </div>
                         <div>
-                          <p className="font-semibold text-[#223a66]">Service Price</p>
+                          <p className="font-semibold text-[#223a66]">Chi Phí</p>
                           <p className="text-[#23cf7c] font-bold text-lg">
                             {specialties[activeTab].price?.toLocaleString("vi-VN")} VND
                           </p>
@@ -156,8 +156,8 @@ const MedicalServices = () => {
                           <FaCalendarAlt className="text-white text-lg" />
                         </div>
                         <div>
-                          <p className="font-semibold text-[#223a66]">Available</p>
-                          <p className="text-gray-600">Mon - Fri, 9AM - 8PM</p>
+                          <p className="font-semibold text-[#223a66]">Thời Gian</p>
+                          <p className="text-gray-600">T2 - T^, 7:00 - 21:00</p>
                         </div>
                       </div>
                     </div>
@@ -166,7 +166,7 @@ const MedicalServices = () => {
                     <div className="mb-6">
                       <div className="flex items-center gap-2 mb-3">
                         <FaInfoCircle className="text-[#23cf7c]" />
-                        <h4 className="font-semibold text-[#223a66]">About This Service</h4>
+                        <h4 className="font-semibold text-[#223a66]">Thông Tin Về Dịch Vụ</h4>
                       </div>
                       <p className="text-gray-600 leading-relaxed">
                         {specialties[activeTab].description}
@@ -193,7 +193,7 @@ const MedicalServices = () => {
                         className="border-2 border-[#223a66] text-[#223a66] hover:bg-[#223a66] hover:text-white px-6 py-3 rounded-full font-medium transition duration-300 flex items-center justify-center gap-2"
                       >
                         <FaInfoCircle />
-                        Learn More
+                        Thêm
                       </button>
                     </div>
                   </div>
@@ -209,10 +209,10 @@ const MedicalServices = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <span className="uppercase text-[#223a66] font-semibold tracking-widest text-sm">
-              Why Choose Us
+              Tại sao nên chọn 
             </span>
             <h2 className="text-4xl md:text-5xl font-light text-[#223a66] mb-4 mt-2">
-              Excellence in <span className="font-bold">Healthcare</span>
+              Sự Xuất Sắc Trong <span className="font-bold">Chăm Sóc Vẻ Đẹp</span>
             </h2>
           </div>
           
@@ -220,18 +220,18 @@ const MedicalServices = () => {
             {[
               {
                 icon: "🏆",
-                title: "Award Winning Care",
-                description: "Recognized for excellence in patient care and medical innovation"
+                title: "Giải Thưởng",
+                description: "Được công nhận về sự xuất sắc trong chăm sóc bệnh nhân và đổi mới y tế"
               },
               {
                 icon: "👨‍⚕️",
-                title: "Expert Specialists",
-                description: "Board-certified doctors with years of specialized experience"
+                title: "Chuyên Gia",
+                description: "Bác sĩ được cấp phép hành nghề với nhiều năm kinh nghiệm chuyên môn"
               },
               {
                 icon: "🔬",
-                title: "Advanced Technology",
-                description: "State-of-the-art equipment for accurate diagnosis and treatment"
+                title: "Công nghệ tiên tiến",
+                description: "Thiết bị hiện đại cho chẩn đoán và điều trị chính xác"
               }
             ].map((feature, index) => (
               <div key={index} className="bg-white rounded-2xl p-8 shadow-lg text-center hover:shadow-xl transition duration-300">

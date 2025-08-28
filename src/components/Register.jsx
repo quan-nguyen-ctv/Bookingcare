@@ -18,10 +18,10 @@ const Register = () => {
   });
 
   const [error, setError] = useState("");
-  const [fieldErrors, setFieldErrors] = useState({}); // Thêm state cho field errors
+  const [fieldErrors, setFieldErrors] = useState({});
   const navigate = useNavigate();
 
-  // Validation functions
+  // Validation
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
@@ -91,7 +91,6 @@ const Register = () => {
       [name]: value
     }));
     
-    // Clear field error when user starts typing
     if (fieldErrors[name]) {
       setFieldErrors(prev => ({
         ...prev,
@@ -129,7 +128,7 @@ const Register = () => {
         navigate("/login");
       }, 1500);
     } catch (err) {
-      console.error("Register error:", err);
+      console.error("Lỗi đăng ký:", err);
       setError("Lỗi hệ thống. Vui lòng thử lại sau!");
       toast.error("Lỗi hệ thống. Vui lòng thử lại sau!");
     }
@@ -145,8 +144,8 @@ const Register = () => {
           style={{ backgroundImage: "url('/images/about-banner.jpg')" }}
         ></div>
         <div className="relative z-10 text-center">
-          <div className="text-white text-sm mb-1">Account</div>
-          <h1 className="text-3xl md:text-4xl font-bold text-white">Login & Register</h1>
+          <div className="text-white text-sm mb-1">Tài khoản</div>
+          <h1 className="text-3xl md:text-4xl font-bold text-white">Đăng nhập & Đăng ký</h1>
         </div>
       </section>
 
@@ -157,7 +156,7 @@ const Register = () => {
         </div>
         <div className="flex-1 max-w-md mx-auto">
           <div className="text-center mb-6">
-            <h2 className="text-2xl md:text-3xl font-bold text-[#223a66] mb-2">Register</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-[#223a66] mb-2">Đăng ký</h2>
             <p className="text-[#6f8ba4] text-sm">Tạo tài khoản mới để sử dụng hệ thống.</p>
           </div>
           <form className="space-y-3" onSubmit={handleSubmit}>
@@ -165,7 +164,7 @@ const Register = () => {
               <div className="flex-1">
                 <input
                   type="text"
-                  placeholder="Full Name *"
+                  placeholder="Họ và tên *"
                   name="fullname"
                   value={formData.fullname}
                   onChange={handleChange}
@@ -176,7 +175,7 @@ const Register = () => {
               <div className="flex-1">
                 <input
                   type="text"
-                  placeholder="Phone Number *"
+                  placeholder="Số điện thoại *"
                   name="phone_number"
                   value={formData.phone_number}
                   onChange={handleChange}
@@ -201,7 +200,7 @@ const Register = () => {
             <div>
               <input
                 type="password"
-                placeholder="Password *"
+                placeholder="Mật khẩu *"
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
@@ -213,7 +212,7 @@ const Register = () => {
             <div>
               <input
                 type="password"
-                placeholder="Re-enter Password *"
+                placeholder="Nhập lại mật khẩu *"
                 name="retype_password"
                 value={formData.retype_password}
                 onChange={handleChange}
@@ -225,7 +224,7 @@ const Register = () => {
             <div>
               <input
                 type="text"
-                placeholder="Address *"
+                placeholder="Địa chỉ *"
                 name="address"
                 value={formData.address}
                 onChange={handleChange}
@@ -263,14 +262,14 @@ const Register = () => {
                 type="submit"
                 className="bg-[#f75757] hover:bg-[#223a66] text-white font-semibold px-8 py-1.5 rounded-xl transition text-sm flex items-center gap-2"
               >
-                REGISTER
+                ĐĂNG KÝ
               </button>
             </div>
           </form>
           <div className="text-center mt-4 text-sm">
-            Have already an account?{" "}
+            Đã có tài khoản?{" "}
             <Link to="/login" className="text-[#223a66] font-semibold hover:underline">
-              Login
+              Đăng nhập
             </Link>
           </div>
         </div>

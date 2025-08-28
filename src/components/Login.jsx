@@ -7,10 +7,10 @@ const Login = () => {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [fieldErrors, setFieldErrors] = useState({}); // Thêm state cho field errors
+  const [fieldErrors, setFieldErrors] = useState({});
   const navigate = useNavigate();
 
-  // Validation functions
+  // Validation
   const validatePhone = (phone) => {
     const phoneRegex = /^[0-9]{10,11}$/;
     return phoneRegex.test(phone);
@@ -89,9 +89,9 @@ const Login = () => {
           style={{ backgroundImage: "url('/images/about-banner.jpg')" }}
         ></div>
         <div className="relative z-10 text-center">
-          <div className="text-white text-sm mb-1">Account</div>
+          <div className="text-white text-sm mb-1">Tài khoản</div>
           <h1 className="text-3xl md:text-4xl font-bold text-white">
-            Login & Register
+            Đăng nhập & Đăng ký
           </h1>
         </div>
       </section>
@@ -103,7 +103,7 @@ const Login = () => {
         </div>
         <div className="flex-1 max-w-md mx-auto">
           <div className="text-center mb-2">
-            <h2 className="text-2xl md:text-3xl font-bold text-[#223a66] mb-2">Login</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-[#223a66] mb-2">Đăng nhập</h2>
             <p className="text-[#6f8ba4] text-sm mb-4">
               Vui lòng đăng nhập để sử dụng hệ thống.
             </p>
@@ -112,7 +112,7 @@ const Login = () => {
             <div>
               <input
                 type="text"
-                placeholder="Number phone"
+                placeholder="Số điện thoại"
                 className={`w-full p-2 rounded border ${fieldErrors.phone ? 'border-red-500' : 'border-gray-200'} focus:outline-none text-sm`}
                 value={phone}
                 onChange={e => setPhone(e.target.value)}
@@ -122,7 +122,7 @@ const Login = () => {
             <div>
               <input
                 type="password"
-                placeholder="Password"
+                placeholder="Mật khẩu"
                 className={`w-full p-2 rounded border ${fieldErrors.password ? 'border-red-500' : 'border-gray-200'} focus:outline-none text-sm`}
                 value={password}
                 onChange={e => setPassword(e.target.value)}
@@ -136,14 +136,14 @@ const Login = () => {
                 className="bg-[#f75757] hover:bg-[#223a66] text-white font-semibold px-8 py-1.5 rounded-xl transition text-sm flex items-center gap-2"
                 style={{ minWidth: 90 }}
               >
-                LOGIN <span className="ml-1">&#8594;</span>
+                ĐĂNG NHẬP <span className="ml-1">&#8594;</span>
               </button>
             </div>
           </form>
           <div className="text-left mt-2 text-xs md:text-sm">
-            Don't have an account?{" "}
+            Chưa có tài khoản?{" "}
             <Link to="/register" className="text-[#223a66] font-semibold hover:underline">
-              Register
+              Đăng ký
             </Link>
           </div>
         </div>

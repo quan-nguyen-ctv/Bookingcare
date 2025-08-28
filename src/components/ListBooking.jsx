@@ -27,7 +27,7 @@ const DeleteConfirmModal = ({ isOpen, onClose, onConfirm, title, message, loadin
               disabled={loading}
             >
               <FaTimes />
-              Cancel
+             Hủy Bỏ
             </button>
             <button
               onClick={onConfirm}
@@ -404,52 +404,67 @@ console.error("Error canceling booking:", error);
         theme="light"
       />
       
-      <div className="mb-6 flex flex-col md:flex-row md:items-end md:justify-between gap-4 mt-28">
-        <div className="flex gap-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">Limit</label>
-            <select
-              className="border rounded px-2 py-1"
-              value={limit}
-              onChange={(e) => {
-                setLimit(Number(e.target.value));
-                setPage(0);
-              }}
-            >
-              {LIMIT_OPTIONS.map((opt) => (
-                <option key={opt} value={opt}>{opt}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Date Schedule</label>
-            <input
-              type="date"
-              className="border rounded px-2 py-1"
-              value={dateSchedule}
-              onChange={(e) => {
-                setDateSchedule(e.target.value);
-                setPage(0);
-              }}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Status</label>
-            <select
-              className="border rounded px-2 py-1"
-              value={status}
-              onChange={(e) => {
-                setStatus(e.target.value);
-                setPage(0);
-              }}
-            >
-              <option value="">All</option>
-              <option value="pending">PENDING</option>
-              <option value="paid">PAID</option>
-              <option value="rejected">REJECTED</option>
-              <option value="Wait Refund">WAIT REFUND</option>
-              <option value="Refunded">REFUNDED</option>
-            </select>
+      <div className="mb-8 mt-28">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+          <div className="flex flex-wrap gap-4 bg-white rounded-xl shadow-md p-4 border border-gray-200 w-full md:w-auto">
+            <div>
+              <label className="block text-sm font-medium mb-1 text-gray-700">Limit</label>
+              <select
+                className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#23cf7c] bg-gray-50"
+                value={limit}
+                onChange={(e) => {
+                  setLimit(Number(e.target.value));
+                  setPage(0);
+                }}
+              >
+                {LIMIT_OPTIONS.map((opt) => (
+                  <option key={opt} value={opt}>{opt}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1 text-gray-700">Date Schedule</label>
+              <input
+                type="date"
+                className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#23cf7c] bg-gray-50"
+                value={dateSchedule}
+                onChange={(e) => {
+                  setDateSchedule(e.target.value);
+                  setPage(0);
+                }}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1 text-gray-700">Status</label>
+              <select
+                className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#23cf7c] bg-gray-50"
+                value={status}
+                onChange={(e) => {
+                  setStatus(e.target.value);
+                  setPage(0);
+                }}
+              >
+                <option value="">All</option>
+                <option value="pending">PENDING</option>
+                <option value="paid">PAID</option>
+                <option value="rejected">REJECTED</option>
+                <option value="Wait Refund">WAIT REFUND</option>
+                <option value="Refunded">REFUNDED</option>
+              </select>
+            </div>
+            <div className="flex-1 min-w-[180px]">
+              <label className="block text-sm font-medium mb-1 text-gray-700">Search</label>
+              <input
+                type="text"
+                className="border border-gray-300 rounded-lg px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-[#23cf7c] bg-gray-50"
+                placeholder="Tìm theo chuyên khoa, mã thanh toán..."
+                value={keyword}
+                onChange={(e) => {
+                  setKeyword(e.target.value);
+                  setPage(0);
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -477,13 +492,13 @@ console.error("Error canceling booking:", error);
               <thead>
                 <tr className="bg-gradient-to-r from-[#223a66] to-[#2c4a7a] text-white">
                   <th className="px-4 py-3 text-left font-semibold">ID</th>
-                  <th className="px-4 py-3 text-left font-semibold">Date Booking</th>
-                  <th className="px-4 py-3 text-left font-semibold">Specialty</th>
-                  <th className="px-4 py-3 text-left font-semibold">Amount</th>
-                  <th className="px-4 py-3 text-left font-semibold">Payment Method</th>
-                  <th className="px-4 py-3 text-left font-semibold">Payment Code</th>
-                  <th className="px-4 py-3 text-left font-semibold">Status</th>
-                  <th className="px-4 py-3 text-center font-semibold">Actions</th>
+                  <th className="px-4 py-3 text-left font-semibold">Ngày Đặt</th>
+                  <th className="px-4 py-3 text-left font-semibold">Dịch Vụ</th>
+                  <th className="px-4 py-3 text-left font-semibold">Số Tiền</th>
+                  <th className="px-4 py-3 text-left font-semibold">Phương Thức</th>
+                  <th className="px-4 py-3 text-left font-semibold">Code</th>
+                  <th className="px-4 py-3 text-left font-semibold">Trạng Thái</th>
+                  <th className="px-4 py-3 text-center font-semibold"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -573,8 +588,8 @@ console.error("Error canceling booking:", error);
         isOpen={showDeleteModal}
         onClose={closeDeleteModal}
         onConfirm={handleDeleteBooking}
-        title="Delete Booking"
-        message="Are you sure you want to delete this booking? This action cannot be undone."
+        title="Xóa Lịch Hẹn "
+        message="Bạn có chắc chắn muốn xóa đặt phòng này không? Hành động này không thể hoàn tác.."
         loading={deleteLoading[selectedBookingId]}
       />
     </div>

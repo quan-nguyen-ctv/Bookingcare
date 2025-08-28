@@ -166,13 +166,13 @@ const BookingDetail = () => {
         />
         <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto">
           <span className="uppercase text-blue-200 font-semibold tracking-widest text-sm">
-            Booking Information
+            Thông Tin Lịch Hẹn 
           </span>
           <h1 className="text-4xl md:text-6xl font-light mb-4 leading-tight mt-2">
-            Appointment <span className="font-bold text-[#23cf7c]">Details</span>
+            Chi Tiết <span className="font-bold text-[#23cf7c]">Lịch Hẹn </span>
           </h1>
           <p className="text-lg md:text-xl font-light opacity-90">
-            Review your appointment information and manage your booking
+            Xem lại thông tin cuộc hẹn và quản lý đặt chỗ của bạn
           </p>
         </div>
       </section>
@@ -187,7 +187,7 @@ const BookingDetail = () => {
               className="mb-8 flex items-center gap-2 px-6 py-3 bg-[#223a66] text-white rounded-full hover:bg-[#1b2c4a] transition duration-300 shadow-lg"
             >
               <FaArrowLeft />
-              Back to Bookings
+              Quay Lại Đặt Lịch
             </button>
 
             {loading ? (
@@ -198,8 +198,8 @@ const BookingDetail = () => {
             ) : !booking ? (
               <div className="bg-white rounded-2xl shadow-xl p-16 text-center">
                 <div className="text-6xl mb-4">📅</div>
-                <h3 className="text-xl font-semibold text-gray-500 mb-2">Booking Not Found</h3>
-                <p className="text-gray-400">The appointment you're looking for doesn't exist or has been removed.</p>
+                <h3 className="text-xl font-semibold text-gray-500 mb-2">Không Tìm Thấy </h3>
+                <p className="text-gray-400">Cuộc hẹn bạn đang tìm kiếm không tồn tại hoặc đã bị xóa.</p>
               </div>
             ) : (
               <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
@@ -207,8 +207,8 @@ const BookingDetail = () => {
                 <div className="bg-gradient-to-r from-[#223a66] to-[#2c4a7a] p-8 text-white">
                   <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div>
-                      <h2 className="text-3xl font-bold mb-2">Booking #{booking.id}</h2>
-                      <p className="text-blue-200">Scheduled appointment details</p>
+                      <h2 className="text-3xl font-bold mb-2">Lịch Hẹn #{booking.id}</h2>
+                      <p className="text-blue-200">Thời Gian Chi Tiết Lịch Hẹn</p>
                     </div>
                     <div className="flex items-center gap-4">
                       <span className={`px-6 py-3 rounded-full font-semibold text-sm ${getStatusBadge(booking.status)}`}>
@@ -234,7 +234,7 @@ const BookingDetail = () => {
                           className="w-32 h-32 rounded-full object-cover mx-auto mb-4 border-4 border-[#23cf7c]"
                         />
                         <h3 className="text-xl font-bold text-[#223a66] mb-2">
-                          Dr. {booking?.schedule?.doctor_name}
+                          Bác Sĩ {booking?.schedule?.doctor_name}
                         </h3>
                         <p className="text-[#23cf7c] font-medium mb-4">
                           {booking?.schedule?.specialty_name}
@@ -263,11 +263,11 @@ const BookingDetail = () => {
                         <div className="bg-gray-50 rounded-2xl p-6">
                           <h4 className="text-lg font-bold text-[#223a66] mb-4 flex items-center gap-2">
                             <FaUserMd className="text-[#23cf7c]" />
-                            Patient Information
+                            Thông Tin
                           </h4>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                              <p className="text-sm text-gray-500 mb-1">Full Name</p>
+                              <p className="text-sm text-gray-500 mb-1">Họ Tên</p>
                               <p className="font-semibold text-gray-800">{booking?.user?.fullname}</p>
                             </div>
                             <div>
@@ -278,7 +278,7 @@ const BookingDetail = () => {
                               </p>
                             </div>
                             <div>
-                              <p className="text-sm text-gray-500 mb-1">Phone</p>
+                              <p className="text-sm text-gray-500 mb-1">SĐT</p>
                               <p className="font-semibold text-gray-800 flex items-center gap-2">
                                 <FaPhone className="text-[#23cf7c] text-sm" />
                                 {booking?.user?.phone_number}
@@ -291,15 +291,15 @@ const BookingDetail = () => {
                         <div className="bg-gray-50 rounded-2xl p-6">
                           <h4 className="text-lg font-bold text-[#223a66] mb-4 flex items-center gap-2">
                             <FaMapMarkerAlt className="text-[#23cf7c]" />
-                            Clinic Information
+                            Thông Tin Phòng Khám
                           </h4>
                           <div className="space-y-3">
                             <div>
-                              <p className="text-sm text-gray-500 mb-1">Clinic Name</p>
+                              <p className="text-sm text-gray-500 mb-1">Tên Phòng Khám</p>
                               <p className="font-semibold text-gray-800">{booking?.schedule?.clinic_name}</p>
                             </div>
                             <div>
-                              <p className="text-sm text-gray-500 mb-1">Address</p>
+                              <p className="text-sm text-gray-500 mb-1">Địa Chỉ</p>
                               <p className="font-semibold text-gray-800">{booking?.schedule?.clinic_address}</p>
                             </div>
                           </div>
@@ -307,14 +307,14 @@ const BookingDetail = () => {
 
                         {/* Consultation Details */}
                         <div className="bg-gray-50 rounded-2xl p-6">
-                          <h4 className="text-lg font-bold text-[#223a66] mb-4">Consultation Details</h4>
+                          <h4 className="text-lg font-bold text-[#223a66] mb-4">Chi tiết </h4>
                           <div className="space-y-3">
                             <div>
-                              <p className="text-sm text-gray-500 mb-1">Reason for Visit</p>
+                              <p className="text-sm text-gray-500 mb-1">Lí Do</p>
                               <p className="font-semibold text-gray-800">{booking?.reason}</p>
                             </div>
                             <div>
-                              <p className="text-sm text-gray-500 mb-1">Consultation Fee</p>
+                              <p className="text-sm text-gray-500 mb-1">Chi Phí</p>
                               <p className="font-bold text-2xl text-[#23cf7c]">
                                 {booking?.amount?.toLocaleString()} VND
                               </p>
@@ -332,7 +332,7 @@ const BookingDetail = () => {
         onClick={handlePayment}
       >
         <FaCreditCard />
-        Pay Now
+        Tiếp Tục Thanh Toán
       </button>
     )}
 
@@ -344,7 +344,7 @@ const BookingDetail = () => {
         disabled
       >
         <FaCreditCard />
-        Payment Expired
+        Thanh toán đã hết hạn
       </button>
     )}
 
@@ -360,7 +360,7 @@ const BookingDetail = () => {
       }}
     >
       <FaEdit />
-      Edit Appointment
+      Sửa Lịch Hẹn
     </button>
   )}
 </div>
@@ -381,9 +381,9 @@ const BookingDetail = () => {
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
             <div className="bg-gradient-to-r from-[#223a66] to-[#2c4a7a] p-6 text-white">
-              <h3 className="text-2xl font-bold mb-2">Change Appointment</h3>
+              <h3 className="text-2xl font-bold mb-2">Thay Đổi Lịch Hẹn Của Bạn</h3>
               <p className="text-blue-200">
-                <strong>Note:</strong> You can only change the appointment <strong>once</strong>.
+                <strong>Chú ý:</strong> Bạn chỉ có thể thay đổi <strong>1 lần</strong>.
               </p>
             </div>
 
@@ -391,7 +391,7 @@ const BookingDetail = () => {
             <div className="p-6">
               {/* Current Schedule */}
               <div className="bg-gray-50 rounded-xl p-4 mb-6">
-                <h4 className="font-semibold text-[#223a66] mb-3">Current Schedule</h4>
+                <h4 className="font-semibold text-[#223a66] mb-3">Thời Gian </h4>
                 <div className="flex items-center gap-4 text-sm">
                   <span className="flex items-center gap-2">
                     <FaClock className="text-[#23cf7c]" />
@@ -419,9 +419,9 @@ const BookingDetail = () => {
                   />
                   <div>
                     <h4 className="font-bold text-[#223a66] text-lg">{booking?.schedule?.doctor_name}</h4>
-                    <p className="text-sm text-gray-600 mb-1">Experience: {booking?.schedule?.experience} years</p>
+                    <p className="text-sm text-gray-600 mb-1">Kinh Nghiệm: {booking?.schedule?.experience} years</p>
                     <p className="text-sm text-gray-600 mb-2">
-                      Qualification: {booking?.schedule?.qualification}
+                      Số Lượng: {booking?.schedule?.qualification}
                     </p>
                     <a
                       href={`/doctors/${booking?.schedule?.doctor_id}-${booking?.schedule?.doctor_name || ""}`}
@@ -429,19 +429,19 @@ const BookingDetail = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      View Profile
+                      Thông Tin
                     </a>
                   </div>
                 </div>
 
                 {/* New Schedule Selection */}
                 <div>
-                  <h4 className="font-semibold text-[#223a66] mb-4">Select New Schedule</h4>
+                  <h4 className="font-semibold text-[#223a66] mb-4">Chọn Thời Gian</h4>
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         <FaCalendarAlt className="inline mr-2 text-[#23cf7c]" />
-                        Date
+                        Ngày
                       </label>
                       <input
                         type="date"
@@ -459,10 +459,10 @@ const BookingDetail = () => {
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         <FaClock className="inline mr-2 text-[#23cf7c]" />
-                        Available Times
+                        Thời Gian
                       </label>
                       {availableTimes.length === 0 && selectedDate && (
-                        <p className="text-gray-400 text-center py-4">No available time slots</p>
+                        <p className="text-gray-400 text-center py-4">Không Có Lịch</p>
                       )}
                       <div className="grid grid-cols-2 gap-2">
                         {availableTimes.map((sch) => (
@@ -495,14 +495,14 @@ const BookingDetail = () => {
                 onClick={() => setShowEditModal(false)}
                 disabled={saving}
               >
-                Cancel
+               Hủy
               </button>
               <button
                 className="px-6 py-3 bg-[#23cf7c] text-white rounded-full hover:bg-[#1eb567] transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={handleSaveChange}
                 disabled={!selectedScheduleId || saving}
               >
-                {saving ? "Saving..." : "Save Changes"}
+                {saving ? "Lưu..." : "Lưu Thay Đổi"}
               </button>
             </div>
           </div>

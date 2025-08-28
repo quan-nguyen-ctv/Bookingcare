@@ -115,24 +115,24 @@ const HomePage = () => {
         />
         <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto">
           <h1 className="text-5xl md:text-7xl font-light mb-6 leading-tight">
-            Your Health,
-            <span className="block font-bold text-[#23cf7c]">Our Priority</span>
+            Sức khỏe của bạn, 
+            <span className="block font-bold text-[#23cf7c]">Ưu tiên của chúng tôi</span>
           </h1>
           <p className="text-xl md:text-2xl font-light mb-8 opacity-90">
-            Experience world-class medical care with cutting-edge technology
+            Trải nghiệm dịch vụ y tế hàng đầu với công nghệ tiên tiến
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
               onClick={handleBookClick}
               className="bg-[#23cf7c] hover:bg-[#1eb567] text-white px-8 py-4 rounded-full text-lg font-medium transition duration-300 shadow-lg"
             >
-              Book Appointment
+              Đặt lịch ngay
             </button>
             <Link
               to="/about"
               className="border-2 border-white text-white hover:bg-white hover:text-[#223a66] px-8 py-4 rounded-full text-lg font-medium transition duration-300"
             >
-              Learn More
+              Tìm hiểu thêm
             </Link>
           </div>
         </div>
@@ -148,46 +148,46 @@ const HomePage = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <span className="uppercase text-[#223a66] font-semibold tracking-widest text-sm">
-              We offer Services
+              Dịch vụ của chúng tôi
             </span>
             <h2 className="text-4xl md:text-5xl font-light text-[#223a66] mb-4 mt-2">
-              Our <span className="font-bold">Specialties</span>
+              Các <span className="font-bold">Chuyên khoa</span>
             </h2>
             <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-              Comprehensive healthcare solutions tailored to your needs
+              Giải pháp chăm sóc sức khỏe toàn diện, phù hợp với nhu cầu của bạn
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               {
                 icon: <FaUserMd className="text-4xl" />,
-                title: "General Medicine",
-                description: "Complete health checkups and preventive care with experienced physicians"
+                title: "Nội tổng quát",
+                description: "Chăm sóc sức khỏe tổng quát và chăm sóc phòng ngừa với đội ngũ bác sĩ giàu kinh nghiệm"
               },
               {
                 icon: <FaHeart className="text-4xl" />,
-                title: "Cardiology",
-                description: "Advanced heart care and cardiovascular treatments by specialists"
+                title: "Da Liễu",
+                description: "Chăm sóc và điều trị chuyên sâu về da liễu bởi các chuyên gia"
               },
               {
                 icon: <FaEye className="text-4xl" />,
-                title: "Ophthalmology", 
-                description: "Comprehensive eye care and vision treatments with latest technology"
+                title: "Nâng cơ",
+                description: "Khám và điều trị các bệnh lý cơ mặt với công nghệ hiện đại"
               },
               {
                 icon: <FaBone className="text-4xl" />,
-                title: "Orthopedics",
-                description: "Bone, joint, and muscle care solutions for all ages"
+                title: "Làm sạch ",
+                description: "Làm sạch vùng da tay chân của bạn với công nghệ cao"
               },
               {
                 icon: <FaChild className="text-4xl" />,
-                title: "Pediatrics",
-                description: "Specialized care for children and infants with gentle approach"
+                title: "tiêm vi điển",
+                description: "Bổ sung dưỡng chất cho da của bạn , an toàn "
               },
               {
                 icon: <FaClock className="text-4xl" />,
-                title: "Emergency Care",
-                description: "24/7 emergency medical services for urgent healthcare needs"
+                title: "Massage Bấm Huyệt",
+                description: "Trải nghiệm thư giãn với massage bấm huyệt"
               }
             ].map((service, index) => (
               <div
@@ -215,22 +215,22 @@ const HomePage = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
               <span className="uppercase text-[#223a66] font-semibold tracking-widest text-sm">
-                About Our Clinic
+                Về Phòng Khám Của Chúng Tôi
               </span>
               <h2 className="text-4xl md:text-5xl font-light text-[#223a66] mb-6 mt-2">
-                Why Choose <span className="font-bold">Our Care</span>
+                Tại Sao Nên Lựa Chọn <span className="font-bold">Sự Quan Tâm Của Bạn</span>
               </h2>
               <p className="text-gray-600 text-lg mb-8 leading-relaxed">
-                With over 20 years of excellence in healthcare, we combine advanced 
-                medical technology with compassionate care to deliver the best outcomes 
-                for our patients and their families.
+                Với hơn 20 năm kinh nghiệm trong lĩnh vực chăm sóc sức khỏe,
+                 chúng tôi kết hợp công nghệ y tế tiên tiến 
+                 với dịch vụ chăm sóc tận tâm để mang lại kết quả tốt nhất cho bệnh nhân và gia đình họ.
               </p>
               <div className="space-y-6">
                 {[
-                  { number: "25+", text: "Years of Experience" },
-                  { number: "10,000+", text: "Happy Patients" },
-                  { number: "50+", text: "Expert Doctors" },
-                  { number: "24/7", text: "Emergency Care" }
+                  { number: "5+", text: "Năm Kinh Nghiệm" },
+                  { number: "1,000+", text: "Người Hạnh Phúc" },
+                  { number: "20+", text: "Chuyên Gia, Bác Sĩ" },
+                  { number: "24/7", text: "Tận Tình , Chu Đáo" }
                 ].map((stat, index) => (
                   <div key={index} className="flex items-center gap-4">
                     <div className="w-16 h-16 bg-[#23cf7c] rounded-full flex items-center justify-center">
@@ -252,8 +252,8 @@ const HomePage = () => {
                 className="rounded-2xl shadow-2xl w-full"
               />
               <div className="absolute -bottom-6 -left-6 bg-[#223a66] text-white p-6 rounded-2xl">
-                <h4 className="font-bold text-xl mb-1">Award Winning</h4>
-                <p className="text-sm opacity-90">Healthcare Provider</p>
+                <h4 className="font-bold text-xl mb-1">Giải thưởng đạt được</h4>
+                <p className="text-sm opacity-90">Nhà cung cấp dịch vụ y tế</p>
               </div>
             </div>
           </div>
@@ -265,13 +265,13 @@ const HomePage = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <span className="uppercase text-[#223a66] font-semibold tracking-widest text-sm">
-              Our Medical Team
+              Đội ngũ y tế của chúng tôi
             </span>
             <h2 className="text-4xl md:text-5xl font-light text-[#223a66] mb-4 mt-2">
-              Meet Our <span className="font-bold">Specialists</span>
+              Gặp gỡ chúng tôi <span className="font-bold">Các Dịch Vụ</span>
             </h2>
             <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-              Our team of experienced doctors are here to provide you with the best care
+              Đội ngũ bác sĩ giàu kinh nghiệm của chúng tôi luôn sẵn sàng cung cấp cho bạn dịch vụ chăm sóc tốt nhất
             </p>
           </div>
 
@@ -319,91 +319,39 @@ const HomePage = () => {
               to="/list-doctor"
               className="bg-[#223a66] hover:bg-[#1a2d52] text-white px-8 py-3 rounded-full font-medium transition duration-300"
             >
-              View All Doctors
+              Xem tất cả bác sĩ
             </Link>
           </div>
         </div>
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-20 bg-[#223a66] text-white">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <span className="uppercase text-blue-200 font-semibold tracking-widest text-sm">
-              Patient Reviews
-            </span>
-            <h2 className="text-4xl md:text-5xl font-light mb-4 mt-2">
-              What Our <span className="font-bold">Patients Say</span>
-            </h2>
-            <p className="text-blue-200 text-lg max-w-2xl mx-auto">
-              Real experiences from real patients
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                name: "John Smith",
-                text: "Exceptional care and professional service. The doctors here are truly outstanding.",
-                rating: 5
-              },
-              {
-                name: "Maria Garcia",
-                text: "I felt comfortable and well-cared for throughout my treatment. Highly recommended!",
-                rating: 5
-              },
-              {
-                name: "David Wilson",
-                text: "The facilities are modern and the staff is incredibly friendly and knowledgeable.",
-                rating: 5
-              }
-            ].map((testimonial, index) => (
-              <div
-                key={index}
-                className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 hover:bg-white/20 transition duration-300"
-              >
-                <div className="flex mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <svg key={i} className="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 24 24">
-                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                    </svg>
-                  ))}
-                </div>
-                <p className="text-blue-100 mb-4 italic">
-                  "{testimonial.text}"
-                </p>
-                <h4 className="font-bold">
-                  {testimonial.name}
-                </h4>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      
 
       {/* CTA Section */}
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4 text-center">
           <span className="uppercase text-[#223a66] font-semibold tracking-widest text-sm">
-            Ready to Get Started
+            Sẵn sàng để bắt đầu
           </span>
           <h2 className="text-4xl md:text-5xl font-light text-[#223a66] mb-6 mt-2">
-            Book Your <span className="font-bold">Appointment</span>
+            Đặt Lịch  <span className="font-bold">Của Bạn</span>
           </h2>
           <p className="text-gray-600 text-lg mb-8 max-w-2xl mx-auto">
-            Take the first step towards better health. Our team is ready to provide you with exceptional care.
+            Hãy thực hiện bước đầu tiên hướng tới sức khỏe tốt hơn. Đội ngũ của chúng tôi sẵn sàng mang đến cho bạn dịch vụ chăm sóc đặc biệt.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
               onClick={handleBookClick}
               className="bg-[#23cf7c] hover:bg-[#1eb567] text-white px-8 py-4 rounded-full text-lg font-medium transition duration-300 shadow-lg"
             >
-              Book Appointment Now
+              Đặt Lịch Ngay
             </button>
             <Link
               to="/contact"
               className="border-2 border-[#223a66] text-[#223a66] hover:bg-[#223a66] hover:text-white px-8 py-4 rounded-full text-lg font-medium transition duration-300"
             >
-              Contact Us
+              Liên Hệ
             </Link>
           </div>
         </div>
@@ -416,23 +364,23 @@ const HomePage = () => {
             {[
               {
                 icon: "📍",
-                title: "Visit Us",
-                info: "123 Medical Street, Health City"
+                title: "Địa Chỉ",
+                info: "Tôn Thất Thuyết, Trịnh Văn Bô"
               },
               {
                 icon: "📞",
-                title: "Call Us",
-                info: "(+01) 123 456 7890"
+                title: "SĐT",
+                info: "0123 654 789"
               },
               {
                 icon: "✉️",
                 title: "Email Us",
-                info: "info@medicalcenter.com"
+                info: "clinic@gmail.com.com"
               },
               {
                 icon: "🕒",
                 title: "Working Hours",
-                info: "Mon-Fri: 9AM-8PM"
+                info: "Mon-Fri: 7AM-9PM"
               }
             ].map((contact, index) => (
               <div key={index} className="text-center">
@@ -449,3 +397,5 @@ const HomePage = () => {
 };
 
 export default HomePage;
+
+

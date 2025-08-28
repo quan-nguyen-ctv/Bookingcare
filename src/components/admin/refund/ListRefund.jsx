@@ -12,6 +12,15 @@ const RefundModal = ({ isOpen, onClose, refundData, onConfirm, onReject, loading
 
   const isProcessed = refundData.status?.toUpperCase() === "REFUNDED" || refundData.status?.toUpperCase() === "REJECTED";
 
+  const refundDetails = {
+    "Mã Hóa Đơn": `#${refundData.id}`,
+    "Mã Đặt Khám": refundData.bookingId || refundData.booking_id,
+    "Số Tiền Hoàn": new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(refundData.amount || 0),
+    "Ngân Hàng": refundData.bankName || refundData.bank_name,
+    "Chủ Tài Khoản": refundData.holderName || refundData.holder_name,
+    "Số Tài Khoản": refundData.accountNumber || refundData.account_number || "—"
+  };
+
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
       <div className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md mx-4">
@@ -32,14 +41,12 @@ const RefundModal = ({ isOpen, onClose, refundData, onConfirm, onReject, loading
         </div>
 
         <div className="space-y-4 mb-6">
-          {{
-            "Mã Hóa Đơn": `#${refundData.id}`,
-            "Mã Đặt Khám": refundData.bookingId || refundData.booking_id,
-            "Số Tiền Hoàn": new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(refundData.amount || 0),
-            "Ngân Hàng": refundData.bankName || refundData.bank_name,
-            "Chủ Tài Khoản": refundData.holderName || refundData.holder_name,
-            "Số Tài Khoản": refundData.accountNumber || refundData.account_number || "—"
-          }}
+          {Object.entries(refundDetails).map(([label, value]) => (
+            <div key={label} className="flex justify-between items-center py-2">
+              <span className="text-sm font-semibold text-gray-600">{label}:</span>
+              <span className="text-sm text-gray-900 font-medium">{value}</span>
+            </div>
+          ))}
 
           <div className="flex justify-between items-center py-2">
             <span className="text-sm font-semibold text-gray-600">Trạng Thái:</span>
@@ -48,7 +55,7 @@ const RefundModal = ({ isOpen, onClose, refundData, onConfirm, onReject, loading
               refundData.status?.toUpperCase() === "REJECTED" ? "bg-red-100 text-red-800" :
               "bg-blue-100 text-blue-800"
             }`}>
-              {refundData.status === "WAIT REFUND" ? "Chờ Hoàn Tiền" :
+{refundData.status === "WAIT REFUND" ? "Chờ Hoàn Tiền" :
                refundData.status === "REFUNDED" ? "Đã Hoàn Tiền" :
                refundData.status === "REJECTED" ? "Đã Từ Chối" :
                refundData.status || 'Chờ Hoàn Tiền'}
@@ -67,13 +74,23 @@ const RefundModal = ({ isOpen, onClose, refundData, onConfirm, onReject, loading
           
           {!isProcessed && (
             <>
-              {/* <button 
-                className="flex-1 bg-red-500 text-white py-2 rounded hover:bg-red-600 transition disabled:opacity-50"
+              <button 
+                className="flex-1 bg-red-500 hover:bg-red-600 text-white py-3 rounded-lg font-semibold transition-colors duration-200 disabled:opacity-50 flex items-center justify-center gap-2"
                 onClick={() => onReject(refundData.id)} 
                 disabled={loading}
               >
-                {loading ? "Processing..." : "Reject"}
-              </button> */}
+                {loading ? (
+                  <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                ) : (
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                )}
+                {loading ? "Đang Xử Lý..." : "Từ Chối"}
+              </button>
               <button 
                 className="flex-1 bg-green-500 hover:bg-green-600 text-white py-3 rounded-lg font-semibold transition-colors duration-200 disabled:opacity-50 flex items-center justify-center gap-2"
                 onClick={() => onConfirm(refundData.id)} 
@@ -91,7 +108,7 @@ const RefundModal = ({ isOpen, onClose, refundData, onConfirm, onReject, loading
                 )}
                 {loading ? "Đang Xử Lý..." : "Phê Duyệt"}
               </button>
-            </>
+</>
           )}
         </div>
       </div>
@@ -204,7 +221,7 @@ const ListRefund = () => {
 
       if (res.status === 200) {
         showToast("Phê duyệt hoàn tiền thành công!");
-        setRefunds(prev => prev.map(r => r.id === refundId ? { ...r, status: "REFUNDED" } : r));
+setRefunds(prev => prev.map(r => r.id === refundId ? { ...r, status: "REFUNDED" } : r));
         setShowRefundModal(false);
         setSelectedRefund(null);
       }
@@ -267,42 +284,20 @@ const ListRefund = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      {toast.show && <Toast message={toast.message} type={toast.type} onClose={() => setToast({ ...toast, show: false })} />}
-
-      <h2 className="text-3xl font-bold text-[#223a66] mb-2">
-        Refund Invoice <span className="text-base font-normal text-gray-400">- Invoice List</span>
-      </h2>
-
-      {/* Filters */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
-        <div>
-          <label className="block text-sm font-medium mb-1">Limit</label>
-          <select value={filters.limit} onChange={(e) => setFilters(prev => ({ ...prev, limit: e.target.value }))} className="border rounded px-3 py-2 w-full">
-            {[5, 10, 20, 50].map(val => <option key={val} value={val}>{val}</option>)}
-          </select>
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Date Refund</label>
-          <input type="date" value={filters.dateRefund} onChange={(e) => setFilters(prev => ({ ...prev, dateRefund: e.target.value }))} className="border rounded px-3 py-2 w-full" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Status</label>
-          <select value={filters.status} onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))} className="border rounded px-3 py-2 w-full">
-            <option value="">Select Status</option>
-            <option value="WAIT REFUND">Wait Refund</option>
-            <option value="REFUNDED">Refunded</option>
-            {/* <option value="REJECTED">Rejected</option> */}
-          </select>
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Search</label>
-          <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} onKeyPress={handleKeyPress} placeholder="Booking ID" className="border rounded px-3 py-2 w-full" />
-        </div>
-        <div className="flex gap-2 items-end">
-          <button onClick={handleSearch} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Search</button>
-          {filters.keyword && <button onClick={clearSearch} className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Clear</button>}
-        </div>
+    <div className="p-6 bg-gray-50 min-h-screen">
+      {/* Header */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-3">
+              <svg className="w-6 h-6 text-[#20c0f3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Danh Sách Hoàn Tiền
+            </h1>
+            <p className="text-gray-600 mt-1">Quản lý các yêu cầu hoàn tiền từ khách hàng</p>
+          </div>
+</div>
       </div>
 
       {/* Main Content */}
@@ -359,7 +354,7 @@ const ListRefund = () => {
               <input
                 type="text"
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Mã đặt khám..."
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#20c0f3] focus:border-transparent"
@@ -409,7 +404,7 @@ const ListRefund = () => {
                   <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Số Tiền Hoàn</th>
                   <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Ngân Hàng</th>
                   <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Chủ Tài Khoản</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Trạng Thái</th>
+<th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Trạng Thái</th>
                   <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Thao Tác</th>
                 </tr>
               </thead>
@@ -454,7 +449,7 @@ const ListRefund = () => {
                   <tr>
                     <td colSpan={7} className="px-6 py-12 text-center">
                       <div className="flex flex-col items-center justify-center text-gray-400">
-                        <svg className="w-12 h-12 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<svg className="w-12 h-12 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
                         <p className="text-lg font-medium">Không có yêu cầu hoàn tiền nào</p>
@@ -514,7 +509,7 @@ const ListRefund = () => {
 
       <ToastContainer
         position="top-right"
-        autoClose={3000}
+autoClose={3000}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick

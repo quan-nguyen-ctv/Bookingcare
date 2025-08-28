@@ -1,11 +1,333 @@
+// import React, { useEffect, useState } from "react";
+// import { FaPlay, FaQuoteLeft, FaAward, FaUsers, FaCalendarAlt, FaHeart, FaShieldAlt, FaStar } from "react-icons/fa";
+
+// const stats = [
+//   { number: 25, label: "Years of Experience", icon: <FaCalendarAlt /> },
+//   { number: 10000, label: "Happy Patients", icon: <FaUsers /> },
+//   { number: 50, label: "Expert Doctors", icon: <FaHeart /> },
+//   { number: 30, label: "Awards Won", icon: <FaAward /> },
+// ];
+
+// const StatCounter = ({ value }) => {
+//   const [count, setCount] = useState(0);
+
+//   useEffect(() => {
+//     let start = 0;
+//     const duration = 1200; // ms
+//     const increment = Math.ceil(value / (duration / 16));
+//     const step = () => {
+//       start += increment;
+//       if (start < value) {
+//         setCount(start);
+//         requestAnimationFrame(step);
+//       } else {
+//         setCount(value);
+//       }
+//     };
+//     step();
+//     // eslint-disable-next-line
+//   }, [value]);
+
+//   return <span>{count.toLocaleString()}</span>;
+// };
+
+// const About = () => {
+//   return (
+//     <main className="bg-white min-h-screen">
+//       {/* Hero Section */}
+//       <section className="relative h-96 flex items-center justify-center bg-gradient-to-r from-[#223a66] to-[#2c4a7a] overflow-hidden">
+//         <div
+//           className="absolute inset-0 bg-cover bg-center"
+//           style={{
+//             backgroundImage: "url('/images/about-banner.jpg')",
+//             filter: "brightness(0.7)"
+//           }}
+//         />
+//         <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto">
+//           <span className="uppercase text-blue-200 font-semibold tracking-widest text-sm">
+//             Learn About Us
+//           </span>
+//           <h1 className="text-4xl md:text-6xl font-light mb-4 leading-tight mt-2">
+//             About Our <span className="font-bold text-[#23cf7c]">Clinic</span>
+//           </h1>
+//           <p className="text-lg md:text-xl font-light opacity-90">
+//             Dedicated to providing exceptional healthcare with compassion and excellence
+//           </p>
+//         </div>
+//       </section>
+
+//       {/* Main About Section */}
+//       <section className="py-20 bg-white">
+//         <div className="container mx-auto px-4">
+//           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-20">
+//             {/* Content */}
+//             <div>
+//               <span className="uppercase text-[#223a66] font-semibold tracking-widest text-sm">
+//                 Welcome to Our Medical Center
+//               </span>
+//               <h2 className="text-4xl md:text-5xl font-light text-[#223a66] mb-6 mt-2">
+//                 Your Health, <span className="font-bold">Our Mission</span>
+//               </h2>
+//               <p className="text-gray-600 text-lg mb-6 leading-relaxed">
+//                 With over 25 years of excellence in healthcare, we combine advanced 
+//                 medical technology with compassionate care to deliver the best outcomes 
+//                 for our patients and their families.
+//               </p>
+//               <p className="text-gray-600 mb-8 leading-relaxed">
+//                 Our state-of-the-art facility houses the latest medical equipment and 
+//                 technologies, while our team of expert physicians and healthcare professionals 
+//                 work tirelessly to provide personalized treatment plans for every patient.
+//               </p>
+              
+//               {/* Feature List */}
+//               <div className="space-y-4 mb-8">
+//                 {[
+//                   "24/7 Emergency Medical Services",
+//                   "State-of-the-art Medical Equipment",
+//                   "Experienced Medical Professionals", 
+//                   "Comprehensive Health Checkups"
+//                 ].map((feature, index) => (
+//                   <div key={index} className="flex items-center gap-3">
+//                     <div className="w-6 h-6 bg-[#23cf7c] rounded-full flex items-center justify-center">
+//                       <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+//                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+//                       </svg>
+//                     </div>
+//                     <span className="text-gray-700 font-medium">{feature}</span>
+//                   </div>
+//                 ))}
+//               </div>
+//             </div>
+
+//             {/* Image with Play Button */}
+//             <div className="relative">
+//               <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+//                 <img
+//                   src="/src/components/img/home3.jpg"
+//                   alt="About Our Clinic"
+//                   className="w-full h-96 object-cover"
+//                 />
+//                 <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
+                 
+//                 </div>
+//               </div>
+              
+//               {/* Floating Card */}
+//               <div className="absolute -bottom-6 -right-6 bg-white p-6 rounded-2xl shadow-xl">
+//                 <div className="flex items-center gap-3">
+//                   <div className="w-12 h-12 bg-[#23cf7c] rounded-full flex items-center justify-center">
+//                     <FaShieldAlt className="text-white text-xl" />
+//                   </div>
+//                   <div>
+//                     <h4 className="font-bold text-[#223a66]">Certified</h4>
+//                     <p className="text-sm text-gray-600">Healthcare Provider</p>
+//                   </div>
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+//       </section>
+
+//       {/* Stats Section */}
+//       <section className="py-20 bg-gray-50">
+//         <div className="container mx-auto px-4">
+//           <div className="text-center mb-16">
+//             <span className="uppercase text-[#223a66] font-semibold tracking-widest text-sm">
+//               Our Achievements
+//             </span>
+//             <h2 className="text-4xl md:text-5xl font-light text-[#223a66] mb-4 mt-2">
+//               Trusted by <span className="font-bold">Thousands</span>
+//             </h2>
+//             <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+//               Numbers that speak for our commitment to excellence in healthcare
+//             </p>
+//           </div>
+          
+//           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+//             {stats.map((stat, idx) => (
+//               <div
+//                 key={idx}
+//                 className="bg-white rounded-2xl shadow-lg p-8 text-center hover:shadow-xl transition duration-300 group"
+//               >
+//                 <div className="text-[#23cf7c] text-4xl mb-4 group-hover:scale-110 transition duration-300 flex justify-center">
+//                   {stat.icon}
+//                 </div>
+//                 <div className="text-4xl font-bold text-[#223a66] mb-2">
+//                   <StatCounter value={stat.number} />
+//                   {stat.number >= 1000 ? '+' : ''}
+//                 </div>
+//                 <div className="text-gray-600 font-medium">{stat.label}</div>
+//               </div>
+//             ))}
+//           </div>
+//         </div>
+//       </section>
+
+//       {/* History Section */}
+//       <section className="py-20 bg-white">
+//         <div className="container mx-auto px-4">
+//           <div className="max-w-4xl mx-auto">
+//             <div className="text-center mb-16">
+//               <span className="uppercase text-[#223a66] font-semibold tracking-widest text-sm">
+//                 Our Journey
+//               </span>
+//               <h2 className="text-4xl md:text-5xl font-light text-[#223a66] mb-4 mt-2">
+//                 Healthcare <span className="font-bold">History</span>
+//               </h2>
+//             </div>
+            
+//             <div className="bg-gray-50 rounded-2xl p-8 md:p-12">
+//               <p className="text-gray-600 text-lg leading-relaxed mb-6">
+//                 Founded in 1998, our medical center has been at the forefront of healthcare 
+//                 innovation for over two decades. What started as a small clinic has grown into 
+//                 a comprehensive healthcare facility serving thousands of patients annually.
+//               </p>
+//               <p className="text-gray-600 text-lg leading-relaxed mb-6">
+//                 Our commitment to excellence has earned us numerous accolades and the trust 
+//                 of our community. We continue to invest in the latest medical technologies 
+//                 and attract the finest healthcare professionals to ensure our patients receive 
+//                 world-class care.
+//               </p>
+//               <p className="text-gray-600 text-lg leading-relaxed">
+//                 Today, we stand as a beacon of hope and healing, dedicated to improving 
+//                 the health and well-being of every individual who walks through our doors.
+//               </p>
+//             </div>
+//           </div>
+//         </div>
+//       </section>
+
+//       {/* Testimonials Section */}
+//       <section className="py-20 bg-[#223a66] text-white">
+//         <div className="container mx-auto px-4">
+//           <div className="text-center mb-16">
+//             <span className="uppercase text-blue-200 font-semibold tracking-widest text-sm">
+//               Patient Stories
+//             </span>
+//             <h2 className="text-4xl md:text-5xl font-light mb-4 mt-2">
+//               Happy Clients & <span className="font-bold">Feedback</span>
+//             </h2>
+//             <p className="text-blue-200 text-lg max-w-2xl mx-auto">
+//               Real experiences from real patients who trust us with their health
+//             </p>
+//           </div>
+          
+//           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+//             {/* Testimonial 1 */}
+//             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 hover:bg-white/20 transition duration-300">
+//               <div className="flex items-start gap-4 mb-6">
+//                 <FaQuoteLeft className="text-[#23cf7c] text-2xl flex-shrink-0 mt-1" />
+//                 <p className="text-blue-100 text-lg leading-relaxed">
+//                   "The care I received here was exceptional. The doctors were thorough, 
+//                   compassionate, and made me feel comfortable throughout my treatment. 
+//                   I couldn't have asked for better healthcare."
+//                 </p>
+//               </div>
+//               <div className="flex items-center gap-4">
+//                 <img 
+//                   src="/images/person_1.jpg" 
+//                   alt="Sarah Johnson" 
+//                   className="w-14 h-14 rounded-full object-cover border-2 border-[#23cf7c]" 
+//                 />
+//                 <div>
+//                   <h4 className="font-bold text-lg">Sarah Johnson</h4>
+//                   <p className="text-blue-200 text-sm">Marketing Manager</p>
+//                   <div className="flex mt-1">
+//                     {[...Array(5)].map((_, i) => (
+//                       <FaStar key={i} className="text-yellow-400 text-sm" />
+//                     ))}
+//                   </div>
+//                 </div>
+//               </div>
+//             </div>
+
+//             {/* Testimonial 2 */}
+//             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 hover:bg-white/20 transition duration-300">
+//               <div className="flex items-start gap-4 mb-6">
+//                 <FaQuoteLeft className="text-[#23cf7c] text-2xl flex-shrink-0 mt-1" />
+//                 <p className="text-blue-100 text-lg leading-relaxed">
+//                   "Outstanding medical facility with state-of-the-art equipment. 
+//                   The staff is incredibly professional and the doctors are among 
+//                   the best I've ever encountered. Highly recommend!"
+//                 </p>
+//               </div>
+//               <div className="flex items-center gap-4">
+//                 <img 
+//                   src="/images/person_2.jpg" 
+//                   alt="Michael Chen" 
+//                   className="w-14 h-14 rounded-full object-cover border-2 border-[#23cf7c]" 
+//                 />
+//                 <div>
+//                   <h4 className="font-bold text-lg">Michael Chen</h4>
+//                   <p className="text-blue-200 text-sm">Business Owner</p>
+//                   <div className="flex mt-1">
+//                     {[...Array(5)].map((_, i) => (
+//                       <FaStar key={i} className="text-yellow-400 text-sm" />
+//                     ))}
+//                   </div>
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+//       </section>
+
+//       {/* Values Section */}
+//       <section className="py-20 bg-gray-50">
+//         <div className="container mx-auto px-4">
+//           <div className="text-center mb-16">
+//             <span className="uppercase text-[#223a66] font-semibold tracking-widest text-sm">
+//               Our Core Values
+//             </span>
+//             <h2 className="text-4xl md:text-5xl font-light text-[#223a66] mb-4 mt-2">
+//               What We <span className="font-bold">Stand For</span>
+//             </h2>
+//           </div>
+          
+//           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+//             {[
+//               {
+//                 icon: <FaHeart />,
+//                 title: "Compassionate Care",
+//                 description: "We treat every patient with empathy, respect, and genuine concern for their wellbeing."
+//               },
+//               {
+//                 icon: <FaShieldAlt />,
+//                 title: "Safety First",
+//                 description: "Patient safety is our top priority in every procedure and treatment we provide."
+//               },
+//               {
+//                 icon: <FaStar />,
+//                 title: "Excellence",
+//                 description: "We strive for the highest standards in medical care and patient satisfaction."
+//               }
+//             ].map((value, index) => (
+//               <div key={index} className="bg-white rounded-2xl p-8 shadow-lg text-center hover:shadow-xl transition duration-300">
+//                 <div className="text-[#23cf7c] text-4xl mb-4 flex justify-center">
+//                   {value.icon}
+//                 </div>
+//                 <h3 className="text-xl font-bold text-[#223a66] mb-3">{value.title}</h3>
+//                 <p className="text-gray-600 leading-relaxed">{value.description}</p>
+//               </div>
+//             ))}
+//           </div>
+//         </div>
+//       </section>
+//     </main>
+//   );
+// };
+
+// export default About;
+
 import React, { useEffect, useState } from "react";
-import { FaPlay, FaQuoteLeft, FaAward, FaUsers, FaCalendarAlt, FaHeart, FaShieldAlt, FaStar } from "react-icons/fa";
+import { FaQuoteLeft, FaAward, FaUsers, FaCalendarAlt, FaHeart, FaShieldAlt, FaStar } from "react-icons/fa";
 
 const stats = [
-  { number: 25, label: "Years of Experience", icon: <FaCalendarAlt /> },
-  { number: 10000, label: "Happy Patients", icon: <FaUsers /> },
-  { number: 50, label: "Expert Doctors", icon: <FaHeart /> },
-  { number: 30, label: "Awards Won", icon: <FaAward /> },
+  { number: 25, label: "Năm kinh nghiệm", icon: <FaCalendarAlt /> },
+  { number: 10000, label: "Bệnh nhân hài lòng", icon: <FaUsers /> },
+  { number: 50, label: "Bác sĩ chuyên khoa", icon: <FaHeart /> },
+  { number: 30, label: "Giải thưởng đạt được", icon: <FaAward /> },
 ];
 
 const StatCounter = ({ value }) => {
@@ -25,7 +347,6 @@ const StatCounter = ({ value }) => {
       }
     };
     step();
-    // eslint-disable-next-line
   }, [value]);
 
   return <span>{count.toLocaleString()}</span>;
@@ -40,57 +361,61 @@ const About = () => {
           className="absolute inset-0 bg-cover bg-center"
           style={{
             backgroundImage: "url('/images/about-banner.jpg')",
-            filter: "brightness(0.7)"
+            filter: "brightness(0.7)",
           }}
         />
         <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto">
           <span className="uppercase text-blue-200 font-semibold tracking-widest text-sm">
-            Learn About Us
+            Giới thiệu về chúng tôi
           </span>
           <h1 className="text-4xl md:text-6xl font-light mb-4 leading-tight mt-2">
-            About Our <span className="font-bold text-[#23cf7c]">Clinic</span>
+            Về <span className="font-bold text-[#23cf7c]">Phòng khám</span>
           </h1>
           <p className="text-lg md:text-xl font-light opacity-90">
-            Dedicated to providing exceptional healthcare with compassion and excellence
+            Tận tâm mang đến dịch vụ chăm sóc sức khỏe xuất sắc với sự đồng cảm và chuyên nghiệp
           </p>
         </div>
       </section>
 
-      {/* Main About Section */}
+      {/* Giới thiệu chính */}
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-20">
-            {/* Content */}
+            {/* Nội dung */}
             <div>
               <span className="uppercase text-[#223a66] font-semibold tracking-widest text-sm">
-                Welcome to Our Medical Center
+                Chào mừng đến với trung tâm y tế của chúng tôi
               </span>
               <h2 className="text-4xl md:text-5xl font-light text-[#223a66] mb-6 mt-2">
-                Your Health, <span className="font-bold">Our Mission</span>
+                Sức khỏe của bạn, <span className="font-bold">Sứ mệnh của chúng tôi</span>
               </h2>
               <p className="text-gray-600 text-lg mb-6 leading-relaxed">
-                With over 25 years of excellence in healthcare, we combine advanced 
-                medical technology with compassionate care to deliver the best outcomes 
-                for our patients and their families.
+                Với hơn 25 năm kinh nghiệm trong lĩnh vực y tế, chúng tôi kết hợp công nghệ tiên tiến với sự chăm sóc tận tâm để mang lại kết quả tốt nhất cho bệnh nhân và gia đình.
               </p>
               <p className="text-gray-600 mb-8 leading-relaxed">
-                Our state-of-the-art facility houses the latest medical equipment and 
-                technologies, while our team of expert physicians and healthcare professionals 
-                work tirelessly to provide personalized treatment plans for every patient.
+                Cơ sở hiện đại với trang thiết bị y tế tiên tiến, cùng đội ngũ bác sĩ và chuyên gia y tế giàu kinh nghiệm, cam kết mang đến phác đồ điều trị cá nhân hóa cho từng bệnh nhân.
               </p>
-              
-              {/* Feature List */}
+
+              {/* Danh sách đặc điểm */}
               <div className="space-y-4 mb-8">
                 {[
-                  "24/7 Emergency Medical Services",
-                  "State-of-the-art Medical Equipment",
-                  "Experienced Medical Professionals", 
-                  "Comprehensive Health Checkups"
+                  "Dịch vụ cấp cứu 24/7",
+                  "Trang thiết bị y tế hiện đại",
+                  "Đội ngũ y bác sĩ giàu kinh nghiệm",
+                  "Khám sức khỏe tổng quát toàn diện",
                 ].map((feature, index) => (
                   <div key={index} className="flex items-center gap-3">
                     <div className="w-6 h-6 bg-[#23cf7c] rounded-full flex items-center justify-center">
-                      <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      <svg
+                        className="w-3 h-3 text-white"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clipRule="evenodd"
+                        />
                       </svg>
                     </div>
                     <span className="text-gray-700 font-medium">{feature}</span>
@@ -99,28 +424,26 @@ const About = () => {
               </div>
             </div>
 
-            {/* Image with Play Button */}
+            {/* Ảnh */}
             <div className="relative">
               <div className="relative rounded-2xl overflow-hidden shadow-2xl">
                 <img
                   src="/src/components/img/home3.jpg"
-                  alt="About Our Clinic"
+                  alt="Về phòng khám"
                   className="w-full h-96 object-cover"
                 />
-                <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
-                 
-                </div>
+                <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center"></div>
               </div>
-              
-              {/* Floating Card */}
+
+              {/* Thẻ nổi */}
               <div className="absolute -bottom-6 -right-6 bg-white p-6 rounded-2xl shadow-xl">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 bg-[#23cf7c] rounded-full flex items-center justify-center">
                     <FaShieldAlt className="text-white text-xl" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-[#223a66]">Certified</h4>
-                    <p className="text-sm text-gray-600">Healthcare Provider</p>
+                    <h4 className="font-bold text-[#223a66]">Chứng nhận</h4>
+                    <p className="text-sm text-gray-600">Nhà cung cấp dịch vụ y tế uy tín</p>
                   </div>
                 </div>
               </div>
@@ -129,33 +452,33 @@ const About = () => {
         </div>
       </section>
 
-      {/* Stats Section */}
+      {/* Thống kê */}
       <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <span className="uppercase text-[#223a66] font-semibold tracking-widest text-sm">
-              Our Achievements
+              Thành tựu
             </span>
             <h2 className="text-4xl md:text-5xl font-light text-[#223a66] mb-4 mt-2">
-              Trusted by <span className="font-bold">Thousands</span>
+              Được <span className="font-bold">tin tưởng</span>
             </h2>
             <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-              Numbers that speak for our commitment to excellence in healthcare
+              Những con số chứng minh cho sự cam kết về chất lượng y tế
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {stats.map((stat, idx) => (
               <div
                 key={idx}
                 className="bg-white rounded-2xl shadow-lg p-8 text-center hover:shadow-xl transition duration-300 group"
               >
-                <div className="text-[#23cf7c] text-4xl mb-4 group-hover:scale-110 transition duration-300 flex justify-center">
+                <div className="text-[#23cf7c] text-4xl mb-4 flex justify-center group-hover:scale-110 transition duration-300">
                   {stat.icon}
                 </div>
                 <div className="text-4xl font-bold text-[#223a66] mb-2">
                   <StatCounter value={stat.number} />
-                  {stat.number >= 1000 ? '+' : ''}
+                  {stat.number >= 1000 ? "+" : ""}
                 </div>
                 <div className="text-gray-600 font-medium">{stat.label}</div>
               </div>
@@ -164,75 +487,67 @@ const About = () => {
         </div>
       </section>
 
-      {/* History Section */}
+      {/* Lịch sử */}
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-16">
               <span className="uppercase text-[#223a66] font-semibold tracking-widest text-sm">
-                Our Journey
+                Hành trình của chúng tôi
               </span>
               <h2 className="text-4xl md:text-5xl font-light text-[#223a66] mb-4 mt-2">
-                Healthcare <span className="font-bold">History</span>
+                Lịch sử <span className="font-bold">phát triển</span>
               </h2>
             </div>
-            
+
             <div className="bg-gray-50 rounded-2xl p-8 md:p-12">
               <p className="text-gray-600 text-lg leading-relaxed mb-6">
-                Founded in 1998, our medical center has been at the forefront of healthcare 
-                innovation for over two decades. What started as a small clinic has grown into 
-                a comprehensive healthcare facility serving thousands of patients annually.
+                Thành lập từ năm 2010, trung tâm y tế của chúng tôi đã đi đầu trong lĩnh vực chăm sóc sức khỏe hơn hai thập kỷ. Từ một phòng khám nhỏ, nay đã phát triển thành cơ sở y tế toàn diện phục vụ hàng ngàn bệnh nhân mỗi năm.
               </p>
               <p className="text-gray-600 text-lg leading-relaxed mb-6">
-                Our commitment to excellence has earned us numerous accolades and the trust 
-                of our community. We continue to invest in the latest medical technologies 
-                and attract the finest healthcare professionals to ensure our patients receive 
-                world-class care.
+                Sự tận tâm và cam kết chất lượng đã mang lại nhiều giải thưởng danh giá cùng niềm tin từ cộng đồng. Chúng tôi không ngừng đầu tư vào công nghệ y tế hiện đại và thu hút đội ngũ y bác sĩ giỏi để đảm bảo bệnh nhân nhận được sự chăm sóc tốt nhất.
               </p>
               <p className="text-gray-600 text-lg leading-relaxed">
-                Today, we stand as a beacon of hope and healing, dedicated to improving 
-                the health and well-being of every individual who walks through our doors.
+                Ngày nay, chúng tôi trở thành điểm đến đáng tin cậy, luôn hướng tới việc nâng cao sức khỏe và hạnh phúc cho từng bệnh nhân.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Testimonials Section */}
+      {/* Cảm nhận bệnh nhân */}
       <section className="py-20 bg-[#223a66] text-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <span className="uppercase text-blue-200 font-semibold tracking-widest text-sm">
-              Patient Stories
+              Câu chuyện bệnh nhân
             </span>
             <h2 className="text-4xl md:text-5xl font-light mb-4 mt-2">
-              Happy Clients & <span className="font-bold">Feedback</span>
+              Khách hàng <span className="font-bold">hài lòng</span>
             </h2>
             <p className="text-blue-200 text-lg max-w-2xl mx-auto">
-              Real experiences from real patients who trust us with their health
+              Trải nghiệm thực tế từ những bệnh nhân đã tin tưởng chúng tôi
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-            {/* Testimonial 1 */}
+            {/* Đánh giá 1 */}
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 hover:bg-white/20 transition duration-300">
               <div className="flex items-start gap-4 mb-6">
                 <FaQuoteLeft className="text-[#23cf7c] text-2xl flex-shrink-0 mt-1" />
                 <p className="text-blue-100 text-lg leading-relaxed">
-                  "The care I received here was exceptional. The doctors were thorough, 
-                  compassionate, and made me feel comfortable throughout my treatment. 
-                  I couldn't have asked for better healthcare."
+                  "Sự chăm sóc tôi nhận được thật tuyệt vời. Các bác sĩ tận tâm, chuyên nghiệp và khiến tôi cảm thấy thoải mái trong suốt quá trình điều trị. Tôi không thể mong đợi gì hơn."
                 </p>
               </div>
               <div className="flex items-center gap-4">
-                <img 
-                  src="/images/person_1.jpg" 
-                  alt="Sarah Johnson" 
-                  className="w-14 h-14 rounded-full object-cover border-2 border-[#23cf7c]" 
+                <img
+                  src="/images/person_1.jpg"
+                  alt="Sarah Johnson"
+                  className="w-14 h-14 rounded-full object-cover border-2 border-[#23cf7c]"
                 />
                 <div>
                   <h4 className="font-bold text-lg">Sarah Johnson</h4>
-                  <p className="text-blue-200 text-sm">Marketing Manager</p>
+                  <p className="text-blue-200 text-sm">Trưởng phòng Marketing</p>
                   <div className="flex mt-1">
                     {[...Array(5)].map((_, i) => (
                       <FaStar key={i} className="text-yellow-400 text-sm" />
@@ -242,25 +557,23 @@ const About = () => {
               </div>
             </div>
 
-            {/* Testimonial 2 */}
+            {/* Đánh giá 2 */}
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 hover:bg-white/20 transition duration-300">
               <div className="flex items-start gap-4 mb-6">
                 <FaQuoteLeft className="text-[#23cf7c] text-2xl flex-shrink-0 mt-1" />
                 <p className="text-blue-100 text-lg leading-relaxed">
-                  "Outstanding medical facility with state-of-the-art equipment. 
-                  The staff is incredibly professional and the doctors are among 
-                  the best I've ever encountered. Highly recommend!"
+                  "Cơ sở y tế tuyệt vời với trang thiết bị hiện đại. Nhân viên cực kỳ chuyên nghiệp và đội ngũ bác sĩ là những người giỏi nhất tôi từng gặp. Rất đáng để tin tưởng!"
                 </p>
               </div>
               <div className="flex items-center gap-4">
-                <img 
-                  src="/images/person_2.jpg" 
-                  alt="Michael Chen" 
-                  className="w-14 h-14 rounded-full object-cover border-2 border-[#23cf7c]" 
+                <img
+                  src="/images/person_2.jpg"
+                  alt="Michael Chen"
+                  className="w-14 h-14 rounded-full object-cover border-2 border-[#23cf7c]"
                 />
                 <div>
                   <h4 className="font-bold text-lg">Michael Chen</h4>
-                  <p className="text-blue-200 text-sm">Business Owner</p>
+                  <p className="text-blue-200 text-sm">Doanh nhân</p>
                   <div className="flex mt-1">
                     {[...Array(5)].map((_, i) => (
                       <FaStar key={i} className="text-yellow-400 text-sm" />
@@ -273,42 +586,52 @@ const About = () => {
         </div>
       </section>
 
-      {/* Values Section */}
+      {/* Giá trị cốt lõi */}
       <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <span className="uppercase text-[#223a66] font-semibold tracking-widest text-sm">
-              Our Core Values
+              Giá trị cốt lõi
             </span>
             <h2 className="text-4xl md:text-5xl font-light text-[#223a66] mb-4 mt-2">
-              What We <span className="font-bold">Stand For</span>
+              Điều chúng tôi <span className="font-bold">theo đuổi</span>
             </h2>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               {
                 icon: <FaHeart />,
-                title: "Compassionate Care",
-                description: "We treat every patient with empathy, respect, and genuine concern for their wellbeing."
+                title: "Chăm sóc tận tâm",
+                description:
+                  "Chúng tôi đối xử với từng bệnh nhân bằng sự đồng cảm, tôn trọng và quan tâm chân thành.",
               },
               {
                 icon: <FaShieldAlt />,
-                title: "Safety First",
-                description: "Patient safety is our top priority in every procedure and treatment we provide."
+                title: "An toàn hàng đầu",
+                description:
+                  "Sự an toàn của bệnh nhân luôn là ưu tiên số một trong mọi quy trình và điều trị.",
               },
               {
                 icon: <FaStar />,
-                title: "Excellence",
-                description: "We strive for the highest standards in medical care and patient satisfaction."
-              }
+                title: "Xuất sắc",
+                description:
+                  "Chúng tôi không ngừng phấn đấu đạt tiêu chuẩn cao nhất trong chăm sóc y tế và sự hài lòng của bệnh nhân.",
+              },
             ].map((value, index) => (
-              <div key={index} className="bg-white rounded-2xl p-8 shadow-lg text-center hover:shadow-xl transition duration-300">
+              <div
+                key={index}
+                className="bg-white rounded-2xl p-8 shadow-lg text-center hover:shadow-xl transition duration-300"
+              >
                 <div className="text-[#23cf7c] text-4xl mb-4 flex justify-center">
                   {value.icon}
                 </div>
-                <h3 className="text-xl font-bold text-[#223a66] mb-3">{value.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{value.description}</p>
+                <h3 className="text-xl font-bold text-[#223a66] mb-3">
+                  {value.title}
+                </h3>
+                <p className="text-gray-600 leading-relaxed">
+                  {value.description}
+                </p>
               </div>
             ))}
           </div>
