@@ -403,53 +403,69 @@ console.error("Error canceling booking:", error);
         pauseOnHover
         theme="light"
       />
-      
-      <div className="mb-6 flex flex-col md:flex-row md:items-end md:justify-between gap-4 mt-28">
-        <div className="flex gap-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">Limit</label>
-            <select
-              className="border rounded px-2 py-1"
-              value={limit}
-              onChange={(e) => {
-                setLimit(Number(e.target.value));
-                setPage(0);
-              }}
-            >
-              {LIMIT_OPTIONS.map((opt) => (
-                <option key={opt} value={opt}>{opt}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Date Schedule</label>
-            <input
-              type="date"
-              className="border rounded px-2 py-1"
-              value={dateSchedule}
-              onChange={(e) => {
-                setDateSchedule(e.target.value);
-                setPage(0);
-              }}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Status</label>
-            <select
-              className="border rounded px-2 py-1"
-              value={status}
-              onChange={(e) => {
-                setStatus(e.target.value);
-                setPage(0);
-              }}
-            >
-              <option value="">All</option>
-              <option value="pending">PENDING</option>
-              <option value="paid">PAID</option>
-              <option value="rejected">REJECTED</option>
-              <option value="Wait Refund">WAIT REFUND</option>
-              <option value="Refunded">REFUNDED</option>
-            </select>
+
+      {/* Filter section - Đẹp hơn với flex, gap, rounded, shadow */}
+      <div className="mb-8 mt-28">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+          <div className="flex flex-wrap gap-4 bg-white rounded-xl shadow-md p-4 border border-gray-200 w-full md:w-auto">
+            <div>
+              <label className="block text-sm font-medium mb-1 text-gray-700">Limit</label>
+              <select
+                className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#23cf7c] bg-gray-50"
+                value={limit}
+                onChange={(e) => {
+                  setLimit(Number(e.target.value));
+                  setPage(0);
+                }}
+              >
+                {LIMIT_OPTIONS.map((opt) => (
+                  <option key={opt} value={opt}>{opt}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1 text-gray-700">Date Schedule</label>
+              <input
+                type="date"
+                className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#23cf7c] bg-gray-50"
+                value={dateSchedule}
+                onChange={(e) => {
+                  setDateSchedule(e.target.value);
+                  setPage(0);
+                }}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1 text-gray-700">Status</label>
+              <select
+                className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#23cf7c] bg-gray-50"
+                value={status}
+                onChange={(e) => {
+                  setStatus(e.target.value);
+                  setPage(0);
+                }}
+              >
+                <option value="">All</option>
+                <option value="pending">PENDING</option>
+                <option value="paid">PAID</option>
+                <option value="rejected">REJECTED</option>
+                <option value="Wait Refund">WAIT REFUND</option>
+                <option value="Refunded">REFUNDED</option>
+              </select>
+            </div>
+            <div className="flex-1 min-w-[180px]">
+              <label className="block text-sm font-medium mb-1 text-gray-700">Search</label>
+              <input
+                type="text"
+                className="border border-gray-300 rounded-lg px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-[#23cf7c] bg-gray-50"
+                placeholder="Tìm theo chuyên khoa, mã thanh toán..."
+                value={keyword}
+                onChange={(e) => {
+                  setKeyword(e.target.value);
+                  setPage(0);
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>

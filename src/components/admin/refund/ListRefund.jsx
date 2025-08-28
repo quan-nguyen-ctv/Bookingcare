@@ -12,6 +12,15 @@ const RefundModal = ({ isOpen, onClose, refundData, onConfirm, onReject, loading
 
   const isProcessed = refundData.status?.toUpperCase() === "REFUNDED" || refundData.status?.toUpperCase() === "REJECTED";
 
+  const refundDetails = {
+    "Mã Hóa Đơn": `#${refundData.id}`,
+    "Mã Đặt Khám": refundData.bookingId || refundData.booking_id,
+    "Số Tiền Hoàn": new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(refundData.amount || 0),
+    "Ngân Hàng": refundData.bankName || refundData.bank_name,
+    "Chủ Tài Khoản": refundData.holderName || refundData.holder_name,
+    "Số Tài Khoản": refundData.accountNumber || refundData.account_number || "—"
+  };
+
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
       <div className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md mx-4">
@@ -32,14 +41,12 @@ const RefundModal = ({ isOpen, onClose, refundData, onConfirm, onReject, loading
         </div>
 
         <div className="space-y-4 mb-6">
-          {{
-            "Mã Hóa Đơn": `#${refundData.id}`,
-            "Mã Đặt Khám": refundData.bookingId || refundData.booking_id,
-            "Số Tiền Hoàn": new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(refundData.amount || 0),
-            "Ngân Hàng": refundData.bankName || refundData.bank_name,
-            "Chủ Tài Khoản": refundData.holderName || refundData.holder_name,
-            "Số Tài Khoản": refundData.accountNumber || refundData.account_number || "—"
-          }}
+          {Object.entries(refundDetails).map(([label, value]) => (
+            <div key={label} className="flex justify-between items-center py-2">
+              <span className="text-sm font-semibold text-gray-600">{label}:</span>
+              <span className="text-sm text-gray-900 font-medium">{value}</span>
+            </div>
+          ))}
 
           <div className="flex justify-between items-center py-2">
             <span className="text-sm font-semibold text-gray-600">Trạng Thái:</span>

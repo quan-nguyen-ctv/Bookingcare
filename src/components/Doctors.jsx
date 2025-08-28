@@ -109,9 +109,9 @@ const Doctors = () => {
           </div>
 
           {/* Doctor Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+          <div className="flex flex-wrap justify-center gap-8">
             {doctors.map((doctor) => (
-              <div key={doctor.id} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300 group">
+              <div key={doctor.id} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300 group w-full md:w-[340px]">
                 {/* Doctor Image */}
                 <div className="relative overflow-hidden">
                   <img
@@ -133,12 +133,12 @@ const Doctors = () => {
                 </div>
 
                 {/* Doctor Info */}
-                <div className="p-6 text-center">
+                <div className="p-6 text-center ">
                   <div className="mb-3">
                     <FaUserMd className="text-[#23cf7c] text-2xl mx-auto mb-2" />
                   </div>
                   <h3 className="text-xl font-bold text-[#223a66] mb-2">
-                    {doctor.bio}
+                    {doctor.user.fullname}
                   </h3>
                   <p className="text-[#23cf7c] font-medium mb-3">
                     {doctor.specialty?.specialtyName || "Không rõ chuyên khoa"}

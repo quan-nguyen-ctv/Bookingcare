@@ -383,8 +383,11 @@ const MedicalServiceDetail = () => {
                             </h4>
                             {(() => {
                               // Filter schedules for this doctor
-                              const doctorSchedules = schedules.filter(s => s.doctor_id == doctor.id);
-                              
+                              let doctorSchedules = schedules.filter(s => s.doctor_id == doctor.id);
+
+                              // Sắp xếp theo start_time tăng dần (từ sáng tới chiều)
+                              doctorSchedules = doctorSchedules.sort((a, b) => a.start_time.localeCompare(b.start_time));
+
                               return doctorSchedules.length > 0 ? (
                                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                                   {doctorSchedules
@@ -410,7 +413,7 @@ const MedicalServiceDetail = () => {
                                         key={schedule.id}
                                         className="bg-gradient-to-r from-[#23cf7c]/10 to-[#20c997]/10 border-2 border-[#23cf7c] text-[#23cf7c] hover:from-[#23cf7c] hover:to-[#20c997] hover:text-white px-4 py-3 rounded-xl font-semibold transition-all duration-300 disabled:opacity-50"
                                         onClick={() => handleBooking(schedule, doctor)}
-                                        disabled={false} // Add loading state if needed
+                                        disabled={false}
                                       >
                                         <div className="text-sm">
                                           {schedule.start_time.slice(0, 5)} - {schedule.end_time.slice(0, 5)}

@@ -147,7 +147,7 @@ const PatientBookingList = () => {
         scheduleIds.map(async (id) => {
           try {
             const res = await axios.get(
-              `http://localhost:6868/api/v1/bookings/doctor?scheduleId=${id}`,
+              `http://localhost:6868/api/v1/bookings/doctor?scheduleId=${id}&status=PAID`,
               { headers: { Authorization: `Bearer ${token}` } }
             );
             

@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from "react-router-dom";
 
-
 const ListContact = () => {
   const [contacts, setContacts] = useState([]);
   const [toast, setToast] = useState({ show: false, message: "", type: "success" });
@@ -30,7 +29,7 @@ const ListContact = () => {
       const params = new URLSearchParams();
       if (limit) params.append('limit', limit);
       if (status) params.append('status', status);
-      if (search) params.append('keyword', search); // đổi từ search -> keyword
+      if (search) params.append('keyword', search);
       if (page) params.append('page', page);
 
       if (params.toString()) url += `?${params.toString()}`;
@@ -52,7 +51,7 @@ const ListContact = () => {
 
   const handleSearch = () => {
     setSearch(searchTerm);
-    setPage(0); // reset về trang 1 khi tìm kiếm
+    setPage(0);
   };
 
   const handleKeyPress = (e) => {
@@ -77,11 +76,11 @@ const ListContact = () => {
   const getStatusBadge = (status) => {
     switch (status) {
       case "Replied":
-        return <span className="bg-green-500 text-white px-2 py-1 rounded text-xs">Replied</span>;
+        return <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Replied</span>;
       case "AwaitReply":
-        return <span className="bg-blue-500 text-white px-2 py-1 rounded text-xs">Await Reply</span>;
+        return <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Await Reply</span>;
       default:
-        return <span className="bg-gray-500 text-white px-2 py-1 rounded text-xs">Unknown</span>;
+        return <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">Unknown</span>;
     }
   };
 
@@ -92,110 +91,199 @@ const ListContact = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      {toast.show && (
-        <Toast message={toast.message} type={toast.type} onClose={() => setToast({ show: false, message: "", type: toast.type })} />
-      )}
-
-      <h2 className="text-3xl font-bold text-[#223a66] mb-2">
-        Contact <span className="text-base font-normal text-gray-400">- Contact List</span>
-      </h2>
-
-      {/* Filters */}
-      <div className="flex gap-4 mb-6">
-        {/* Limit */}
-        <div>
-          <label className="block text-sm font-medium mb-1">Limit</label>
-          <select value={limit} onChange={(e) => { setLimit(e.target.value); setPage(0); }} className="border rounded px-3 py-2">
-            <option value={5}>5</option>
-            <option value={10}>10</option>
-            <option value={20}>20</option>
-            <option value={50}>50</option>
-          </select>
-        </div>
-
-        {/* Status */}
-        <div>
-          <label className="block text-sm font-medium mb-1">Status</label>
-          <select value={status} onChange={(e) => { setStatus(e.target.value); setPage(0); }} className="border rounded px-3 py-2">
-            <option value="">Select Status</option>
-            <option value="Replied">Replied</option>
-            <option value="AwaitReply">Await Reply</option>
-          </select>
-        </div>
-
-        {/* Search */}
-        <div className="flex-1">
-          <label className="block text-sm font-medium mb-1">Search</label>
-          <div className="flex gap-2">
-            <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} onKeyPress={handleKeyPress} placeholder="Search by name, email..." className="border rounded px-3 py-2 flex-1" />
-            <button onClick={handleSearch} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Search</button>
-            {search && (
-              <button onClick={() => { setSearch(""); setSearchTerm(""); setPage(0); }} className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Clear</button>
-            )}
+    <div className="p-6 bg-gray-50 min-h-screen">
+      {/* Header */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-3">
+              <svg className="w-6 h-6 text-[#20c0f3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12a4 4 0 01-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+              Danh Sách Liên Hệ
+            </h1>
+            <p className="text-gray-600 mt-1">Quản lý các liên hệ từ khách hàng</p>
           </div>
         </div>
       </div>
 
-      {/* Table */}
-      <div className="overflow-x-auto">
-        <table className="min-w-full border text-center">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="border px-3 py-2">ID</th>
-              <th className="border px-3 py-2">Full Name</th>
-              <th className="border px-3 py-2">Email</th>
-              <th className="border px-3 py-2">Message</th>
-              <th className="border px-3 py-2">Status</th>
-              <th className="border px-3 py-2">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {contacts.length === 0 ? (
+      {/* Card */}
+      <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+        {/* Filters */}
+        <div className="p-6 border-b border-gray-200 bg-gray-50">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+            <svg className="w-5 h-5 text-[#20c0f3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z" />
+            </svg>
+            Bộ Lọc Tìm Kiếm
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Số lượng/trang</label>
+              <select
+                value={limit}
+                onChange={e => { setLimit(Number(e.target.value)); setPage(0); }}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#20c0f3] focus:border-transparent"
+              >
+                {[5, 10, 20, 50].map(val => (
+                  <option key={val} value={val}>{val}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Trạng thái</label>
+              <select
+                value={status}
+                onChange={e => { setStatus(e.target.value); setPage(0); }}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#20c0f3] focus:border-transparent"
+              >
+                <option value="">Tất cả trạng thái</option>
+                <option value="Replied">Replied</option>
+                <option value="AwaitReply">Await Reply</option>
+              </select>
+            </div>
+            <div className="lg:col-span-2">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Tìm kiếm</label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={e => setSearchTerm(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder="Tìm theo tên, email..."
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#20c0f3] focus:border-transparent"
+                />
+                <button
+                  onClick={handleSearch}
+                  className="bg-[#20c0f3] hover:bg-[#1ba0d1] text-white px-4 py-2 rounded-lg font-semibold transition-colors duration-200"
+                >
+                  Tìm kiếm
+                </button>
+                {search && (
+                  <button
+                    onClick={() => { setSearch(""); setSearchTerm(""); setPage(0); }}
+                    className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors duration-200"
+                  >
+                    Xóa
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Table */}
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200 text-center">
+            <thead className="bg-gray-50">
               <tr>
-                <td colSpan={6} className="py-4 text-gray-400">Không có liên hệ nào.</td>
+                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">ID</th>
+                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Họ tên</th>
+                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Email</th>
+                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Nội dung</th>
+                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Trạng thái</th>
+                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Thao tác</th>
               </tr>
-            ) : (
-              contacts.map((item) => (
-                <tr key={item.id} className="border-b">
-                  <td className="border px-3 py-2">{item.id}</td>
-                  <td className="border px-3 py-2">{item.name}</td>
-                  <td className="border px-3 py-2">{item.email}</td>
-                  <td className="border px-3 py-2 max-w-xs truncate" title={item.message}>{item.message}</td>
-                  <td className="border px-3 py-2">{getStatusBadge(item.status)}</td>
-                  <td className="border px-3 py-2 flex gap-2 justify-center">
-                    <button title="View" className="text-blue-500 hover:text-blue-700" onClick={() => navigate(`/admin/contacts/${item.id}`)}>
-                      <FontAwesomeIcon icon={faEye} />
-                    </button>
-                    <button title="Delete" className="text-red-500 hover:text-red-700" onClick={() => handleDelete(item.id)}>
-                      <FontAwesomeIcon icon={faTrash} />
-                    </button>
-                  </td>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {contacts.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="py-8 text-gray-400 text-lg">Không có liên hệ nào.</td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : (
+                contacts.map((item) => (
+                  <tr key={item.id} className="hover:bg-gray-50 transition-colors duration-150">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">#{item.id}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.name}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.email}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 max-w-xs truncate" title={item.message}>{item.message}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">{getStatusBadge(item.status)}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <div className="flex gap-2 justify-center">
+                        <button
+                          title="Xem"
+                          className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg transition-colors duration-200 flex items-center gap-1"
+                          onClick={() => navigate(`/admin/contacts/${item.id}`)}
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                          </svg>
+                          Xem
+                        </button>
+                        <button
+                          title="Xóa"
+                          className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg transition-colors duration-200 flex items-center gap-1"
+                          onClick={() => handleDelete(item.id)}
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                          Xóa
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
+            <div className="flex justify-between items-center">
+              <div className="text-sm text-gray-700">
+                Hiển thị {(page * limit) + 1} - {Math.min((page + 1) * limit, contacts.length + page * limit)} trong tổng số {contacts.length + (totalPages - 1) * limit} kết quả
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  className={`px-3 py-2 rounded-lg text-sm font-medium ${page === 0 ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"} transition-colors duration-200`}
+                  onClick={() => handlePageChange(page - 1)}
+                  disabled={page === 0}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                {Array.from({ length: totalPages }, (_, i) => i)
+                  .filter(i => i === 0 || i === totalPages - 1 || (i >= page - 1 && i <= page + 1))
+                  .map((i, index, array) => (
+                    <React.Fragment key={i}>
+                      {index > 0 && array[index - 1] !== i - 1 && (
+                        <span className="px-2 text-gray-400">...</span>
+                      )}
+                      <button
+                        className={`px-3 py-2 rounded-lg text-sm font-medium ${page === i ? "bg-[#20c0f3] text-white" : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"} transition-colors duration-200`}
+                        onClick={() => handlePageChange(i)}
+                      >
+                        {i + 1}
+                      </button>
+                    </React.Fragment>
+                  ))}
+                <button
+                  className={`px-3 py-2 rounded-lg text-sm font-medium ${page === totalPages - 1 ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"} transition-colors duration-200`}
+                  onClick={() => handlePageChange(page + 1)}
+                  disabled={page === totalPages - 1}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Pagination */}
-      <div className="flex justify-between items-center mt-4">
-        <button
-          className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-          onClick={() => handlePageChange(page - 1)}
-          disabled={page === 0}
-        >
-          Trang trước
-        </button>
-        <span>Trang {page + 1} / {totalPages}</span>
-        <button
-          className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-          onClick={() => handlePageChange(page + 1)}
-          disabled={page + 1 >= totalPages}
-        >
-          Trang sau
-        </button>
-      </div>
+      {/* Toast */}
+      {toast.show && (
+        <div className={`fixed top-6 right-6 z-50 px-6 py-4 rounded-lg shadow-lg text-white font-semibold transition-all duration-300
+          ${toast.type === "success" ? "bg-green-500" : "bg-red-500"}`}>
+          {toast.message}
+        </div>
+      )}
     </div>
   );
 };

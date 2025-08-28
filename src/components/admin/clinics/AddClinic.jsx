@@ -56,31 +56,31 @@ const AddClinic = ({ onAdded }) => {
     }));
   };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      // Validate file type
-      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
-      if (!validTypes.includes(file.type)) {
-        showToast("Vui lòng chọn file hình ảnh hợp lệ (JPG, PNG, GIF)", "error");
-        return;
-      }
+  // const handleImageChange = (e) => {
+  //   const file = e.target.files[0];
+  //   if (file) {
+  //     // Validate file type
+  //     const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+  //     if (!validTypes.includes(file.type)) {
+  //       showToast("Vui lòng chọn file hình ảnh hợp lệ (JPG, PNG, GIF)", "error");
+  //       return;
+  //     }
 
-      // Validate file size (max 5MB)
-      const maxSize = 5 * 1024 * 1024; // 5MB
-      if (file.size > maxSize) {
-        showToast("Kích thước file không được vượt quá 5MB", "error");
-        return;
-      }
+  //     // Validate file size (max 5MB)
+  //     const maxSize = 5 * 1024 * 1024; // 5MB
+  //     if (file.size > maxSize) {
+  //       showToast("Kích thước file không được vượt quá 5MB", "error");
+  //       return;
+  //     }
 
-      setImageFile(file);
-      setImagePreview(URL.createObjectURL(file));
-    }
-  };
+  //     setImageFile(file);
+  //     setImagePreview(URL.createObjectURL(file));
+  //   }
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Validation
     if (!formData.name.trim() || !formData.address.trim() || !formData.phone.trim() || !formData.email.trim()) {
       showToast("Vui lòng điền đầy đủ thông tin bắt buộc", "error");
@@ -107,55 +107,32 @@ const AddClinic = ({ onAdded }) => {
     }
 
     setLoading(true);
-    
-    try {
-      let imageName = "";
-      
-      // Upload image if selected
-      if (imageFile) {
-        const formDataImg = new FormData();
-        formDataImg.append("file", imageFile);
-        
-        try {
-          const imgRes = await axios.post(
-            "http://localhost:6868/api/v1/images/clinic-upload",
-            formDataImg,
-            { 
-              headers: { 
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'multipart/form-data'
-              } 
-            }
-          );
-          imageName = imgRes.data?.image || "";
-          showToast("Tải ảnh lên thành công", "info");
-        } catch (imgErr) {
-          console.error("Image upload error:", imgErr);
-          showToast("Lỗi khi tải ảnh lên, sẽ tạo phòng khám không có ảnh", "info");
-        }
-      }
 
-      // Create clinic
+    try {
+      // Nếu có upload ảnh thì xử lý upload ảnh trước (nếu cần)
+      let clinicImage = null;
+      // Nếu bạn muốn upload ảnh, hãy mở lại phần upload ảnh ở đây
+
+      // Gửi dữ liệu đúng format backend yêu cầu
       await axios.post(
         "http://localhost:6868/api/v1/clinics",
-        { 
-          name: formData.name.trim(),
-          address: formData.address.trim(),
-          image: imageName,
-          phone: formData.phone.trim(),
+        {
+          clinic_name: formData.name.trim(),
+          clinic_image: clinicImage, // null nếu không có ảnh
           email: formData.email.trim(),
-          description: formData.description.trim()
+          phone: formData.phone.trim(),
+          address: formData.address.trim(),
+          active: true
         },
-        { 
-          headers: { 
+        {
+          headers: {
             Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          } 
+          }
         }
       );
 
       showToast("Thêm phòng khám thành công!");
-      
+
       // Reset form
       setFormData({
         name: "",
@@ -166,13 +143,13 @@ const AddClinic = ({ onAdded }) => {
       });
       setImageFile(null);
       setImagePreview(null);
-      
+
       // Reset file input
       const fileInput = document.querySelector('input[type="file"]');
       if (fileInput) fileInput.value = '';
-      
+
       if (onAdded) onAdded();
-      
+
     } catch (err) {
       console.error("Clinic creation error:", err);
       const errorMessage = err?.response?.data?.message || "Lỗi khi thêm phòng khám";

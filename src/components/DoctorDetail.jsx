@@ -177,7 +177,7 @@ const DoctorDetail = () => {
             filter: "brightness(0.3)"
           }}
         />
-        <div className="relative z-10 flex items-center justify-center h-full text-center text-white px-4">
+        <div className="relative z-10 flex items-center justify-center h-full text-center text-white px-4 mt-5">
           <div className="max-w-4xl mx-auto">
             <span className="uppercase text-blue-200 font-semibold tracking-widest text-sm">
               Medical Professional
