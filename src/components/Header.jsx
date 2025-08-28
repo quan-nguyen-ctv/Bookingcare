@@ -4,7 +4,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 
 const navLinks = [
   { label: "Trang Chủ", href: "/" },
-  { label: "Chúng Tôi", href: "/about" },
+  { label: "Giới Thiệu", href: "/about" },
   { label: "Dịch Vụ", href: "/medical-services" },
   { label: "Bác Sĩ", href: "/list-doctor" },
   { label: "Tin Tức", href: "/blog" },

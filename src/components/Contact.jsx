@@ -445,7 +445,7 @@ const Contact = () => {
               Liên hệ với chúng tôi
             </span>
             <h1 className="text-4xl md:text-6xl font-light mb-4 leading-tight mt-2">
-              <span className="font-bold">Liên hệ</span> ngay
+              <span className="font-bold">Liên hệ ngay</span> 
             </h1>
             <p className="text-lg md:text-xl font-light opacity-90 max-w-2xl mx-auto">
               Chúng tôi luôn sẵn sàng hỗ trợ bạn trên hành trình chăm sóc sức khỏe & làm đẹp.
@@ -463,7 +463,7 @@ const Contact = () => {
                 Thông tin liên hệ
               </span>
               <h2 className="text-3xl font-light text-[#223a66] mb-4 mt-2">
-                Cách để <span className="font-bold">liên hệ với chúng tôi</span>
+                 <span className="font-bold">Cách để liên hệ với chúng tôi</span>
               </h2>
             </div>
 
@@ -525,7 +525,7 @@ const Contact = () => {
                     Gửi tin nhắn
                   </span>
                   <h2 className="text-3xl font-light text-[#223a66] mb-4 mt-2">
-                    Liên hệ <span className="font-bold">với chúng tôi</span>
+                     <span className="font-bold">Liên hệ với chúng tôi</span>
                   </h2>
                   <p className="text-gray-600">
                     Sẵn sàng bắt đầu hành trình chăm sóc sức khỏe? Hãy gửi tin nhắn, chúng tôi sẽ phản hồi trong vòng 24 giờ.
@@ -685,7 +685,7 @@ const Contact = () => {
         <div className="container mx-auto px-4 text-center">
           <div className="max-w-3xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-light text-white mb-4">
-              Sẵn sàng bắt đầu <span className="font-bold">hành trình chăm sóc bản thân?</span>
+              <span className="font-bold">Sẵn sàng bắt đầu hành trình chăm sóc bản thân?</span>
             </h2>
             <p className="text-blue-100 mb-8 text-lg">
               Đặt lịch hẹn ngay hôm nay để trải nghiệm dịch vụ chăm sóc chuyên nghiệp.

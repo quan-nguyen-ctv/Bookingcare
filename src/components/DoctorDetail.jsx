@@ -185,7 +185,7 @@ schedule_id: schedule.id,
               Chuyên gia y tế
             </span>
             <h1 className="text-4xl md:text-5xl font-light mb-4 leading-tight mt-2">
-              Bác sĩ <span className="font-bold">{doctor.user?.fullname || doctor.user?.name}</span>
+              <span className="font-bold">Bác sĩ {doctor.user?.fullname || doctor.user?.name}</span>
             </h1>
             <p className="text-lg md:text-xl font-light opacity-90">
               Chuyên khoa {doctor.specialty?.specialtyName}

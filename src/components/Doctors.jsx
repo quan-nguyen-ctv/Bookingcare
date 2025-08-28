@@ -268,7 +268,7 @@ const Doctors = () => {
             Đội ngũ y bác sĩ
           </span>
           <h1 className="text-4xl md:text-6xl font-light mb-4 leading-tight mt-2">
-            Các <span className="font-bold text-[#23cf7c]">Chuyên gia</span> của chúng tôi
+             <span className="font-bold text-[#23cf7c]">Chuyên gia của chúng tôi</span> 
           </h1>
           <p className="text-lg md:text-xl font-light opacity-90">
             Gặp gỡ đội ngũ bác sĩ giàu kinh nghiệm và tận tâm của chúng tôi
@@ -285,7 +285,7 @@ const Doctors = () => {
               Đội ngũ y tế chuyên môn
             </span>
             <h2 className="text-4xl md:text-5xl font-light text-[#223a66] mb-4 mt-2">
-              Các <span className="font-bold">Bác sĩ chuyên khoa</span>
+               <span className="font-bold">Bác sĩ chuyên khoa</span>
             </h2>
             <p className="text-gray-600 text-lg max-w-2xl mx-auto">
               Chúng tôi cung cấp nhiều dịch vụ y tế chất lượng với đội ngũ bác sĩ giàu kinh nghiệm.
@@ -385,7 +385,7 @@ const Doctors = () => {
             Cần hỗ trợ y tế?
           </span>
           <h2 className="text-4xl md:text-5xl font-light text-[#223a66] mb-6 mt-2">
-            Đặt lịch <span className="font-bold">Khám ngay</span>
+            <span className="font-bold">Đặt lịch Khám ngay</span>
           </h2>
           <p className="text-gray-600 text-lg mb-8 max-w-2xl mx-auto">
             Đặt hẹn với bác sĩ chuyên khoa của chúng tôi để được tư vấn và chăm sóc sức khỏe tốt nhất.

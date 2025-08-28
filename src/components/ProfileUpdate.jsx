@@ -210,7 +210,7 @@ const ProfileUpdate = () => {
               Cài đặt tài khoản
             </span>
             <h1 className="text-4xl md:text-5xl font-light mb-4 leading-tight mt-2">
-              Cập nhật <span className="font-bold">Hồ sơ</span>
+               <span className="font-bold">Cập nhật hồ sơ</span>
             </h1>
             <p className="text-lg md:text-xl font-light opacity-90">
               Giữ thông tin của bạn luôn chính xác và mới nhất

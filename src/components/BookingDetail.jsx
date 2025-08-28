@@ -170,7 +170,7 @@ const BookingDetail = () => {
             Thông Tin Lịch Hẹn 
           </span>
           <h1 className="text-4xl md:text-6xl font-light mb-4 leading-tight mt-2">
-            Chi Tiết <span className="font-bold text-[#23cf7c]">Lịch Hẹn </span>
+            <span className="font-bold text-[#23cf7c]">Chi Tiết Lịch Hẹn </span>
           </h1>
           <p className="text-lg md:text-xl font-light opacity-90">
             Xem lại thông tin cuộc hẹn và quản lý đặt chỗ của bạn

@@ -324,10 +324,10 @@ import React, { useEffect, useState } from "react";
 import { FaQuoteLeft, FaAward, FaUsers, FaCalendarAlt, FaHeart, FaShieldAlt, FaStar } from "react-icons/fa";
 
 const stats = [
-  { number: 25, label: "Năm kinh nghiệm", icon: <FaCalendarAlt /> },
-  { number: 10000, label: "Bệnh nhân hài lòng", icon: <FaUsers /> },
-  { number: 50, label: "Bác sĩ chuyên khoa", icon: <FaHeart /> },
-  { number: 30, label: "Giải thưởng đạt được", icon: <FaAward /> },
+  { number: 10, label: "Năm kinh nghiệm", icon: <FaCalendarAlt /> },
+  { number: 1000, label: "Bệnh nhân hài lòng", icon: <FaUsers /> },
+  { number: 20, label: "Bác sĩ chuyên khoa", icon: <FaHeart /> },
+  { number: 5, label: "Giải thưởng đạt được", icon: <FaAward /> },
 ];
 
 const StatCounter = ({ value }) => {
@@ -369,7 +369,7 @@ const About = () => {
             Giới thiệu về chúng tôi
           </span>
           <h1 className="text-4xl md:text-6xl font-light mb-4 leading-tight mt-2">
-            Về <span className="font-bold text-[#23cf7c]">Phòng khám</span>
+            <span className="font-bold text-[#23cf7c]">Phòng khám</span>
           </h1>
           <p className="text-lg md:text-xl font-light opacity-90">
             Tận tâm mang đến dịch vụ chăm sóc sức khỏe xuất sắc với sự đồng cảm và chuyên nghiệp
@@ -387,7 +387,7 @@ const About = () => {
                 Chào mừng đến với trung tâm y tế của chúng tôi
               </span>
               <h2 className="text-4xl md:text-5xl font-light text-[#223a66] mb-6 mt-2">
-                Sức khỏe của bạn, <span className="font-bold">Sứ mệnh của chúng tôi</span>
+                <span className="font-bold">Sức khỏe của bạn, Sứ mệnh của chúng tôi</span>
               </h2>
               <p className="text-gray-600 text-lg mb-6 leading-relaxed">
                 Với hơn 25 năm kinh nghiệm trong lĩnh vực y tế, chúng tôi kết hợp công nghệ tiên tiến với sự chăm sóc tận tâm để mang lại kết quả tốt nhất cho bệnh nhân và gia đình.
@@ -460,7 +460,7 @@ const About = () => {
               Thành tựu
             </span>
             <h2 className="text-4xl md:text-5xl font-light text-[#223a66] mb-4 mt-2">
-              Được <span className="font-bold">tin tưởng</span>
+              <span className="font-bold">Được tin tưởng</span>
             </h2>
             <p className="text-gray-600 text-lg max-w-2xl mx-auto">
               Những con số chứng minh cho sự cam kết về chất lượng y tế
@@ -496,7 +496,7 @@ const About = () => {
                 Hành trình của chúng tôi
               </span>
               <h2 className="text-4xl md:text-5xl font-light text-[#223a66] mb-4 mt-2">
-                Lịch sử <span className="font-bold">phát triển</span>
+                <span className="font-bold">Lịch sử phát triển</span>
               </h2>
             </div>
 
@@ -523,7 +523,7 @@ const About = () => {
               Câu chuyện bệnh nhân
             </span>
             <h2 className="text-4xl md:text-5xl font-light mb-4 mt-2">
-              Khách hàng <span className="font-bold">hài lòng</span>
+              <span className="font-bold">Khách hàng hài lòng</span>
             </h2>
             <p className="text-blue-200 text-lg max-w-2xl mx-auto">
               Trải nghiệm thực tế từ những bệnh nhân đã tin tưởng chúng tôi
@@ -594,7 +594,7 @@ const About = () => {
               Giá trị cốt lõi
             </span>
             <h2 className="text-4xl md:text-5xl font-light text-[#223a66] mb-4 mt-2">
-              Điều chúng tôi <span className="font-bold">theo đuổi</span>
+              <span className="font-bold">Điều chúng tôi theo đuổi</span>
             </h2>
           </div>
 

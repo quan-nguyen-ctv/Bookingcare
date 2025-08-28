@@ -270,7 +270,7 @@ const MedicalServiceDetail = () => {
                   Đội ngũ y tế của chúng tôi
                 </span>
                 <h2 className="text-3xl font-light text-[#223a66] mb-4 mt-2">
-                  Chuyên Gia <span className="font-bold">Bác Sĩ</span>
+                  <span className="font-bold">Chuyên Gia,Bác Sĩ</span>
                 </h2>
                 <p className="text-gray-600">
                   Gặp gỡ các chuyên gia y tế giàu kinh nghiệm của chúng tôi chuyên về khoa này

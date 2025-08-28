@@ -50,7 +50,7 @@ const MedicalServices = () => {
             Chăm sóc sức khỏe xuất sắc
           </span>
           <h1 className="text-4xl md:text-6xl font-light mb-4 leading-tight mt-2">
-            Dịch Vụ<span className="font-bold text-[#23cf7c]">Chăm Sóc</span>
+            <span className="font-bold text-[#23cf7c]">Dịch Vụ Chăm Sóc</span>
           </h1>
           <p className="text-lg md:text-xl font-light opacity-90">
             Giải pháp chăm sóc sức khỏe toàn diện với công nghệ tiên tiến
@@ -67,7 +67,7 @@ const MedicalServices = () => {
               Dịch Vụ Của Chúng Tôi
             </span>
             <h2 className="text-4xl md:text-5xl font-light text-[#223a66] mb-4 mt-2">
-              Thành Tựu <span className="font-bold">Chăm Sóc Tận Tâm</span>
+              <span className="font-bold">Chăm Sóc Tận Tâm</span>
             </h2>
             <p className="text-gray-600 text-lg max-w-2xl mx-auto">
               Chúng ta hãy hiểu rõ hơn về nhu cầu đau đớn để có thể trở nên kiên cường hơn.
@@ -157,7 +157,7 @@ const MedicalServices = () => {
                         </div>
                         <div>
                           <p className="font-semibold text-[#223a66]">Thời Gian</p>
-                          <p className="text-gray-600">T2 - T^, 7:00 - 21:00</p>
+                          <p className="text-gray-600">T2 - T7, 7:00 - 21:00</p>
                         </div>
                       </div>
                     </div>
@@ -212,7 +212,7 @@ const MedicalServices = () => {
               Tại sao nên chọn 
             </span>
             <h2 className="text-4xl md:text-5xl font-light text-[#223a66] mb-4 mt-2">
-              Sự Xuất Sắc Trong <span className="font-bold">Chăm Sóc Vẻ Đẹp</span>
+              <span className="font-bold">Sự Xuất Sắc Trong Chăm Sóc Vẻ Đẹp</span>
             </h2>
           </div>
           

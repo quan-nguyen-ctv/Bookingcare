@@ -151,7 +151,7 @@ const HomePage = () => {
               Dịch vụ của chúng tôi
             </span>
             <h2 className="text-4xl md:text-5xl font-light text-[#223a66] mb-4 mt-2">
-              Các <span className="font-bold">Chuyên khoa</span>
+               <span className="font-bold">Chuyên khoa</span>
             </h2>
             <p className="text-gray-600 text-lg max-w-2xl mx-auto">
               Giải pháp chăm sóc sức khỏe toàn diện, phù hợp với nhu cầu của bạn
@@ -170,22 +170,22 @@ const HomePage = () => {
                 description: "Chăm sóc và điều trị chuyên sâu về da liễu bởi các chuyên gia"
               },
               {
-                icon: <FaEye className="text-4xl" />,
+                icon: <FaHeart className="text-4xl" />,
                 title: "Nâng cơ",
                 description: "Khám và điều trị các bệnh lý cơ mặt với công nghệ hiện đại"
               },
               {
-                icon: <FaBone className="text-4xl" />,
+                icon: <FaHeart className="text-4xl" />,
                 title: "Làm sạch ",
                 description: "Làm sạch vùng da tay chân của bạn với công nghệ cao"
               },
               {
-                icon: <FaChild className="text-4xl" />,
+                icon: <FaHeart className="text-4xl" />,
                 title: "tiêm vi điển",
                 description: "Bổ sung dưỡng chất cho da của bạn , an toàn "
               },
               {
-                icon: <FaClock className="text-4xl" />,
+                icon: <FaHeart className="text-4xl" />,
                 title: "Massage Bấm Huyệt",
                 description: "Trải nghiệm thư giãn với massage bấm huyệt"
               }
@@ -218,7 +218,7 @@ const HomePage = () => {
                 Về Phòng Khám Của Chúng Tôi
               </span>
               <h2 className="text-4xl md:text-5xl font-light text-[#223a66] mb-6 mt-2">
-                Tại Sao Nên Lựa Chọn <span className="font-bold">Sự Quan Tâm Của Bạn</span>
+                 <span className="font-bold">Tại Sao Nên Lựa Chọn Sự Quan Tâm Của Bạn</span>
               </h2>
               <p className="text-gray-600 text-lg mb-8 leading-relaxed">
                 Với hơn 20 năm kinh nghiệm trong lĩnh vực chăm sóc sức khỏe,
@@ -268,7 +268,7 @@ const HomePage = () => {
               Đội ngũ y tế của chúng tôi
             </span>
             <h2 className="text-4xl md:text-5xl font-light text-[#223a66] mb-4 mt-2">
-              Gặp gỡ chúng tôi <span className="font-bold">Các Dịch Vụ</span>
+              <span className="font-bold">Gặp gỡ chúng tôi </span>
             </h2>
             <p className="text-gray-600 text-lg max-w-2xl mx-auto">
               Đội ngũ bác sĩ giàu kinh nghiệm của chúng tôi luôn sẵn sàng cung cấp cho bạn dịch vụ chăm sóc tốt nhất
@@ -335,7 +335,7 @@ const HomePage = () => {
             Sẵn sàng để bắt đầu
           </span>
           <h2 className="text-4xl md:text-5xl font-light text-[#223a66] mb-6 mt-2">
-            Đặt Lịch  <span className="font-bold">Của Bạn</span>
+             <span className="font-bold">Đặt Lịch Của Bạn</span>
           </h2>
           <p className="text-gray-600 text-lg mb-8 max-w-2xl mx-auto">
             Hãy thực hiện bước đầu tiên hướng tới sức khỏe tốt hơn. Đội ngũ của chúng tôi sẵn sàng mang đến cho bạn dịch vụ chăm sóc đặc biệt.

@@ -110,7 +110,7 @@ const ProfileView = () => {
               Thông tin tài khoản
             </span>
             <h1 className="text-4xl md:text-5xl font-light mb-4 leading-tight mt-2">
-              Hồ sơ <span className="font-bold">của tôi</span>
+              <span className="font-bold">Hồ sơ của tôi</span>
             </h1>
             <p className="text-lg md:text-xl font-light opacity-90">
               Thông tin cá nhân và chi tiết tài khoản
