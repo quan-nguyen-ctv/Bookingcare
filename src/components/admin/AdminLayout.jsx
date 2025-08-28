@@ -3,6 +3,22 @@ import { NavLink, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AdminHeader from "./AdminHeader";
+import { 
+  FaTachometerAlt, 
+  FaStethoscope, 
+  FaUserMd, 
+  FaHospital, 
+  FaCalendarAlt, 
+  FaClock, 
+  FaUsers, 
+  FaBookmark, 
+  FaEnvelope, 
+  FaPills, 
+  FaMoneyBillWave, 
+  FaChevronDown, 
+  FaSignOutAlt, 
+  FaBars 
+} from "react-icons/fa";
 
 const adminMenu = [
   { 
@@ -112,6 +128,18 @@ const adminMenu = [
       </svg>
     ), 
     to: "/admin/medications" 
+  },
+  {
+    label: "Khung Giờ",
+    icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6l4 2m4-10a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    ),
+    children: [
+      { label: "Danh Sách Khung Giờ", to: "/admin/time-slots/list" },
+      // { label: "Thêm Khung Giờ", to: "/admin/time-slots/add" } // Có thể thêm sau
+    ]
   }
 ];
 

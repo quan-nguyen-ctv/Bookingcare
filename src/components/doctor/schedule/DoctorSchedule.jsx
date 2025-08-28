@@ -239,7 +239,11 @@ const DoctorSchedule = () => {
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
-                    <span className="text-xs text-gray-600">Đã lên lịch</span>
+                    <span className="text-xs text-gray-600">Lịch ngày khác</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-gray-400 rounded-full"></div>
+                    <span className="text-xs text-gray-600">Không hoạt động</span>
                   </div>
                 </div>
 
@@ -248,7 +252,8 @@ const DoctorSchedule = () => {
                   {schedules.map((schedule) => {
                     const status = getTimeStatus(schedule.start_time, schedule.end_time);
                     const isSelected = selectedSchedule?.id === schedule.id;
-                    
+
+                    // Nếu active === false thì luôn là màu xám
                     let statusColor = "bg-purple-500 hover:bg-purple-600";
                     let statusText = "Đã lên lịch";
                     let statusIcon = (
@@ -257,8 +262,16 @@ const DoctorSchedule = () => {
                       </svg>
                     );
 
-                    if (status === "upcoming") {
-                      statusColor = "bg-green-500 hover:bg-green-600";
+                    if (schedule.active === false) {
+                      statusColor = "bg-gray-400 hover:bg-gray-500";
+                      statusText = "Không hoạt động";
+                      statusIcon = (
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      );
+                    } else if (status === "upcoming") {
+                      statusColor = "bg-yellow-500 hover:bg-yellow-600";
                       statusText = "Sắp tới";
                       statusIcon = (
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -274,7 +287,7 @@ const DoctorSchedule = () => {
                         </svg>
                       );
                     } else if (status === "completed") {
-                      statusColor = "bg-gray-500 hover:bg-gray-600";
+                      statusColor = "bg-green-500 hover:bg-green-600";
                       statusText = "Đã hoàn thành";
                       statusIcon = (
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -290,6 +303,7 @@ const DoctorSchedule = () => {
                         className={`${statusColor} ${
                           isSelected ? 'ring-4 ring-blue-300' : ''
                         } text-white p-4 rounded-xl shadow-lg transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300`}
+                        disabled={schedule.active === false}
                       >
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-2">
@@ -300,7 +314,6 @@ const DoctorSchedule = () => {
                             <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
                           )}
                         </div>
-                        
                         <div className="text-center">
                           <div className="text-lg font-bold mb-1">
                             {formatTimeSlot(schedule.start_time, schedule.end_time)}

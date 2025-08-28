@@ -17,7 +17,8 @@ const AddBooking = () => {
   const [selectedSchedule, setSelectedSchedule] = useState("");
 
   const [amount, setAmount] = useState(0);
-  const [paymentMethod] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("VNPAY");
+
   const [paymentCode] = useState(Math.floor(100000 + Math.random() * 900000).toString());
   const [reason] = useState("");
   const [status] = useState("PENDING");

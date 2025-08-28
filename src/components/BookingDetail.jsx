@@ -14,6 +14,7 @@ const BookingDetail = () => {
   const [availableTimes, setAvailableTimes] = useState([]);
   const [selectedScheduleId, setSelectedScheduleId] = useState(null);
   const [selectedTime, setSelectedTime] = useState("");
+  // const [paymentMethod, setPaymentMethod] = useState("VNPAY");
   const [saving, setSaving] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams();
@@ -114,9 +115,11 @@ const BookingDetail = () => {
         clinic_address: booking.schedule?.clinic_address,
         clinic_name: booking.schedule?.clinic_name,
         price: booking.amount,
+        
       },
       bookingId: booking.id,
-      reason: booking?.reason
+      reason: booking?.reason,
+      payment_method: "VNPAY"
     };
 
     // Navigate to payment page with data

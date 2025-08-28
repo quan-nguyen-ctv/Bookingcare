@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 
 const PrescriptionModal = ({ isOpen, onClose, booking, doctorData }) => {
   const [loading, setLoading] = useState(false);
+  const [medications, setMedications] = useState([]); // Thêm state cho danh sách thuốc
+  const [loadingMedications, setLoadingMedications] = useState(false);
   const [formData, setFormData] = useState({
     diagnosis: "",
     prescriptions: [
@@ -15,6 +17,30 @@ const PrescriptionModal = ({ isOpen, onClose, booking, doctorData }) => {
       }
     ]
   });
+
+  // Fetch medications từ API
+  const fetchMedications = async () => {
+    try {
+      setLoadingMedications(true);
+      const response = await axios.get("http://localhost:6868/api/v1/medications");
+      
+      if (response.data && response.data.data && response.data.data.medications) {
+        setMedications(response.data.data.medications);
+      }
+    } catch (error) {
+      console.error("Error fetching medications:", error);
+      toast.error("Không thể tải danh sách thuốc");
+    } finally {
+      setLoadingMedications(false);
+    }
+  };
+
+  // Fetch medications khi modal mở
+  useEffect(() => {
+    if (isOpen) {
+      fetchMedications();
+    }
+  }, [isOpen]);
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
@@ -82,6 +108,7 @@ const PrescriptionModal = ({ isOpen, onClose, booking, doctorData }) => {
       setLoading(true);
       const token = localStorage.getItem("doctor_token");
 
+      // 1. Gửi email đơn thuốc
       const emailData = {
         toEmail: booking.user.email,
         subject: `Đơn thuốc từ Bác sĩ ${doctorData?.fullname || ""}`,
@@ -121,7 +148,27 @@ const PrescriptionModal = ({ isOpen, onClose, booking, doctorData }) => {
         }
       );
 
-      toast.success("Đã gửi đơn thuốc qua email thành công!");
+      // 2. Lưu prescription vào database
+      // Tạo array các prescription để gửi vào API
+      const prescriptionsData = formData.prescriptions.map(prescription => ({
+        medicine: prescription.medicine,
+        descriptionUsage: prescription.desciptionUsage, // Sử dụng descriptionUsage thay vì desciptionUsage
+        unit: prescription.unit
+      }));
+
+      // Gọi API để lưu prescription vào DB
+      await axios.post(
+        `http://localhost:6868/api/v1/histories/${booking.id}/create-prescriptions`,
+        prescriptionsData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json"
+          }
+        }
+      );
+
+      toast.success("Đã gửi đơn thuốc qua email và lưu vào hệ thống thành công!");
       onClose();
       
       // Reset form
@@ -139,7 +186,19 @@ const PrescriptionModal = ({ isOpen, onClose, booking, doctorData }) => {
 
     } catch (error) {
       console.error("Error sending prescription:", error);
-      toast.error(error.response?.data?.message || "Lỗi khi gửi đơn thuốc");
+      
+      // Xử lý lỗi chi tiết hơn
+      if (error.response) {
+        // Lỗi từ server
+        const errorMessage = error.response.data?.message || "Lỗi từ server";
+        toast.error(errorMessage);
+      } else if (error.request) {
+        // Lỗi network
+        toast.error("Lỗi kết nối mạng");
+      } else {
+        // Lỗi khác
+        toast.error("Có lỗi xảy ra khi gửi đơn thuốc");
+      }
     } finally {
       setLoading(false);
     }
@@ -247,14 +306,26 @@ const PrescriptionModal = ({ isOpen, onClose, booking, doctorData }) => {
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Tên thuốc <span className="text-red-500">*</span>
                       </label>
-                      <input
-                        type="text"
-                        className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#20c0f3] focus:border-transparent"
-                        placeholder="Tên thuốc"
-                        value={prescription.medicine}
-                        onChange={(e) => handlePrescriptionChange(index, 'medicine', e.target.value)}
-                        required
-                      />
+                      {loadingMedications ? (
+                        <div className="w-full border border-gray-300 rounded-lg px-3 py-2 bg-gray-100 flex items-center">
+                          <div className="animate-spin w-4 h-4 border-2 border-[#20c0f3] border-t-transparent rounded-full mr-2"></div>
+                          <span className="text-gray-500">Đang tải...</span>
+                        </div>
+                      ) : (
+                        <select
+                          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#20c0f3] focus:border-transparent"
+                          value={prescription.medicine}
+                          onChange={(e) => handlePrescriptionChange(index, 'medicine', e.target.value)}
+                          required
+                        >
+                          <option value="">Chọn thuốc</option>
+                          {medications.map((medication) => (
+                            <option key={medication.id} value={medication.medicationName}>
+                              {medication.medicationName}
+                            </option>
+                          ))}
+                        </select>
+                      )}
                     </div>
                     
                     <div>

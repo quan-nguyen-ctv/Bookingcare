@@ -52,6 +52,7 @@ import ListRefund from "./components/admin/refund/ListRefund";
 import ListMedication from "./components/admin/medications/ListMedication";
 import BookingDetailAdmin from "./components/admin/bookings/BookingDetail";
 import UserDetail from "./components/admin/user/UserDetail";
+import ListTimeSlot from "./components/admin/time-slot/ListTimeSlot";
 
 
 function AppContent() {
@@ -104,15 +105,11 @@ function AppContent() {
           <Route path="schedules/list" element={<ListSchedule />} />
           <Route path="schedules/:id" element={<ScheduleDetail />} />
           <Route path="contacts/list" element={<ListContact />} />
-<Route path="contacts/:id" element={<ContactDetail />} />
+          <Route path="contacts/:id" element={<ContactDetail />} />
           <Route path="medications" element={<ListMedication />} />
-        
           <Route path="refund-invoice" element={<ListRefund />} />
+          <Route path="time-slots/list" element={<ListTimeSlot />} />
   
-
-          
-
-          
           {/* Các route con khác */}
         </Route>
           <Route path="/doctor/*" element={<DoctorLayout />}>
