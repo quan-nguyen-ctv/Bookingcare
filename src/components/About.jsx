@@ -428,7 +428,7 @@ const About = () => {
             <div className="relative">
               <div className="relative rounded-2xl overflow-hidden shadow-2xl">
                 <img
-                  src="/src/components/img/home3.jpg"
+                  src="/src/components/img/b59f7c57df6765393c761-768x374.jpg"
                   alt="Về phòng khám"
                   className="w-full h-96 object-cover"
                 />

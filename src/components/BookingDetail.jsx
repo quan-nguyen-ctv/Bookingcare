@@ -116,7 +116,8 @@ const BookingDetail = () => {
         price: booking.amount,
       },
       bookingId: booking.id,
-      reason: booking?.reason
+      reason: booking?.reason,
+      payment_method: "VNPAY"
     };
 
     // Navigate to payment page with data

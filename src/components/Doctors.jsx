@@ -345,7 +345,7 @@ const Doctors = () => {
                     <FaUserMd className="text-[#23cf7c] text-2xl mx-auto mb-2" />
                   </div>
                   <h3 className="text-xl font-bold text-[#223a66] mb-2">
-                    {doctor.bio}
+                    {doctor.user.fullname}
                   </h3>
                   <p className="text-[#23cf7c] font-medium mb-3">
                     {doctor.specialty?.specialtyName || "Không rõ chuyên khoa"}

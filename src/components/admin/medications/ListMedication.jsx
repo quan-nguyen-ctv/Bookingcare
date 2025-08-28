@@ -74,30 +74,6 @@ const MedicationModal = ({ isOpen, onClose, medicationData, onSave, loading, isE
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Giá Thuốc</label>
-              <input
-                type="number"
-                value={formData.price}
-                onChange={(e) => setFormData(prev => ({ ...prev, price: e.target.value }))}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#20c0f3] focus:border-transparent transition-all duration-200"
-                placeholder="Nhập giá thuốc..."
-                min="0"
-                disabled={loading}
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Mô Tả</label>
-              <textarea
-                value={formData.description}
-                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#20c0f3] focus:border-transparent transition-all duration-200"
-                placeholder="Nhập mô tả thuốc..."
-                rows={3}
-                disabled={loading}
-              />
-            </div>
           </div>
 
           <div className="flex gap-3">
@@ -463,8 +439,6 @@ const ListMedication = () => {
                 <tr>
                   <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">ID</th>
                   <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Tên Thuốc</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Giá</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Mô Tả</th>
                   <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Thao Tác</th>
                 </tr>
               </thead>
@@ -490,26 +464,8 @@ const ListMedication = () => {
                           item.medicationName || item.name || "—"
                         )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium">
-                        {formatCurrency(item.price)}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-900 max-w-xs">
-                        <div className="truncate" title={item.description}>
-                          {search && item.description ? (
-                            <span 
-                              dangerouslySetInnerHTML={{
-                                __html: item.description
-                                  .replace(
-                                    new RegExp(`(${search})`, 'gi'),
-                                    '<mark class="bg-yellow-200 px-1 rounded">$1</mark>'
-                                  )
-                              }}
-                            />
-                          ) : (
-                            item.description || "—"
-                          )}
-                        </div>
-                      </td>
+                      
+                      
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div className="flex gap-2">
                           <button

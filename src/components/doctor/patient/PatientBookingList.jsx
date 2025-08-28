@@ -434,11 +434,11 @@ const PatientBookingList = () => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                            user.gender === 'male' ? 'bg-blue-100 text-blue-800' :
-                            user.gender === 'female' ? 'bg-pink-100 text-pink-800' :
+                            user.gender === 'Male' ? 'bg-blue-100 text-blue-800' :
+                            user.gender === 'Female' ? 'bg-pink-100 text-pink-800' :
                             'bg-gray-100 text-gray-800'
                           }`}>
-                            {user.gender === 'male' ? 'Nam' : user.gender === 'female' ? 'Nữ' : '—'}
+                            {user.gender === 'Male' ? 'Male' : user.gender === 'Female' ? 'Female' : '—'}
                           </span>
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-900 max-w-xs">

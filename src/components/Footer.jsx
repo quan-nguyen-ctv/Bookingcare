@@ -167,14 +167,14 @@ const Footer = () => {
                 <span className="font-semibold">Hỗ trợ 24/7</span>
               </div>
               <p className="mt-2 text-gray-300">
-                <a href="mailto:support@email.com" className="hover:text-gray-100">support@email.com</a>
+                <a href="mailto:support@email.com" className="hover:text-gray-100">healthyclinic@gmail.com</a>
               </p>
             </div>
 
             <div>
               <div className="flex items-center space-x-2">
                 <FaPhone />
-                <span className="font-semibold">Thứ 2 - Thứ 6 : 08:30 - 18:00</span>
+                <span className="font-semibold">Thứ 2 - Thứ 6 : 7:00 - 21:00</span>
               </div>
               <p className="mt-2 text-gray-300">
                 <a href="tel:+23-456-6588" className="hover:text-gray-100">+1234567890</a>
@@ -185,7 +185,7 @@ const Footer = () => {
 
         {/* Bottom section */}
         <div className="mt-10 border-t pt-6 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-sm">&copy; 2021, Thiết kế & phát triển bởi <a href="https://themefisher.com" className="text-gray-300 hover:underline">FptAptech</a></p>
+          
 
           <form className="mt-4 md:mt-0 flex space-x-2">
             <input

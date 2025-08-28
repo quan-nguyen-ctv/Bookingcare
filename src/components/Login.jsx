@@ -83,13 +83,12 @@ const Login = () => {
     <main className="bg-white min-h-screen">
       <ToastContainer position="top-right" autoClose={1500} />
       {/* Banner */}
-      <section className="bg-[#223a66] h-56 flex flex-col justify-center items-center relative mb-8">
+      <section className="bg-[#223a66] h-56 flex flex-col justify-center items-center relative mb-8 mt-8">
         <div
           className="absolute inset-0 bg-cover bg-center opacity-20"
           style={{ backgroundImage: "url('/images/about-banner.jpg')" }}
         ></div>
         <div className="relative z-10 text-center">
-          <div className="text-white text-sm mb-1">Tài khoản</div>
           <h1 className="text-3xl md:text-4xl font-bold text-white">
             Đăng nhập & Đăng ký
           </h1>

@@ -474,7 +474,7 @@ const Contact = () => {
                   <FaPhone className="text-white text-xl" />
                 </div>
                 <h3 className="font-semibold text-[#223a66] mb-2">Gọi cho chúng tôi</h3>
-                <p className="text-gray-600 text-sm mb-2">+84 (555) 123-4567</p>
+                <p className="text-gray-600 text-sm mb-2">0123 456 789</p>
                 <p className="text-gray-500 text-xs">Hỗ trợ 24/7</p>
               </div>
 
@@ -484,7 +484,7 @@ const Contact = () => {
                   <FaEnvelope className="text-white text-xl" />
                 </div>
                 <h3 className="font-semibold text-[#223a66] mb-2">Email</h3>
-                <p className="text-gray-600 text-sm mb-2">info@spa.com</p>
+                <p className="text-gray-600 text-sm mb-2">healthyclinic@gmail.com.com</p>
                 <p className="text-gray-500 text-xs">Phản hồi nhanh</p>
               </div>
 
@@ -494,7 +494,7 @@ const Contact = () => {
                   <FaMapMarkerAlt className="text-white text-xl" />
                 </div>
                 <h3 className="font-semibold text-[#223a66] mb-2">Địa chỉ</h3>
-                <p className="text-gray-600 text-sm mb-2">123 Spa Center</p>
+                <p className="text-gray-600 text-sm mb-2">Trịnh Văn Bô</p>
                 <p className="text-gray-500 text-xs">Thành phố Sức khỏe</p>
               </div>
 
@@ -504,8 +504,8 @@ const Contact = () => {
                   <FaClock className="text-white text-xl" />
                 </div>
                 <h3 className="font-semibold text-[#223a66] mb-2">Giờ làm việc</h3>
-                <p className="text-gray-600 text-sm mb-2">Thứ 2 - Thứ 6: 7:00 - 17:00</p>
-                <p className="text-gray-500 text-xs">Thứ 7: 7:00 - 16:00</p>
+                <p className="text-gray-600 text-sm mb-2">Thứ 2 - Thứ 6: 7:00 - 21:00</p>
+                <p className="text-gray-500 text-xs">Thứ 7: 7:00 - 19:00</p>
               </div>
             </div>
           </div>
@@ -655,7 +655,7 @@ const Contact = () => {
                 <div className="h-96">
                   <iframe
                     title="Địa chỉ Spa"
-                    src="https://www.google.com/maps/embed?pb=!1m18..."
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2976.447128027334!2d105.74502827428043!3d21.038051713262583!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x313455e940879933%3A0xcf10b34e9f1a03df!2zVHLGsOG7nW5nIENhbyDEkeG6s25nIEZQVCBQb2x5dGVjaG5pYw!5e1!3m2!1sfr!2s!4v1756352928589!5m2!1sfr!2s"
                     width="100%"
                     height="100%"
                     style={{ border: 0 }}
