@@ -53,6 +53,8 @@ import ListMedication from "./components/admin/medications/ListMedication";
 import BookingDetailAdmin from "./components/admin/bookings/BookingDetail";
 import UserDetail from "./components/admin/user/UserDetail";
 import ListTimeSlot from "./components/admin/time-slot/ListTimeSlot";
+import AddTimeSlot from "./components/admin/time-slot/AddTimeSlot ";
+import DetailTimeSlot from "./components/admin/time-slot/DetailTimeSlot";
 
 
 function AppContent() {
@@ -109,6 +111,8 @@ function AppContent() {
           <Route path="medications" element={<ListMedication />} />
           <Route path="refund-invoice" element={<ListRefund />} />
           <Route path="time-slots/list" element={<ListTimeSlot />} />
+          <Route path="time-slots/add" element={<AddTimeSlot />} />
+          <Route path="time-slots/:id" element={<DetailTimeSlot />} /> 
   
           {/* Các route con khác */}
         </Route>

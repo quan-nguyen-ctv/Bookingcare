@@ -138,7 +138,7 @@ const adminMenu = [
     ),
     children: [
       { label: "Danh Sách Khung Giờ", to: "/admin/time-slots/list" },
-      // { label: "Thêm Khung Giờ", to: "/admin/time-slots/add" } // Có thể thêm sau
+      { label: "Thêm Khung Giờ", to: "/admin/time-slots/add" } // Có thể thêm sau
     ]
   }
 ];
