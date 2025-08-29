@@ -3,6 +3,7 @@ import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import PrescriptionModal from "./PrescriptionModal";
+import PrescriptionHistoryModal from "./PrescriptionHistoryModal"; // Import modal vừa tạo
 
 // Helper: format date dd-mm-yyyy
 const formatDate = (dateStr) => {
@@ -36,6 +37,10 @@ const PatientBookingList = () => {
   const [loading, setLoading] = useState(false);
   const [showPrescriptionModal, setShowPrescriptionModal] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
+  
+  // Thêm state cho history modal
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [selectedBookingForHistory, setSelectedBookingForHistory] = useState(null);
 
   // Get doctorId from localStorage
   const doctorData = JSON.parse(localStorage.getItem("doctor_details"));
@@ -77,7 +82,7 @@ const PatientBookingList = () => {
     try {
       const token = localStorage.getItem("doctor_token");
       if (!token || !doctorId) {
-        showToast("Không tìm thấy thông tin đăng nhập", "error");
+showToast("Không tìm thấy thông tin đăng nhập", "error");
         return;
       }
 
@@ -170,7 +175,7 @@ const PatientBookingList = () => {
       setBookings(allBookings);
       
       if (allBookings.length === 0) {
-        showToast("Chưa có bệnh nhân nào đặt lịch", "info");
+showToast("Chưa có bệnh nhân nào đặt lịch", "info");
       } else {
         showToast(`Đã tải ${allBookings.length} lượt đặt lịch`);
       }
@@ -230,6 +235,12 @@ const PatientBookingList = () => {
     setShowPrescriptionModal(true);
   };
 
+  // Thêm function cho history modal
+  const handleViewPrescriptionHistory = (booking) => {
+    setSelectedBookingForHistory(booking.id);
+    setShowHistoryModal(true);
+  };
+
   const handleMedicalRecord = (booking) => {
     showToast("Tính năng hồ sơ bệnh án đang phát triển", "info");
   };
@@ -237,6 +248,12 @@ const PatientBookingList = () => {
   const closePrescriptionModal = () => {
     setShowPrescriptionModal(false);
     setSelectedBooking(null);
+  };
+
+  // Thêm function đóng history modal
+  const closeHistoryModal = () => {
+    setShowHistoryModal(false);
+    setSelectedBookingForHistory(null);
   };
 
   if (loading) {
@@ -255,7 +272,7 @@ const PatientBookingList = () => {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
+<div className="flex items-center gap-3 mb-2">
             <div className="bg-gradient-to-r from-[#20c0f3] to-[#1ba0d1] p-2 rounded-lg">
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
@@ -310,7 +327,7 @@ const PatientBookingList = () => {
                 <input
                   type="text"
                   className="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#20c0f3] focus:border-transparent"
-                  placeholder="Tìm theo tên hoặc số điện thoại..."
+placeholder="Tìm theo tên hoặc số điện thoại..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
@@ -373,7 +390,7 @@ const PatientBookingList = () => {
 
         {/* Table */}
         <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-          <div className="overflow-x-auto">
+<div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
@@ -414,7 +431,7 @@ const PatientBookingList = () => {
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center">
+<div className="flex items-center">
                             <div className="w-10 h-10 bg-gradient-to-r from-[#20c0f3] to-[#1ba0d1] rounded-full flex items-center justify-center text-white font-semibold mr-3">
                               {user.fullname ? user.fullname.charAt(0).toUpperCase() : 'P'}
                             </div>
@@ -434,11 +451,15 @@ const PatientBookingList = () => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+
+                           
+
                             user.gender === 'Male' ? 'bg-blue-100 text-blue-800' :
                             user.gender === 'Female' ? 'bg-pink-100 text-pink-800' :
                             'bg-gray-100 text-gray-800'
                           }`}>
                             {user.gender === 'Male' ? 'Male' : user.gender === 'Female' ? 'Female' : '—'}
+
                           </span>
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-900 max-w-xs">
@@ -456,7 +477,7 @@ const PatientBookingList = () => {
                             {formatTime(schedule.start_time)}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+<td className="px-6 py-4 whitespace-nowrap text-sm">
                           <div className="flex gap-2">
                             <button 
                               onClick={() => handleViewPrescription(item)}
@@ -467,7 +488,23 @@ const PatientBookingList = () => {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                               </svg>
                               Đơn thuốc
-</button>
+
+                            </button>
+
+                            {/* Thêm nút Xem đơn thuốc */}
+                            <button 
+                              onClick={() => handleViewPrescriptionHistory(item)}
+                              className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-lg text-xs font-medium transition-colors duration-200 flex items-center gap-1"
+                              title="Xem lịch sử đơn thuốc"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                              </svg>
+                              Xem đơn thuốc
+                            </button>
+
+
                           
                           </div>
                         </td>
@@ -489,6 +526,13 @@ const PatientBookingList = () => {
         doctorData={doctorData}
       />
 
+      {/* Thêm History Modal */}
+      <PrescriptionHistoryModal
+        isOpen={showHistoryModal}
+        onClose={closeHistoryModal}
+        bookingId={selectedBookingForHistory}
+      />
+
       <ToastContainer
         position="top-right"
         autoClose={3000}
@@ -502,7 +546,7 @@ const PatientBookingList = () => {
         theme="light"
         toastStyle={{
           fontSize: '14px',
-          borderRadius: '8px',
+borderRadius: '8px',
         }}
       />
     </div>

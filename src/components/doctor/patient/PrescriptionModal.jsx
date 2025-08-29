@@ -108,11 +108,12 @@ const PrescriptionModal = ({ isOpen, onClose, booking, doctorData }) => {
       setLoading(true);
       const token = localStorage.getItem("doctor_token");
 
+      // 1. Gửi email đơn thuốc
       const emailData = {
         toEmail: booking.user.email,
-        subject: `Đơn thuốc từ Bác sĩ ${doctorData?.fullname || ""}`,
+subject: `Đơn thuốc từ Bác sĩ ${doctorData?.fullname || ""}`,
         booking_data: {
-doctor_name: doctorData?.fullname || "",
+          doctor_name: doctorData?.fullname || "",
           specialty_name: doctorData?.specialty_name || "",
           clinic_name: doctorData?.clinic_name || "",
           clinic_address: doctorData?.clinic_address || "",
@@ -147,7 +148,27 @@ doctor_name: doctorData?.fullname || "",
         }
       );
 
-      toast.success("Đã gửi đơn thuốc qua email thành công!");
+      // 2. Lưu prescription vào database
+      // Tạo array các prescription để gửi vào API
+      const prescriptionsData = formData.prescriptions.map(prescription => ({
+        medicine: prescription.medicine,
+        descriptionUsage: prescription.desciptionUsage, // Sử dụng descriptionUsage thay vì desciptionUsage
+        unit: prescription.unit
+      }));
+
+      // Gọi API để lưu prescription vào DB
+      await axios.post(
+        `http://localhost:6868/api/v1/histories/${booking.id}/create-prescriptions`,
+        prescriptionsData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json"
+          }
+        }
+      );
+
+      toast.success("Đã gửi đơn thuốc qua email và lưu vào hệ thống thành công!");
       onClose();
       
       // Reset form
@@ -165,15 +186,26 @@ doctor_name: doctorData?.fullname || "",
 
     } catch (error) {
       console.error("Error sending prescription:", error);
-      toast.error(error.response?.data?.message || "Lỗi khi gửi đơn thuốc");
+      
+      // Xử lý lỗi chi tiết hơn
+      if (error.response) {
+        // Lỗi từ server
+        const errorMessage = error.response.data?.message || "Lỗi từ server";
+        toast.error(errorMessage);
+      } else if (error.request) {
+        // Lỗi network
+        toast.error("Lỗi kết nối mạng");
+      } else {
+        // Lỗi khác
+        toast.error("Có lỗi xảy ra khi gửi đơn thuốc");
+      }
     } finally {
       setLoading(false);
     }
   };
 
   if (!isOpen) return null;
-
-  return (
+return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
@@ -195,7 +227,8 @@ doctor_name: doctorData?.fullname || "",
             </button>
           </div>
         </div>
-<form onSubmit={handleSubmit} className="p-6 space-y-6">
+
+        <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {/* Patient Info */}
           <div className="bg-gray-50 rounded-lg p-4">
             <h3 className="font-semibold text-gray-800 mb-3">Thông tin bệnh nhân</h3>
@@ -237,7 +270,7 @@ doctor_name: doctorData?.fullname || "",
           {/* Prescriptions */}
           <div>
             <div className="flex justify-between items-center mb-4">
-              <label className="block text-sm font-medium text-gray-700">
+<label className="block text-sm font-medium text-gray-700">
                 Đơn thuốc <span className="text-red-500">*</span>
               </label>
               <button
@@ -259,7 +292,7 @@ doctor_name: doctorData?.fullname || "",
                         type="button"
                         onClick={() => removePrescription(index)}
                         className="text-red-500 hover:text-red-700 p-1"
->
+                      >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                         </svg>
@@ -287,7 +320,7 @@ doctor_name: doctorData?.fullname || "",
                           <option value="">Chọn thuốc</option>
                           {medications.map((medication) => (
                             <option key={medication.id} value={medication.medicationName}>
-                              {medication.medicationName}
+{medication.medicationName}
                             </option>
                           ))}
                         </select>
@@ -310,7 +343,7 @@ doctor_name: doctorData?.fullname || "",
                     
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-Số lượng <span className="text-red-500">*</span>
+                        Số lượng <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="number"

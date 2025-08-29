@@ -3,6 +3,22 @@ import { NavLink, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AdminHeader from "./AdminHeader";
+import { 
+  FaTachometerAlt, 
+  FaStethoscope, 
+  FaUserMd, 
+  FaHospital, 
+  FaCalendarAlt, 
+  FaClock, 
+  FaUsers, 
+  FaBookmark, 
+  FaEnvelope, 
+  FaPills, 
+  FaMoneyBillWave, 
+  FaChevronDown, 
+  FaSignOutAlt, 
+  FaBars 
+} from "react-icons/fa";
 
 const adminMenu = [
   { 
@@ -54,7 +70,7 @@ const adminMenu = [
     label: "Quản Lý Bác Sĩ", 
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
       </svg>
     ), 
     children: [
@@ -112,6 +128,18 @@ const adminMenu = [
       </svg>
     ), 
     to: "/admin/medications" 
+  },
+  {
+    label: "Khung Giờ",
+    icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6l4 2m4-10a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    ),
+    children: [
+      { label: "Danh Sách Khung Giờ", to: "/admin/time-slots/list" },
+{ label: "Thêm Khung Giờ", to: "/admin/time-slots/add" } // Có thể thêm sau
+    ]
   }
 ];
 
@@ -199,7 +227,7 @@ const AdminLayout = () => {
               <div>
                 <h2 className="text-lg font-bold text-gray-800">BookingCare</h2>
                 <p className="text-xs text-gray-500">Admin Dashboard</p>
-              </div>
+</div>
             </div>
           )}
           <button
@@ -257,7 +285,7 @@ const AdminLayout = () => {
                             to={child.to}
                             className={({ isActive }) =>
                               `block px-4 py-2 rounded-lg text-sm transition-colors duration-200 ${
-                                isActive
+isActive
                                   ? "bg-[#20c0f3] text-white font-medium"
                                   : "text-gray-600 hover:bg-gray-100 hover:text-[#20c0f3]"
                               }`
@@ -326,8 +354,7 @@ const AdminLayout = () => {
           </div>
         )}
       </aside>
-
-      {/* Main Content */}
+{/* Main Content */}
       <div className="flex-1 flex flex-col min-h-screen">
         <AdminHeader />
         <main className="flex-1 overflow-auto">

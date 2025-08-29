@@ -54,6 +54,11 @@ import BookingDetailAdmin from "./components/admin/bookings/BookingDetail";
 import UserDetail from "./components/admin/user/UserDetail";
 
 
+import ListTimeSlot from "./components/admin/timeslot/ListTimeSlot";
+import AddTimeSlot from "./components/admin/timeslot/AddTimeSlot";
+import DetailTimeSlot from "./components/admin/timeslot/DetailTimeSlot";
+
+
 function AppContent() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
@@ -99,20 +104,18 @@ function AppContent() {
           <Route path="users/:id" element={<UserDetail />} />
           <Route path="bookings/list" element={<ListBookings />} />
           <Route path="bookings/add" element={<AddBooking />} />
-          <Route path="bookings/:id" element={<BookingDetailAdmin />} />
+<Route path="bookings/:id" element={<BookingDetailAdmin />} />
           <Route path="schedules/add" element={<AddSchedule />} />
           <Route path="schedules/list" element={<ListSchedule />} />
           <Route path="schedules/:id" element={<ScheduleDetail />} />
           <Route path="contacts/list" element={<ListContact />} />
-<Route path="contacts/:id" element={<ContactDetail />} />
+          <Route path="contacts/:id" element={<ContactDetail />} />
           <Route path="medications" element={<ListMedication />} />
-        
           <Route path="refund-invoice" element={<ListRefund />} />
+          <Route path="time-slots/list" element={<ListTimeSlot />} />
+          <Route path="time-slots/add" element={<AddTimeSlot />} />
+          <Route path="time-slots/:id" element={<DetailTimeSlot />} /> 
   
-
-          
-
-          
           {/* Các route con khác */}
         </Route>
           <Route path="/doctor/*" element={<DoctorLayout />}>
