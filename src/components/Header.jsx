@@ -58,7 +58,7 @@ const Header = () => {
             </div>
             <div className="flex items-center gap-2">
               <FaEnvelope className="text-[#23cf7c]" />
-              <span>clinic@gmail.com.com</span>
+              <span>clinic@gmail.com</span>
             </div>
             <div className="flex items-center gap-2">
               <FaClock className="text-[#23cf7c]" />

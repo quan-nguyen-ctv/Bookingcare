@@ -375,7 +375,7 @@ const HomePage = () => {
               {
                 icon: "✉️",
                 title: "Email Us",
-                info: "clinic@gmail.com.com"
+                info: "clinic@gmail.com"
               },
               {
                 icon: "🕒",
